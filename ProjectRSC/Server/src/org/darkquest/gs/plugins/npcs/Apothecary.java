@@ -22,9 +22,6 @@ public class Apothecary implements TalkToNpcListener {
     	if(npc.getID() != 33) {
     		return;
     	}
-    	if(player.getQuestStage(World.getWorld().getQuest(6)) == 5 || player.getQuestStage(World.getWorld().getQuest(6)) == 4) {
-    		return;
-    	}
     	player.setBusy(false);
     	player.informOfNpcMessage(new ChatMessage(npc, "Hello, can i help you?", player));
     	world.getDelayedEventHandler().add(new ShortEvent(player) {
