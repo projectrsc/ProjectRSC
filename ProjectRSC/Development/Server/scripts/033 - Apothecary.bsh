@@ -1,0 +1,40 @@
+NpcTalk("I am the apothecary");
+		NpcTalk("I have potions to brew, do you need anything specific?");
+		options = PickOption("Can you make a strength potion?", "Do you know a good potion to make my hair fall out?", "Have you got any good potions to give away?");
+		if(options == 2) {
+			NpcTalk("I do indeed. I gave it to my mother. That's why i now live alone");
+		} else if(options == 3) {
+			NpcTalk("Yes, ok. Try this potion");
+			AddItem(58, 1);
+			SendMessage("The Apothecary gives you a potion");
+		} else if(options == 1) {
+			if(HasItem(219, 1) && HasItem(220, 1)) { 
+				PlayerTalk("I have the root and spider eggs needed to make it");
+				NpcTalk("Well give me them and 5 gold and i'll make you your potion");
+				options = PickOption("Yes, ok", "No thanks");
+				if(options == 1) {
+					if(HasItem(10, 5)) {
+						SendMessage("You give limpwurt root, some spider eggs, and 5 coins to apothecary");
+						Wait(1000);
+						SendMessage("The apothecary brews up a potion");
+						Wait(1000);
+						SendMessage("The apothecary gives you a strength potion");
+						RemoveItem(219, 1);
+						RemoveItem(220, 1);
+						RemoveItem(10, 5);
+						AddItem(221, 1);
+					} else {
+						PlayerTalk("I don't have enough coins. I'll come back later");
+					}
+				}
+			} else {
+				NpcTalk("Yes. But the ingredients are little hard to find");
+				NpcTalk("If you ever get them i will make it for you. For a cost");
+				PlayerTalk("So what are the ingredients?");
+				NpcTalk("You'll need to find the eggs of a deadly red spider");
+				NpcTalk("And a limpwurt root");
+				NpcTalk("Oh and you'll have to pay me 5 coins");
+				PlayerTalk("Ok, i'll look out for them");
+				
+			}
+		}

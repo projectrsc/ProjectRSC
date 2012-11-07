@@ -1,0 +1,55 @@
+// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
+// Jad home page: http://www.kpdus.com/jad.html
+// Decompiler options: packimports(3) 
+// Source File Name:   ItemDef.java
+
+package defs;
+
+
+// Referenced classes of package defs:
+//            EntityDef
+
+public class ItemDef extends EntityDef
+{
+
+    public ItemDef()
+    {
+    }
+
+    public String getCommand()
+    {
+        return command;
+    }
+
+    public int getSprite()
+    {
+        return sprite;
+    }
+
+    public int getBasePrice()
+    {
+        return basePrice;
+    }
+
+    public boolean isStackable()
+    {
+        return stackable;
+    }
+
+    public boolean isWieldable()
+    {
+        return wieldable;
+    }
+
+    public int getPictureMask()
+    {
+        return pictureMask;
+    }
+
+    public String command;
+    public int basePrice;
+    public int sprite;
+    public boolean stackable;
+    public boolean wieldable;
+    public int pictureMask;
+}

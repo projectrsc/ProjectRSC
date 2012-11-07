@@ -1,0 +1,5 @@
+####################################### README ##########################################
+
+If you are using ant to compile, do NOT package 'python-standalone-*.jar' into the server
+during compile otherwise the library will not be able to find its version file for 
+initialization. 

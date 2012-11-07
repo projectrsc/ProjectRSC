@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse-pydev version="1.0"?><pydev_project>
+<pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Default</pydev_property>
+<pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">jython 2.7</pydev_property>
+<pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
+<path>/PRSC_Server</path>
+<path>/PRSC_Server/src</path>
+</pydev_pathproperty>
+<pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
+<path>C:\FastWorkspace\PRSC_TRUNKK\Server\lib\bsh.jar</path>
+<path>C:\FastWorkspace\PRSC_TRUNKK\Server\lib\jython-standalone-2.5.3.jar</path>
+<path>C:\FastWorkspace\PRSC_TRUNKK\Server\lib\mysql-connector.jar</path>
+<path>C:\FastWorkspace\PRSC_TRUNKK\Server\lib\netty.jar</path>
+<path>C:\FastWorkspace\PRSC_TRUNKK\Server\lib\xpp3.jar</path>
+<path>C:\FastWorkspace\PRSC_TRUNKK\Server\lib\xstream.jar</path>
+</pydev_pathproperty>
+</pydev_project>

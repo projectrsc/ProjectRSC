@@ -1,0 +1,316 @@
+package org.darkquest.gs.plugins.commands;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.darkquest.config.Constants;
+import org.darkquest.config.Formulae;
+import org.darkquest.gs.db.DatabaseManager;
+import org.darkquest.gs.db.query.StaffLog;
+import org.darkquest.gs.event.DelayedEvent;
+import org.darkquest.gs.event.SingleEvent;
+import org.darkquest.gs.external.EntityHandler;
+import org.darkquest.gs.model.Item;
+import org.darkquest.gs.model.Mob;
+import org.darkquest.gs.model.Npc;
+import org.darkquest.gs.model.Player;
+import org.darkquest.gs.model.Point;
+import org.darkquest.gs.plugins.PluginHandler;
+import org.darkquest.gs.plugins.listeners.action.CommandListener;
+import org.darkquest.gs.service.Services;
+import org.darkquest.gs.states.CombatState;
+import org.darkquest.gs.tools.DataConversions;
+import org.darkquest.gs.world.ActiveTile;
+import org.darkquest.gs.world.TileValue;
+import org.darkquest.gs.world.World;
+
+public final class Admins implements CommandListener {
+
+	private final World world = World.getWorld();
+
+	private static final String[] towns = { "varrock", "falador", "draynor", "portsarim", "karamja", "alkharid", "lumbridge", "edgeville", "castle", "taverly", "clubhouse", "seers", "barbarian", "rimmington", "catherby", "ardougne", "yanille", "lostcity", "gnome" };
+
+	private static final Point[] townLocations = { Point.location(122, 509), Point.location(304, 542), Point.location(214, 632), Point.location(269, 643), Point.location(370, 685), Point.location(89, 693), Point.location(120, 648), Point.location(217, 449), Point.location(270, 352), Point.location(373, 498), Point.location(653, 491), Point.location(501, 450), Point.location(233, 513), Point.location(325, 663), Point.location(440, 501), Point.location(549, 589), Point.location(583, 747), Point.location(127, 3518), Point.location(703, 527) };
+
+	private static final String COMMAND_PREFIX = "@red@SERVER: @whi@";
+
+	private DelayedEvent maskEvent;
+
+	@Override
+	public void onCommand(String command, String[] args, Player player) {
+		if (!player.isAdmin()) {
+			return;
+		}
+		else if (command.equals("fatigue")) {
+			player.setFatigue(7500);
+			player.getActionSender().sendFatigue(player.getFatigue() / 10);
+		} else if (command.equals("update")) {
+			String reason = "";
+			int seconds = 60;
+			if (args.length > 0) {
+				for (int i = 0; i < args.length; i++) {
+					if (i == 0) {
+						try {
+							seconds = Integer.parseInt(args[i]);
+						} catch (Exception e) {
+							reason += (args[i] + " ");
+						}
+					} else {
+						reason += (args[i] + " ");
+					}
+				}
+				reason = reason.substring(0, reason.length() - 1);
+			}
+			int minutes = seconds / 60;
+			int remainder = seconds % 60;
+
+			if (world.getServer().shutdownForUpdate(seconds)) {
+				String message = "The server will be shutting down in " + (minutes > 0 ? minutes + " minute" + (minutes > 1 ? "s" : "") + " " : "") + (remainder > 0 ? remainder + " second" + (remainder > 1 ? "s" : "") : "") + (reason == "" ? "" : ": % % " + reason);
+				for (Player p : world.getPlayers()) {
+					p.getActionSender().sendAlert(message, false);
+					p.getActionSender().startShutdown(seconds);
+				}
+			}
+			Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " used UPDATE " + minutes + ":" + remainder + " " + reason));
+		} else if (command.equals("appearance")) {
+			player.setChangingAppearance(true);
+			player.getActionSender().sendAppearanceScreen();
+		}  else if (command.equals("pos")) {
+			player.getActionSender().sendMessage("X: " + player.getX() + ", Y: " + player.getY());
+		} else if (command.equals("dropall")) {
+			player.getInventory().getItems().clear();
+			player.getActionSender().sendInventory();
+		} else if (command.equals("sysmsg")) {
+			StringBuilder sb = new StringBuilder("SYSTEM MESSAGE: @whi@");
+
+			for (int i = 0; i < args.length; i++) {
+				sb.append(args[i]).append(" ");
+			}
+
+			world.sendWorldMessage("@red@" + sb.toString());
+			world.sendWorldMessage("@yel@" + sb.toString());
+			world.sendWorldMessage("@gre@" + sb.toString());
+			world.sendWorldMessage("@cya@" + sb.toString());
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " used SYSMSG " + sb.toString()));
+		} else if (command.equals("system")) {
+			StringBuilder sb = new StringBuilder("@yel@System message: @whi@");
+
+			for (int i = 0; i < args.length; i++) {
+				sb.append(args[i]).append(" ");
+			}
+
+			for (Player p : World.getWorld().getPlayers()) {
+				p.getActionSender().sendAlert(sb.toString(), false);
+			}
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " used SYSTEM " + sb.toString()));
+		} else if (command.equals("info")) {
+			if (args.length != 1) {
+				sendInvalidArguments(player, "info", "name");
+				return; 
+			}
+
+			world.getServer().getLoginConnector().getActionSender().requestPlayerInfo(player, DataConversions.usernameToHash(args[0]));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " used INFO " + args[0]));
+		} else if (command.equals("say")) {
+			String newStr = "@whi@";
+
+			for (int i = 0; i < args.length; i++) {
+				newStr += args[i] + " ";
+			}
+
+			newStr = player.getRankHeader() + player.getUsername() + ": " + newStr;
+
+			World.getWorld().sendWorldMessage(newStr);
+		} else if (command.equals("ban") || command.equals("unban")) {
+			boolean banned = command.equals("ban");
+			if (args.length != 1) {
+				sendInvalidArguments(player, banned ? "ban" : "unban", "name");
+				return;
+			}
+			world.getServer().getLoginConnector().getActionSender().banPlayer(player, DataConversions.usernameToHash(args[0]), banned);
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " attempted to " + (banned ? "banned" : "unbanned") + " " + args[0]));
+		} else if (command.equals("info")) {
+			if (args.length != 1) {
+				sendInvalidArguments(player, "info", "name");
+				return;
+			}
+			World.getWorld().getServer().getLoginConnector().getActionSender().requestPlayerInfo(player, DataConversions.usernameToHash(args[0]));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " requested info for " + args[0]));
+		} else if (command.equalsIgnoreCase("town")) {
+			try {
+				String town = args[0];
+				if (town != null) {
+					for (int i = 0; i < towns.length; i++)
+						if (town.equalsIgnoreCase(towns[i])) {
+							player.teleport(townLocations[i].getX(), townLocations[i].getY(), true);
+							//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went to " + args[0]));
+							return;
+						}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}  else if (command.equals("goto") || command.equals("summon")) {
+			boolean summon = command.equals("summon");
+
+			if (args.length != 1) {
+				sendInvalidArguments(player, summon ? "summon" : "goto", "name");
+				return;
+			}
+			long usernameHash = DataConversions.usernameToHash(args[0]);
+			Player affectedPlayer = world.getPlayer(usernameHash);
+
+			if (affectedPlayer != null) {
+				if (summon) {
+					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " summoned " + affectedPlayer.getUsername() + " from " + affectedPlayer.getLocation().toString() + " to " + player.getLocation().toString()));
+					affectedPlayer.teleport(player.getX(), player.getY(), true);
+				} else {
+					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went from " + player.getLocation() + " to " + affectedPlayer.getUsername() + " at " + affectedPlayer.getLocation().toString()));
+					player.teleport(affectedPlayer.getX(), affectedPlayer.getY(), true);
+				}
+			} else {
+				player.getActionSender().sendMessage(COMMAND_PREFIX + "Invalid player");
+			}
+		} else if (command.equals("blink")) {
+			player.setBlink(!player.blink());
+			player.getActionSender().sendMessage(COMMAND_PREFIX + "Your blink status is now " + player.blink());
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " changed blink status to " + player.blink()));
+		} else if (command.equals("invis")) {
+			if (player.isInvis()) {
+				player.setinvis(false);
+			} else {
+				player.setinvis(true);
+			}
+			player.getActionSender().sendMessage(COMMAND_PREFIX + "You are now " + (player.isInvis() ? "invisible" : "visible"));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went " + (player.isInvis() ? "in" : "") + "visible"));
+		} else if (command.equals("teleport")) {
+			if (args.length != 2) {
+				player.getActionSender().sendMessage("Invalid args. Syntax: TELEPORT x y");
+				return;
+			}
+			int x = Integer.parseInt(args[0]);
+			int y = Integer.parseInt(args[1]);
+			if (world.withinWorld(x, y)) {
+				//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " teleported from " + player.getLocation().toString() + " to (" + x + ", " + y + ")"));
+				player.teleport(x, y, true);
+			} else {
+				player.getActionSender().sendMessage("Invalid coordinates!");
+			}
+		} else if (command.equalsIgnoreCase("kick")) {
+			Player p = world.getPlayer(DataConversions.usernameToHash(args[0]));
+			if (p == null) {
+				return;
+			}
+			p.destroy(false);
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " kicked " + p.getUsername()));
+		} else if (command.equals("take") || command.equals("put")) {
+			if (args.length != 1) {
+				player.getActionSender().sendMessage("Invalid args. Syntax: TAKE name");
+				return;
+			}
+			Player affectedPlayer = world.getPlayer(DataConversions.usernameToHash(args[0]));
+			if (affectedPlayer == null) {
+				player.getActionSender().sendMessage("Invalid player, maybe they aren't currently online?");
+				return;
+			}
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " took " + affectedPlayer.getUsername() + " from " + affectedPlayer.getLocation().toString() + " to admin room"));
+
+			affectedPlayer.teleport(78, 1642, true);
+
+			if (command.equals("take")) {
+				player.teleport(76, 1642, true);
+			}
+		} else if (command.equals("reload")) {
+			if(PluginHandler.getPluginHandler() != null) {
+				player.getActionSender().sendMessage("Reloading all script factories...");
+				if(PluginHandler.getPluginHandler().getPythonScriptFactory().canReload())
+					try {
+						PluginHandler.getPluginHandler().loadPythonScripts();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				player.getActionSender().sendMessage("Complete...");
+			}
+		} else if (command.equals("check")) {
+			if (args.length < 1) {
+				sendInvalidArguments(player, "check", "name");
+				return;
+			}
+			long hash = DataConversions.usernameToHash(args[0]);
+			String currentIp = null;
+			Player target = World.getWorld().getPlayer(hash);
+
+			if (target == null) {
+				player.getActionSender().sendMessage(COMMAND_PREFIX + "No online character found named '" + args[0] + "'.. checking MySQL..");
+
+				try {
+					Statement statement = World.getWorld().getDB().getConnection().createStatement();
+					ResultSet result = statement.executeQuery("SELECT * FROM `" + Constants.GameServer.MYSQL_TABLE_PREFIX + "players` WHERE `user`=" + hash);
+
+					if (result.next()) {
+						currentIp = result.getString("login_ip");
+					} else {
+						player.getActionSender().sendMessage(COMMAND_PREFIX + "Error character not found in MySQL");
+						return;
+					}
+				} catch (SQLException e) {
+					player.getActionSender().sendMessage(COMMAND_PREFIX + "A MySQL error has occured! " + e.getMessage());
+					return;
+				}
+			} else {
+				currentIp = target.getCurrentIP();
+			}
+
+			if (currentIp == null) {
+				player.getActionSender().sendMessage(COMMAND_PREFIX + "An unknown error has occured!");
+				return;
+			}
+
+			player.getActionSender().sendMessage(COMMAND_PREFIX + "Fetching characters..");
+
+			try {
+				Statement statement = World.getWorld().getDB().getConnection().createStatement();
+				ResultSet result = statement.executeQuery("SELECT * FROM `" + Constants.GameServer.MYSQL_TABLE_PREFIX + "players` WHERE `login_ip` LIKE '%" + currentIp + "%'");
+
+				List<String> names = new ArrayList<>();
+
+				while (result.next()) {
+					names.add(result.getString("username"));
+				}
+
+				StringBuilder builder = new StringBuilder("@red@").append(args[0].toUpperCase()).append(" @whi@currently has ").append(names.size() > 0 ? "@gre@" : "@red@").append(names.size()).append(" @whi@registered characters.");
+
+				if (names.size() > 0) {
+					builder.append(" % % They are: ");
+				}
+
+				for (int i = 0; i < names.size(); i++) {
+					builder.append("@yel@").append(names.get(i));
+
+					if (i != names.size() - 1) {
+						builder.append("@whi@, ");
+					}
+				}
+
+				player.getActionSender().sendAlert(builder.toString(), names.size() > 10);
+			} catch (SQLException e) {
+				player.getActionSender().sendMessage(COMMAND_PREFIX + "A MySQL error has occured! " + e.getMessage());
+			}
+		} 
+	}
+
+
+	private void sendInvalidArguments(Player p, String... strings) {
+		StringBuilder sb = new StringBuilder(COMMAND_PREFIX + "Invalid arguments @red@Syntax: @whi@");
+
+		for (int i = 0; i < strings.length; i++) {
+			sb.append(i == 0 ? strings[i].toUpperCase() : strings[i]).append(i == (strings.length - 1) ? "" : " ");
+		}
+		p.getActionSender().sendMessage(sb.toString());
+	}
+
+}
