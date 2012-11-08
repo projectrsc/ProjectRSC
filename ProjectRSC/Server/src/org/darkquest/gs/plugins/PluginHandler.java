@@ -42,7 +42,7 @@ public final class PluginHandler {
 
     private final Map<String, Set<Object>> actionPlugins = new HashMap<String, Set<Object>>();
     private final Map<String, Set<Object>> executivePlugins = new HashMap<String, Set<Object>>();
-    //private final Map<String, Class<?>> queue = new HashMap<String, Class<?>>();
+    private final Map<String, Class<?>> queue = new HashMap<String, Class<?>>();
     private final List<Class<?>> knownInterfaces = new ArrayList<Class<?>>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final PythonScriptFactory psf = new PythonScriptFactory(this);
@@ -230,7 +230,7 @@ public final class PluginHandler {
     public boolean blockDefaultAction(String interfce, final Object[] data, boolean callAction) {
         boolean shouldBlock = false;
 
-        //queue.clear();
+        queue.clear();
         if (executivePlugins.containsKey(interfce + "ExecutiveListener")) {
             for (Object c : executivePlugins.get(interfce + "ExecutiveListener")) {
                 try {
@@ -244,10 +244,10 @@ public final class PluginHandler {
                     shouldBlock = (Boolean) m.invoke(c, data); // return where to block or not
                     
                     // we should block npc talktonpc if the ^ returns true
-                    //if(shouldBlock) {
-                        //System.out.println("Has blocking for this npc " + c.getClass().getName());
-                       // queue.put(interfce, c.getClass());
-                   // } // we can assume the rest is fair game
+                    if(shouldBlock) {
+                        System.out.println("Has blocking for this npc " + c.getClass().getName());
+                        queue.put(interfce, c.getClass());
+                    } // we can assume the rest is fair game
                 } catch (Exception e) {
                     System.err.println("Exception at plugin handling: ");
                     e.printStackTrace();
@@ -259,7 +259,7 @@ public final class PluginHandler {
             handleAction(interfce, data);
         //if(!queue.isEmpty())
         //    return true;
-        return false; // will return false for now (action: block future reqs if found)
+        return false; // not sure why it matters if its false or true
     }
 
     public void handleAction(String interfce, final Object[] data) {
@@ -273,11 +273,8 @@ public final class PluginHandler {
                     }
 
                     final Method m = c.getClass().getMethod("on" + interfce, dataClasses);
-                    //boolean go = true;
-                    //Class<?>[] interfcs = c.getClass().getInterfaces();
-                    //System.out.println("Interface " + interfce);
-                    //System.out.println("Class " + c.getClass().getName());
-                    /*
+                    boolean go = false;
+                    
                     if(queue.containsKey(interfce)) {
                         //System.out.println("Triggered from interface " + interfce);
                         for(Class<?> clz : queue.values()) {
@@ -288,10 +285,10 @@ public final class PluginHandler {
                         }
                     } else {
                     	go = true;
-                    } */
+                    } 
                     
-                    //if(go) {
-                        //System.out.println("INVOKING " + c.getClass().getName());
+                    if(go) {
+                        System.out.println("INVOKING " + c.getClass().getName());
                         FutureTask<Integer> task = new FutureTask<Integer>(new Callable<Integer>() {
 
                             @Override
@@ -305,7 +302,7 @@ public final class PluginHandler {
                             }
                         });
                         getExecutor().execute(task);
-                   // }
+                    }
                 } catch (Exception e) {
                     System.err.println("Exception at plugin handling: ");
                     e.printStackTrace();

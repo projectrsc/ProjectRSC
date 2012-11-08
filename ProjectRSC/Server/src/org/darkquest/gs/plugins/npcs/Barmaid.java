@@ -13,8 +13,8 @@ public final class Barmaid extends Scriptable implements TalkToNpcExecutiveListe
 
 	@Override
 	public void onTalkToNpc(Player p, final Npc n) { 
-		if(n.getID() != 142)
-			return;
+		//if(n.getID() != 142)
+		//	return;
 		p.setBusy(true);
 		n.blockedBy(p);
 

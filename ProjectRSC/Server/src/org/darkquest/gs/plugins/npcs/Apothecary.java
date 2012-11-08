@@ -9,9 +9,10 @@ import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
+import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 import org.darkquest.gs.world.World;
 
-public class Apothecary implements TalkToNpcListener {
+public class Apothecary implements TalkToNpcListener, TalkToNpcExecutiveListener {
 	
 	public World world = World.getWorld();
 
@@ -19,9 +20,9 @@ public class Apothecary implements TalkToNpcListener {
 
     @Override
 	public void onTalkToNpc(Player player, final Npc npc) {
-    	if(npc.getID() != 33) {
-    		return;
-    	}
+    	//if(npc.getID() != 33) {
+    	//	return;
+    	//}
     	player.setBusy(false);
     	player.informOfNpcMessage(new ChatMessage(npc, "Hello, can i help you?", player));
     	world.getDelayedEventHandler().add(new ShortEvent(player) {
@@ -109,5 +110,11 @@ public class Apothecary implements TalkToNpcListener {
     		owner.getActionSender().sendMenu(names);
     	    }
     	});	
+	}
+
+	@Override
+	public boolean blockTalkToNpc(Player p, Npc n) {
+		// TODO Auto-generated method stub
+		return n.getID() == 33;
 	}
 }

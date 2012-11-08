@@ -18,8 +18,8 @@ public final class KebabSeller implements TalkToNpcListener, TalkToNpcExecutiveL
 
 	@Override
 	public void onTalkToNpc(Player player, final Npc npc) {
-		if(npc.getID() != 90)
-			return;
+		//if(npc.getID() != 90)
+		//	return;
 		player.informOfNpcMessage(new ChatMessage(npc, "Would you like to buy a nice kebab? Only 1 gold", player));
 		player.setBusy(true);
 		world.getDelayedEventHandler().add(new ShortEvent(player) {

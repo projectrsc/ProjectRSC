@@ -31,6 +31,9 @@ class Dorics(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUseOnObjec
         self.addQuestPoints(1)
             
     def onTalkToNpc(self, player, npc):
+        #if npc.getID() != 144:
+        #    return 
+        
         self.setParticipants(player, npc)
         stage = self.getQuestStage()
         self.occupy()

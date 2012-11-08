@@ -9,10 +9,8 @@ The Bartender NPC in Varrock's Blue Moon Inn
 '''
 
 class Bartender(NpcInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
+	
 	def onTalkToNpc(self, player, npc):
-		if(npc.getID() != 12):
-			return
-		
 		self.setParticipants(player, npc)
 		self.occupy()
 		
@@ -49,4 +47,4 @@ class Bartender(NpcInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 	
 	def blockTalkToNpc(self, player, npc):
 		# TODO SLIPPY IT'S SUPPOSED TO RUN IF IT RETURNS TRUE
-		return npc.getID() != 12
+		return npc.getID() == 12

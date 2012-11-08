@@ -30,7 +30,7 @@ public class Bankers extends Scriptable implements TalkToNpcExecutiveListener, T
 
 	@Override
 	public void onTalkToNpc(Player player, final Npc npc) {
-		switch (npc.getID()) {
+		/*switch (npc.getID()) {
 		case 95:
 		case 224:
 		case 268:
@@ -41,7 +41,7 @@ public class Bankers extends Scriptable implements TalkToNpcExecutiveListener, T
 			break;
 		default:
 			return; 
-		}
+		} */
 		player.setBusy(true);
 		npc.blockedBy(player);
 

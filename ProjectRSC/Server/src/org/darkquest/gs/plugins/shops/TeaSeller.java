@@ -22,7 +22,7 @@ public final class TeaSeller extends Scriptable implements ShopInterface, TalkTo
 	
 	@Override
 	public void onTalkToNpc(Player p, final Npc n) {
-		if (n.getID() == 780) {
+		if (n.getID() == 780) { // fucked
 			p.setBusy(true);
 			n.blockedBy(p);
 			
@@ -58,7 +58,7 @@ public final class TeaSeller extends Scriptable implements ShopInterface, TalkTo
 
 	@Override
 	public boolean blockTalkToNpc(Player p, Npc n) {
-		return n.getID() == 780 && Constants.GameServer.MEMBER_WORLD;
+		return n.getID() == 780;
 	}
 
 	@Override

@@ -2,8 +2,6 @@ from org.darkquest.gs.plugins import Quest;
 from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener, ObjectActionListener, PlayerKilledNpcListener
 from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, ObjectActionExecutiveListener, PlayerKilledNpcExecutiveListener
 
-from org.darkquest.gs.model import Player, Npc, InvItem, GameObject
-
 '''
 @author: Mister Hat
 Witch's potion F2P quest
@@ -21,12 +19,12 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 		return False
 
 	def handleReward(self):
-		self.displayMessage("Well done you have completed the witches potion quest", 0)
+		self.displayMessage("Well done you have completed the witches potion quest")
 		self.advanceStat(self.SkillType.MAGIC, 225 + 50 * self.getMaxLevel(self.SkillType.MAGIC))
-		self.displayMessage("@gre@You have gained 1 quest point!", 0)
+		self.displayMessage("@gre@You have gained 1 quest point!")
 		self.addQuestPoints(1)
 
-	def onTalkToNpc(self, player, npc):			
+	def onTalkToNpc(self, player, npc):	
 		self.setParticipants(player, npc)
 		stage = self.getQuestStage()
 		
@@ -109,20 +107,17 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 		self.release()
 	
 	def onObjectAction(self, gameObject, command, player):
-		if gameObject.getID() != 147 and command != "drink from":
-			return
-		
 		self.setParticipant(player)
-		player.setBusy(True)
+		self.occupy()
 		
-		if(self.getQuestStage() != 2):
+		if self.getQuestStage() != 2:
 			self.sendPlayerChat("I'd rather not", "It doesn't look very tasty")
 		else:
 			self.displayMessage("You drink from the cauldron", "You feel yourself imbued with power")
 			self.setQuestStage(-1)
 			self.setQuestCompleted()
 		
-		player.setBusy(False)
+		self.release()
 	
 	def onPlayerKilledNpc(self, player, npc):
 		self.setParticipant(player)

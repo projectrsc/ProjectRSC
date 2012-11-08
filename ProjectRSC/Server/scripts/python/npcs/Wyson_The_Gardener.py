@@ -1,7 +1,6 @@
 from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener
 from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener
 from org.darkquest.gs.plugins import NpcInterface
-from org.darkquest.gs.model import Player, Npc
 
 '''
 @author: xEnt
@@ -14,7 +13,9 @@ class Wyson_The_Gardener(NpcInterface, TalkToNpcListener, TalkToNpcExecutiveList
     WOAD_LEAF = 281
 
     def onTalkToNpc(self, player, npc):
-        self.displayMessage("YoHitsHere Wyson")
+        #if npc.getID() != self.NPC_ID:
+        #    return
+        
         self.setParticipants(player, npc)
         self.occupy();
         

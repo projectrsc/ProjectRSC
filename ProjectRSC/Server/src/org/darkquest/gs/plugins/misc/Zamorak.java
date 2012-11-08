@@ -36,7 +36,8 @@ public class Zamorak implements PickupListener, PickupExecutiveListener, PlayerA
 			Npc zam = World.getWorld().getNpc(140, 328, 333, 433, 438, true);
 			if(zam == null || zam.inCombat())
 				return false;
-			else return true;
+			else 
+				return true;
 		}
 		return false;
 	}

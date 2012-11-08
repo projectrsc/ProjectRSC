@@ -15,9 +15,9 @@ public class EntranaMonks implements TalkToNpcListener, TalkToNpcExecutiveListen
 	
 	@Override
 	public void onTalkToNpc(Player player, final Npc npc) {
-		if(npc.getID() != 212) {
-			return;
-		}
+		//if(npc.getID() != 212) {
+		//	return;
+		//}
 		player.sendMemberErrorMessage();
 		/*
 		final boolean toEntrana = !player.getLocation().inBounds(390,530, 440, 580); 

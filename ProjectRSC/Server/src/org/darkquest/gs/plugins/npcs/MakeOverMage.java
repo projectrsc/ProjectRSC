@@ -17,8 +17,8 @@ public class MakeOverMage implements TalkToNpcListener, TalkToNpcExecutiveListen
 
     @Override
 	public void onTalkToNpc(Player player, final Npc npc) {
-    	if(npc.getID() != 339)
-    		return;
+    	//if(npc.getID() != 339)
+    	//	return;
     	player.informOfNpcMessage(new ChatMessage(npc, "Are you happy with your looks?", player));
     	player.setBusy(true);
     	world.getDelayedEventHandler().add(new ShortEvent(player) {

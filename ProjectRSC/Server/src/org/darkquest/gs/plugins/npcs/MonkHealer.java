@@ -17,8 +17,8 @@ public class MonkHealer implements TalkToNpcListener, TalkToNpcExecutiveListener
 
 	@Override
 	public void onTalkToNpc(Player player, final Npc npc) {
-		if(npc.getID() != 93)
-			return;
+		//if(npc.getID() != 93)
+		//	return;
 		player.informOfNpcMessage(new ChatMessage(npc, "Greetings traveller", player));
 		player.setBusy(true);
 		world.getDelayedEventHandler().add(new ShortEvent(player) {

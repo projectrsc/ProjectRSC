@@ -27,8 +27,8 @@ public final class Aggie implements TalkToNpcListener, TalkToNpcExecutiveListene
 	@Override
 	public void onTalkToNpc(Player player, final Npc npc) {
 		try {
-			if(npc.getID() != 125)
-				return;
+			//if(npc.getID() != 125)
+			//	return;
 			player.setBusy(false);
 			player.informOfNpcMessage(new ChatMessage(npc, "Hi traveller, i specialize in creating different colored dyes", player));
 			Thread.sleep(1500);

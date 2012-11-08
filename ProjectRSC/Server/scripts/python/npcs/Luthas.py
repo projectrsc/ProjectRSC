@@ -13,6 +13,9 @@ class Luthas(NpcInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
     BANANA_ID = 249
 
     def onTalkToNpc(self, player, npc):
+        #if npc.getID() != self.NPC_ID:
+        #    return
+        
         self.setParticipants(player, npc)
         self.sendNpcChat("Hello, i am after 20 Bananas, do you have 20 you can sell?")
         opt = self.pickOption(["Yes i will sell you 20 bananas", "No sorry, i don't have any"])

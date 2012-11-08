@@ -15,8 +15,8 @@ public final class BorderGuard extends Scriptable implements TalkToNpcExecutiveL
 
 	@Override
 	public void onTalkToNpc(Player p, final Npc n) {
-		if(n.getID() != 161)
-			return;
+		//if(n.getID() != 161)
+		//	return;
 		p.setBusy(true);
 		n.blockedBy(p);
 

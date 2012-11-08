@@ -2,8 +2,6 @@ from org.darkquest.gs.plugins import Quest
 from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener
 from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, InvUseOnObjectExecutiveListener
 
-from org.darkquest.gs.model import Player, Npc, GameObject, InvItem
-
 class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUseOnObjectExecutiveListener):
 
     introduction_question_responses = ["What's wrong?", "Well you could give me all your money", "You don't look very happy", "Nice hat"]
@@ -32,7 +30,7 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
         self.addQuestPoints(1)
         self.advanceStat(self.SkillType.COOKING, 270)
     
-    def onTalkToNpc(self, player, npc):
+    def onTalkToNpc(self, player, npc):        
         if npc.getID() == 7:
             self.setParticipants(player, npc)
             stage = self.getQuestStage()
@@ -43,15 +41,11 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
                 self.request_ingredients()
     
     def blockInvUseOnObject(self, gameObj, invItem, player):
-        if gameObj.getID() == 133: 
-            return True
-        return False
+        return gameObj.getID() == 133
 
     def start_quest(self):
         self.sendNpcChat("What am i to do?")
-        self.pickOption(self.introduction_question_responses, self.introduction_handler)
-
-    def introduction_handler(self, option):
+        option = self.pickOption(self.introduction_question_responses)
         if option == 0:
             self.cook_request_help()
         if option == 1:
@@ -69,15 +63,13 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
             , "it's the duke's bithday today", "i'm meant to be making him a big cake for this evening",
             "unfortunately, i've forgotten to buy some of the ingredients", "i'll never get them in time now",
             "i don't suppose you could help me?")
-        self.pickOption(self.cook_request_help_responses, self.help_request_handler)
-
-    def help_request_handler(self, option):
+        option = self.pickOption(self.cook_request_help_responses)
         if option == 0:
             self.sendNpcChat("oh thank you, thank you", "i need milk, eggs, and flour", "i'd be very grateful if you could get them to me")
             self.setQuestStage(1)
         if option == 1:
             self.sendNpcChat("ok, suit yourself")
-        self.release() #for some reason this gets called while still sending the chat?
+        self.release()
 
     def request_ingredients(self):
         self.sendNpcChat("how are you getting on with finding those ingredients?")

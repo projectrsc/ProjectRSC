@@ -20,8 +20,8 @@ public class Certer implements TalkToNpcListener, TalkToNpcExecutiveListener {
 
 	@Override
 	public void onTalkToNpc(Player player, final Npc npc) {
-		if(!DataConversions.inArray(certers, npc.getID()))
-			return;
+		//if(!DataConversions.inArray(certers, npc.getID()))
+		//	return;
 		
 		final CerterDef certerDef = EntityHandler.getCerterDef(npc.getID());
 		if (certerDef == null) {

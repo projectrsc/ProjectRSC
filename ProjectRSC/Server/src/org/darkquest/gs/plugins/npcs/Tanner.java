@@ -19,8 +19,8 @@ public class Tanner implements TalkToNpcListener, TalkToNpcExecutiveListener {
 
 	@Override
 	public void onTalkToNpc(Player player, final Npc npc) {
-		if(npc.getID() != 172)
-			return;
+		//if(npc.getID() != 172)
+		//	return;
 		
 		player.informOfNpcMessage(new ChatMessage(npc, "Greeting friend i'm a manufacturer of leather", player));
 		player.setBusy(true);
