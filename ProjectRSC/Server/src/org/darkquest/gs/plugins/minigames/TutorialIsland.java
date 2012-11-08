@@ -19,6 +19,12 @@ import org.darkquest.gs.plugins.listeners.executive.PlayerKilledNpcExecutiveList
 import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 import org.darkquest.gs.world.World;
 
+/**
+ * TODO: By GORF
+ * @author openfrog
+ *
+ */
+
 public final class TutorialIsland extends Scriptable implements TalkToNpcExecutiveListener, TalkToNpcListener, PlayerKilledNpcExecutiveListener, PlayerKilledNpcListener, InvUseOnObjectExecutiveListener, InvUseOnObjectListener {
 
 	@Override
