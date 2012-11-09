@@ -584,13 +584,13 @@ public final class Player extends Mob {
 			lastCount = now;
 			packetCount = 0;
 		}
-		//if (!DataConversions.inArray(Formulae.safePacketIDs, p.getID()) && packetCount++ >= 90) {
-		//	destroy(false);
-		//}
+		if (!DataConversions.inArray(Formulae.safePacketIDs, p.getID()) && ++packetCount >= 60) {
+			destroy(false);
+		}
 
-		//if (lastPackets.size() >= 90) {
-		//	lastPackets.remove();
-		//}
+		if (lastPackets.size() >= 60) {
+			lastPackets.remove();
+		}
 		lastPackets.addLast(p);
 	}
 
