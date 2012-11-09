@@ -7,17 +7,15 @@ import org.darkquest.gs.external.ItemSmeltingDef;
 import org.darkquest.gs.external.ReqOreDef;
 import org.darkquest.gs.model.*;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnObjectListener;
+import org.darkquest.gs.plugins.listeners.executive.InvUseOnObjectExecutiveListener;
 import org.darkquest.gs.tools.DataConversions;
 import org.darkquest.gs.world.World;
 
-public class Smelting implements InvUseOnObjectListener {
+public class Smelting implements InvUseOnObjectListener, InvUseOnObjectExecutiveListener {
 
     @Override
     public void onInvUseOnObject(GameObject obj, InvItem item, Player player) {
-        if ((obj.getID() == 813 || obj.getID() == 118) && !DataConversions.inArray(new int[]{172, 384, 625}, item.getID())) {
-            handleRegularSmelting(item, player, obj);
-            return;
-        }
+        
     }
 
     private void handleRegularSmelting(final InvItem item, Player owner, final GameObject obj) {
@@ -89,4 +87,14 @@ public class Smelting implements InvUseOnObjectListener {
             p.informOfBubble(bubble);
         }
     }
+
+	@Override
+	public boolean blockInvUseOnObject(GameObject obj, InvItem item,
+			Player player) {
+		if ((obj.getID() == 813 || obj.getID() == 118) && !DataConversions.inArray(new int[]{172, 384, 625}, item.getID())) {
+            handleRegularSmelting(item, player, obj);
+            return true;
+        }
+		return false;
+	}
 }

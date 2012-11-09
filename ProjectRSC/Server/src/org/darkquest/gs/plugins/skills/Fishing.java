@@ -8,17 +8,18 @@ import org.darkquest.gs.external.ObjectFishDef;
 import org.darkquest.gs.external.ObjectFishingDef;
 import org.darkquest.gs.model.*;
 import org.darkquest.gs.plugins.listeners.action.ObjectActionListener;
+import org.darkquest.gs.plugins.listeners.executive.ObjectActionExecutiveListener;
 import org.darkquest.gs.world.World;
 
 
-public class Fishing implements ObjectActionListener {
+public class Fishing implements ObjectActionListener, ObjectActionExecutiveListener {
 
     @Override
     public void onObjectAction(final GameObject object, String command, Player owner) {
-        if (command.equals("lure") || command.equals("bait") || command.equals("net") || command.equals("harpoon") || command.equals("cage")) {
+        /*if (command.equals("lure") || command.equals("bait") || command.equals("net") || command.equals("harpoon") || command.equals("cage")) {
             handleFishing(object, owner, owner.click);
             return;
-        }
+        } */
         return;
     }
 
@@ -92,4 +93,14 @@ public class Fishing implements ObjectActionListener {
             }
         });
     }
+
+	@Override
+	public boolean blockObjectAction(GameObject obj, String command,
+			Player player) {
+		if (command.equals("lure") || command.equals("bait") || command.equals("net") || command.equals("harpoon") || command.equals("cage")) {
+			handleFishing(obj, player, player.click);
+			return true;
+        }
+		return false;
+	}
 }

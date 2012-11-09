@@ -8,12 +8,13 @@ import org.darkquest.gs.external.EntityHandler;
 import org.darkquest.gs.external.ObjectMiningDef;
 import org.darkquest.gs.model.*;
 import org.darkquest.gs.plugins.listeners.action.ObjectActionListener;
+import org.darkquest.gs.plugins.listeners.executive.ObjectActionExecutiveListener;
 import org.darkquest.gs.tools.DataConversions;
 import org.darkquest.gs.world.World;
 
 import java.util.Arrays;
 
-public final class Mining implements ObjectActionListener {
+public final class Mining implements ObjectActionListener, ObjectActionExecutiveListener {
 
 	static int[] ids;
 
@@ -24,10 +25,7 @@ public final class Mining implements ObjectActionListener {
 
 	@Override
 	public void onObjectAction(final GameObject object, String command, Player owner) {
-		if (Arrays.binarySearch(ids, object.getID()) >= 0) {
-			handleMining(object, owner, owner.click);
-			return;
-		}
+		
 	}
 
 	public int getAxe(Player p) {
@@ -192,5 +190,15 @@ public final class Mining implements ObjectActionListener {
 				owner.setBusy(false);
 			}
 		});
+	}
+
+	@Override
+	public boolean blockObjectAction(GameObject obj, String command,
+			Player player) {
+		if (Arrays.binarySearch(ids, obj.getID()) >= 0) {
+			handleMining(obj, player, player.click);
+			return true;
+		}
+		return false;
 	}
 }

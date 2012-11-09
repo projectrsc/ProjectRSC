@@ -7,11 +7,13 @@ import org.darkquest.gs.external.ItemCookingDef;
 import org.darkquest.gs.model.*;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnItemListener;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnObjectListener;
+import org.darkquest.gs.plugins.listeners.executive.InvUseOnItemExecutiveListener;
+import org.darkquest.gs.plugins.listeners.executive.InvUseOnObjectExecutiveListener;
 import org.darkquest.gs.world.World;
 
 import java.util.Arrays;
 
-public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener {
+public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, InvUseOnObjectExecutiveListener {
 
     static int[] ids;
 
@@ -22,11 +24,7 @@ public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener {
 
     @Override
     public void onInvUseOnObject(GameObject object, InvItem item, Player owner) {
-        if (Arrays.binarySearch(ids, object.getID()) >= 0) {
-            handleCooking(item, owner, object);
-            return;
-        }
-        return;
+        
     }//113
 
     private void handleCooking(final InvItem item, Player owner, final GameObject object) {
@@ -286,4 +284,14 @@ public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener {
         }
         return;
     }
+
+	@Override
+	public boolean blockInvUseOnObject(GameObject obj, InvItem item,
+			Player player) {
+		if (Arrays.binarySearch(ids, item.getID()) >= 0) {
+            handleCooking(item, player, obj);
+            return true;
+        }
+		return false;
+	}
 }
