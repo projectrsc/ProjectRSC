@@ -111,13 +111,19 @@ public final class Constants {
          * where the server will look for other configuration files
          */
         public static String CONFIG_DIR = "../" + File.separator + "conf" + File.separator + "server";
-        //public static String CONFIG_DIR = "conf" + File.separator + "server";v // GORF ONLY
+        //public static String CONFIG_DIR = "conf" + File.separator + "server"; // GORF ONLY
         
         /**
          * Script location
          */
         public static String SCRIPTS_DIR = "../" + File.separator + "scripts";
-
+        
+        /**
+         * Connection limit
+         */
+        
+        public static final int MAX_THRESHOLD = 3;
+        
         /**
          * when the server was started
          */
