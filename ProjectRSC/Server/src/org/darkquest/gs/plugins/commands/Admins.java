@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.darkquest.config.Constants;
 import org.darkquest.config.Formulae;
+import org.darkquest.gs.connection.filter.ConnectionFilter;
 import org.darkquest.gs.db.DatabaseManager;
 import org.darkquest.gs.db.query.StaffLog;
 import org.darkquest.gs.event.DelayedEvent;
@@ -81,6 +82,10 @@ public final class Admins implements CommandListener {
 			player.getActionSender().sendAppearanceScreen();
 		}  else if (command.equals("pos")) {
 			player.getActionSender().sendMessage("X: " + player.getX() + ", Y: " + player.getY());
+		} else if(command.equals("resetq")) {
+			int quest = Integer.parseInt(args[0]);
+			int stage = Integer.parseInt(args[1]);
+			player.setQuestStage(quest, stage);
 		} else if (command.equals("dropall")) {
 			player.getInventory().getItems().clear();
 			player.getActionSender().sendInventory();
@@ -107,6 +112,20 @@ public final class Admins implements CommandListener {
 				p.getActionSender().sendAlert(sb.toString(), false);
 			}
 			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " used SYSTEM " + sb.toString()));
+		} else if (command.equals("removeip")) {
+			if (args.length != 1) {
+				sendInvalidArguments(player, "removeip", "ip");
+				return; 
+			}
+			String ip = args[0];
+			long hashed = DataConversions.IPToLong(ip);
+			
+			if(ConnectionFilter.getInstance(0).getCurrentClients().containsKey(hashed)) {
+				ConnectionFilter.getInstance(0).getCurrentClients().remove(hashed);
+				player.getActionSender().sendMessage("Removed " + ip + " from filter");
+			} else {
+				player.getActionSender().sendMessage(ip + " does not exist");
+			}
 		} else if (command.equals("info")) {
 			if (args.length != 1) {
 				sendInvalidArguments(player, "info", "name");
