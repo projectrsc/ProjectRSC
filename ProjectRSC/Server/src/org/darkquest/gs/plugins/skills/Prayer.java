@@ -3,8 +3,9 @@ package org.darkquest.gs.plugins.skills;
 import org.darkquest.gs.model.GameObject;
 import org.darkquest.gs.model.Player;
 import org.darkquest.gs.plugins.listeners.action.ObjectActionListener;
+import org.darkquest.gs.plugins.listeners.executive.ObjectActionExecutiveListener;
 
-public class Prayer implements ObjectActionListener {
+public class Prayer implements ObjectActionListener, ObjectActionExecutiveListener {
 
     @Override
     public void onObjectAction(GameObject object, String command, Player player) {
@@ -19,5 +20,14 @@ public class Prayer implements ObjectActionListener {
             return;
         }
     }
+
+	@Override
+	public boolean blockObjectAction(GameObject obj, String command,
+			Player player) {
+		if (command.equalsIgnoreCase("recharge at")) {
+			return true;
+		}
+		return false;
+	}
 
 }

@@ -15,6 +15,7 @@ import org.darkquest.gs.db.query.StaffLog;
 import org.darkquest.gs.event.DelayedEvent;
 import org.darkquest.gs.event.SingleEvent;
 import org.darkquest.gs.external.EntityHandler;
+import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.Item;
 import org.darkquest.gs.model.Mob;
 import org.darkquest.gs.model.Npc;
@@ -249,6 +250,7 @@ public final class Admins implements CommandListener {
 				if(PluginHandler.getPluginHandler().getPythonScriptFactory().canReload())
 					try {
 						PluginHandler.getPluginHandler().loadPythonScripts();
+						player.getActionSender().sendQuestInfo();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -319,7 +321,12 @@ public final class Admins implements CommandListener {
 			} catch (SQLException e) {
 				player.getActionSender().sendMessage(COMMAND_PREFIX + "A MySQL error has occured! " + e.getMessage());
 			}
-		} 
+		} /*else if(command.equals("item")) { DEV ONLY
+			int item = Integer.parseInt(args[0]);
+			int amt = Integer.parseInt(args[1]);
+			player.getInventory().add(new InvItem(item, amt));
+			player.getActionSender().sendInventory();
+		} */
 	}
 
 

@@ -111,7 +111,8 @@ public class RandomObjects implements ObjectActionExecutiveListener, ObjectActio
 	@Override
 	public boolean blockObjectAction(GameObject obj, String command, Player player) {
 		if (obj.getID() == 613 || obj.getID() == 638 || obj.getID() == 639 || obj.getID() == 643
-				|| command.equals("board") || (command.equals("search") && obj.getGameObjectDef().getName().equals("cupboard"))) {
+				|| command.equals("board") || command.endsWith("up") || command.endsWith("down") 
+				|| (command.equals("search"))) {
 			return true;
 		}
 		//System.out.println(obj.getX() + ", " + obj.getY() + ", " + obj.getID());

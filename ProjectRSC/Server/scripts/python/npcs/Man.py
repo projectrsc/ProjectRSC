@@ -1,9 +1,6 @@
-
-
 from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener
 from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener
 from org.darkquest.gs.plugins import NpcInterface
-from org.darkquest.gs.model import Player, Npc
 
 '''
 @author: Mister Hat

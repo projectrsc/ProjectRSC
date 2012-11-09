@@ -11,8 +11,6 @@ public class InvUseOnItem implements InvUseOnItemListener {
 
 	@Override
 	public void onInvUseOnItem(Player player, InvItem item1, InvItem item2) {
-
-
 		if (item1.getID() == 1276 && item2.getID() == 1277) {
 			if (player.getInventory().remove(new InvItem(1276)) > -1 && player.getInventory().remove(new InvItem(1277)) > -1) {
 				player.getActionSender().sendMessage("You combine the two parts.");

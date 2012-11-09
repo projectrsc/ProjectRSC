@@ -12,10 +12,6 @@ public final class Pick implements ObjectActionExecutiveListener, ObjectActionLi
 
 	@Override
 	public void onObjectAction(GameObject object, String command, Player owner) {	
-
-		if (!command.equals("pick") && !command.equals("pick banana")) {
-			return;
-		}
 		switch (object.getID()) {
 		case 72: // Wheat
 			owner.getActionSender().sendMessage("You get some grain");

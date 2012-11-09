@@ -15,7 +15,10 @@ public class Smelting implements InvUseOnObjectListener, InvUseOnObjectExecutive
 
     @Override
     public void onInvUseOnObject(GameObject obj, InvItem item, Player player) {
-        
+    	/*if ((obj.getID() == 813 || obj.getID() == 118) && !DataConversions.inArray(new int[]{172, 384, 625}, item.getID())) {
+            handleRegularSmelting(item, player, obj);
+            return;
+        } */
     }
 
     private void handleRegularSmelting(final InvItem item, Player owner, final GameObject obj) {
@@ -94,7 +97,7 @@ public class Smelting implements InvUseOnObjectListener, InvUseOnObjectExecutive
 		if ((obj.getID() == 813 || obj.getID() == 118) && !DataConversions.inArray(new int[]{172, 384, 625}, item.getID())) {
             handleRegularSmelting(item, player, obj);
             return true;
-        }
+        } 
 		return false;
 	}
 }

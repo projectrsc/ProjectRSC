@@ -25,7 +25,10 @@ public final class Mining implements ObjectActionListener, ObjectActionExecutive
 
 	@Override
 	public void onObjectAction(final GameObject object, String command, Player owner) {
-		
+		/*if (Arrays.binarySearch(ids, object.getID()) >= 0) {
+			handleMining(object, owner, owner.click);
+			return;
+		} */
 	}
 
 	public int getAxe(Player p) {

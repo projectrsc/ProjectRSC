@@ -182,7 +182,10 @@ public final class PluginHandler {
             }
             return;
         }
-        List<QuestInterface> pyQuests = psf.buildQuests(pyQuestsDir);
+        List<QuestInterface> pyQuests = new ArrayList<QuestInterface>();
+        if(pyQuestsDir.listFiles().length > 0) {
+        	pyQuests = psf.buildQuests(pyQuestsDir);
+        }
 
         File pyNpcsDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/npcs/");
 
@@ -194,8 +197,11 @@ public final class PluginHandler {
             }
             return;
         }
-
-        List<NpcInterface> pyNpcs = psf.buildNpcs(pyNpcsDir);
+        
+        List<NpcInterface> pyNpcs = new ArrayList<NpcInterface>();
+        if(pyQuestsDir.listFiles().length > 0) {
+        	pyNpcs = psf.buildNpcs(pyNpcsDir);
+        }
 
         for(Class<?> interfce : knownInterfaces) {
             if(!pyQuests.isEmpty())

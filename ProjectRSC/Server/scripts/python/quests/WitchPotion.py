@@ -101,7 +101,6 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 
 		self.sendPlayerChat("What do I need")
 		self.sendNpcChat("You need an eye of newt, a rat's tail, an onion and a piece of burnt meat")
-		
 		self.setQuestStage(1)
 		
 		self.release()
@@ -110,9 +109,7 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 		self.setParticipant(player)
 		self.occupy()
 		
-		if self.getQuestStage() != 2:
-			self.sendPlayerChat("I'd rather not", "It doesn't look very tasty")
-		else:
+		if self.getQuestStage() == 2:
 			self.displayMessage("You drink from the cauldron", "You feel yourself imbued with power")
 			self.setQuestStage(-1)
 			self.setQuestCompleted()
@@ -126,8 +123,7 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 			self.spawnItem(npc.getX(), npc.getY(), 271, 1)
 
 	def blockTalkToNpc(self, player, npc):
-		self.setParticipant(player)
-		return npc.getID() == 148 and self.getQuestStage() >= 0
+		return npc.getID() == 148
 	
 	def blockObjectAction(self, gameObject, command, player):
 		return gameObject.getID() == 147

@@ -20,7 +20,7 @@ public class Fishing implements ObjectActionListener, ObjectActionExecutiveListe
             handleFishing(object, owner, owner.click);
             return;
         } */
-        return;
+       // return;
     }
 
     private void handleFishing(final GameObject object, Player owner, final int click) {
@@ -100,7 +100,7 @@ public class Fishing implements ObjectActionListener, ObjectActionExecutiveListe
 		if (command.equals("lure") || command.equals("bait") || command.equals("net") || command.equals("harpoon") || command.equals("cage")) {
 			handleFishing(obj, player, player.click);
 			return true;
-        }
+        } 
 		return false;
 	}
 }

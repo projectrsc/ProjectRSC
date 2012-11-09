@@ -39,12 +39,16 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
                 self.start_quest()
             if stage == 1:
                 self.request_ingredients()
+            else:
+                self.displayMessage("He looks busy")
+                self.release()
     
     def blockInvUseOnObject(self, gameObj, invItem, player):
         return gameObj.getID() == 133
 
     def start_quest(self):
         self.sendNpcChat("What am i to do?")
+        
         option = self.pickOption(self.introduction_question_responses)
         if option == 0:
             self.cook_request_help()
@@ -105,5 +109,4 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
         self.release()
     
     def blockTalkToNpc(self, player, npc):
-        self.setParticipant(player)
-        return npc.getID() == 7 and self.getQuestStage() >= 0
+        return npc.getID() == 7

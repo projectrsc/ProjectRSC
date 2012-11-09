@@ -1,7 +1,6 @@
 from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener
 from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener
 from org.darkquest.gs.plugins import NpcInterface
-from org.darkquest.gs.model import Player, Npc
 
 '''
 @author: Mister Hat
@@ -27,7 +26,7 @@ class Bartender(NpcInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 				self.sendPlayerChat("oh dear i don't seem to have enough coins")
 		elif option == 1:
 			self.sendNpcChat("Ooh I don't know if I should be giving away information", "Makes the computer game too easy")
-			option = self.pickOption(["Oh ah well", "Computer game? What are you talking about?", "Just a small clue?"], False)
+			option = self.pickOption(["Oh ah well", "Computer game? What are you talking about?", "Just a small clue?"])
 			
 			if option == 0:
 				self.sendPlayerChat("Oh ah well")
@@ -46,5 +45,4 @@ class Bartender(NpcInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 		self.release()
 	
 	def blockTalkToNpc(self, player, npc):
-		# TODO SLIPPY IT'S SUPPOSED TO RUN IF IT RETURNS TRUE
 		return npc.getID() == 12

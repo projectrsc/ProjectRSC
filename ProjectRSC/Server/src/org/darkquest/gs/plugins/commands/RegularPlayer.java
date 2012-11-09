@@ -11,6 +11,9 @@ public final class RegularPlayer implements CommandListener {
 		if(command.equals("online")) {
 			player.getActionSender().sendMessage("Online players: " + World.getWorld().getPlayers().size());
 			return;
-		}		
+		}
+		if(command.equals("stuck")) {
+			player.setBusy(false);
+		}
 	}
 }

@@ -1,13 +1,13 @@
 package org.darkquest.gs.plugins.skills;
 
 import org.darkquest.config.Constants;
+
 import org.darkquest.config.Formulae;
 import org.darkquest.gs.event.ShortEvent;
 import org.darkquest.gs.external.ItemCookingDef;
 import org.darkquest.gs.model.*;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnItemListener;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnObjectListener;
-import org.darkquest.gs.plugins.listeners.executive.InvUseOnItemExecutiveListener;
 import org.darkquest.gs.plugins.listeners.executive.InvUseOnObjectExecutiveListener;
 import org.darkquest.gs.world.World;
 
@@ -24,7 +24,8 @@ public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, In
 
     @Override
     public void onInvUseOnObject(GameObject object, InvItem item, Player owner) {
-        
+    	handleCooking(item, owner, object);
+        return;
     }//113
 
     private void handleCooking(final InvItem item, Player owner, final GameObject object) {
@@ -287,11 +288,11 @@ public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, In
 
 	@Override
 	public boolean blockInvUseOnObject(GameObject obj, InvItem item,
-			Player player) {
+			Player player) { /*
 		if (Arrays.binarySearch(ids, item.getID()) >= 0) {
             handleCooking(item, player, obj);
             return true;
-        }
+        } */
 		return false;
 	}
 }

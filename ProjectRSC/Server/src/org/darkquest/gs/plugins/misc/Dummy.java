@@ -19,7 +19,7 @@ public class Dummy implements ObjectActionExecutiveListener, ObjectActionListene
 	
 	@Override
 	public boolean blockObjectAction(GameObject obj, String command, Player player) {
-		return Arrays.binarySearch(ids, obj.getID()) >= 0;
+		return obj.getID() == 49;
 	}
 
 	@Override
