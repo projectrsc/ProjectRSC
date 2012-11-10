@@ -45,7 +45,7 @@ public final class Mining implements ObjectActionListener, ObjectActionExecutive
 	} 
 
 	public void handleMining(final GameObject object, Player owner, int click) {
-		if (owner.isBusy() || owner.inCombat()) {
+		if (owner.isBusy()) {
 			return;
 		}
 		
@@ -200,6 +200,9 @@ public final class Mining implements ObjectActionListener, ObjectActionExecutive
 			Player player) {
 		if (Arrays.binarySearch(ids, obj.getID()) >= 0) {
 			handleMining(obj, player, player.click);
+			return true;
+		}
+		if(command.equals("mine") || command.equals("prospect")) {
 			return true;
 		}
 		return false;
