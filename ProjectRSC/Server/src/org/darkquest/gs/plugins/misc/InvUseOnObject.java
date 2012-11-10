@@ -10,10 +10,11 @@ import org.darkquest.gs.model.GameObject;
 import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.Player;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnObjectListener;
+import org.darkquest.gs.plugins.listeners.executive.InvUseOnObjectExecutiveListener;
 import org.darkquest.gs.tools.DataConversions;
 import org.darkquest.gs.world.World;
 
-public class InvUseOnObject implements InvUseOnObjectListener {
+public class InvUseOnObject implements InvUseOnObjectListener, InvUseOnObjectExecutiveListener {
 
 	static int[] objectIDs;
 	static {
@@ -22,10 +23,10 @@ public class InvUseOnObject implements InvUseOnObjectListener {
 	}
 	@Override
 	public void onInvUseOnObject(GameObject obj, InvItem item, Player owner) {
-		if(Arrays.binarySearch(objectIDs, obj.getID()) >= 0) {
+		/*if(Arrays.binarySearch(objectIDs, obj.getID()) >= 0) {
 			handleRefill(owner, item);
 			return;
-		}
+		} */
 	}
 	private void handleRefill(Player owner, final InvItem item) {
 		if (!itemId(new int[] { 21, 140, 465 }, item) && !itemId(Formulae.potionsUnfinished, item) && !itemId(Formulae.potions1Dose, item) && !itemId(Formulae.potions2Dose, item) && !itemId(Formulae.potions3Dose, item)) {
@@ -70,5 +71,14 @@ public class InvUseOnObject implements InvUseOnObjectListener {
 	}
 	private void showBubble(Player owner, InvItem item) {
 		owner.informGroupOfBubble(new Bubble(owner, item.getID()));
+	}
+	@Override
+	public boolean blockInvUseOnObject(GameObject obj, InvItem item,
+			Player player) {
+		if(Arrays.binarySearch(objectIDs, obj.getID()) >= 0) {
+			handleRefill(player, item);
+			return true;
+		}
+		return false;
 	}
 }
