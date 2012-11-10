@@ -13,7 +13,8 @@ public final class RegularPlayer implements CommandListener {
 			return;
 		}
 		if(command.equals("stuck")) {
-			player.setBusy(false);
+			if(!player.inCombat())
+				player.setBusy(false);
 		}
 	}
 }
