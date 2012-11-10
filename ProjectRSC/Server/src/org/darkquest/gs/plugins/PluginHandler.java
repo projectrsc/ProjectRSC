@@ -251,7 +251,7 @@ public final class PluginHandler {
                     
                     // we should block npc talktonpc if the ^ returns true
                     if(shouldBlock) {
-                        System.out.println("Has blocking for this npc " + c.getClass().getName());
+                        //System.out.println("Has blocking for this npc " + c.getClass().getName());
                         queue.put(interfce, c.getClass());
                     } // we can assume the rest is fair game
                 } catch (Exception e) {
@@ -294,7 +294,7 @@ public final class PluginHandler {
                     } 
                     
                     if(go) {
-                        System.out.println("INVOKING " + c.getClass().getName());
+                        //System.out.println("INVOKING " + c.getClass().getName());
                         FutureTask<Integer> task = new FutureTask<Integer>(new Callable<Integer>() {
 
                             @Override
