@@ -106,7 +106,7 @@ public final class Boat implements TalkToNpcListener, TalkToNpcExecutiveListener
 									public void action() {
 										Point p = Point.location(324, 713); // karamja
 										owner.teleport(p.getX(), p.getY(), false);
-										owner.getActionSender().sendMessage("The ship arrives at Karamja" + reply);
+										owner.getActionSender().sendMessage("The ship arrives at Karamja");
 										owner.setBusy(false);
 										npc.unblock();
 									}
