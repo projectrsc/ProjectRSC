@@ -89,7 +89,7 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 					
 					};
 					resetQueue.put(encoded, currentTask);
-					connectionReset.schedule(currentTask, 60000); 
+					connectionReset.schedule(currentTask, 30000); 
 				}
 				ctx.getChannel().disconnect();
 			}
