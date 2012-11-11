@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import java.util.jar.JarFile;
 import org.darkquest.config.Constants;
 import org.darkquest.gs.phandler.PacketHandler;
 import org.darkquest.gs.plugins.lang.python.PythonScriptFactory;
+import org.darkquest.gs.plugins.misc.Default;
 import org.darkquest.gs.world.Shop;
 import org.darkquest.gs.world.World;
 import org.darkquest.ls.Server;
@@ -237,8 +239,8 @@ public final class PluginHandler {
 
     public boolean blockDefaultAction(String interfce, final Object[] data, boolean callAction) {
         boolean shouldBlock = false;
-
         queue.clear();
+        
         if (executivePlugins.containsKey(interfce + "ExecutiveListener")) {
             for (Object c : executivePlugins.get(interfce + "ExecutiveListener")) {
                 try {
@@ -251,22 +253,22 @@ public final class PluginHandler {
                     Method m = c.getClass().getMethod("block" + interfce, dataClasses); // invoke
                     shouldBlock = (Boolean) m.invoke(c, data); // return where to block or not
                     
-                    // we should block npc talktonpc if the ^ returns true
+                    // Call this the internal pipeline
                     if(shouldBlock) {
-                        //System.out.println("Has blocking for this npc " + c.getClass().getName());
+                       //System.out.println("Has blocking for this npc " + c.getClass().getName());
                         queue.put(interfce, c.getClass());
-                    } // we can assume the rest is fair game
+                    } else if(queue.isEmpty()) { // if nothing is blocking, we can go to default
+                    	queue.put(interfce, Default.class); // point here if nothing is blocking
+                    }
                 } catch (Exception e) {
                     System.err.println("Exception at plugin handling: ");
                     e.printStackTrace();
                 }
             }
         }
-
+        
         if (callAction) // call action no matter what
             handleAction(interfce, data);
-        //if(!queue.isEmpty())
-        //    return true;
         return false; // not sure why it matters if its false or true
     }
 
@@ -284,7 +286,6 @@ public final class PluginHandler {
                     boolean go = false;
                     
                     if(queue.containsKey(interfce)) {
-                        //System.out.println("Triggered from interface " + interfce);
                         for(Class<?> clz : queue.values()) {
                             if(clz.getName().equalsIgnoreCase(c.getClass().getName())) {
                                 go = true;
