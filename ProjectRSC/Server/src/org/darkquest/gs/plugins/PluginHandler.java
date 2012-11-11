@@ -27,9 +27,11 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.darkquest.config.Constants;
+import org.darkquest.gs.phandler.PacketHandler;
 import org.darkquest.gs.plugins.lang.python.PythonScriptFactory;
 import org.darkquest.gs.world.Shop;
 import org.darkquest.gs.world.World;
+import org.darkquest.ls.Server;
 
 /**
  * Initiates plug-ins that implements some listeners
@@ -212,7 +214,7 @@ public final class PluginHandler {
 
         for(QuestInterface q : pyQuests) { // since we need to register them to the world...
             try {
-                //System.out.println("[PYTHON]: Registering quest " + q.getQuestName());
+               // System.out.println("[PYTHON]: Registering quest " + q.getQuestName());
                 World.getWorld().registerQuest(q);
             } catch (Exception e) {
                 System.out.println("Error registering quest " + q.getQuestName());
@@ -294,7 +296,7 @@ public final class PluginHandler {
                     } 
                     
                     if(go) {
-                        //System.out.println("INVOKING " + c.getClass().getName());
+                        System.out.println("INVOKING " + c.getClass().getName());
                         FutureTask<Integer> task = new FutureTask<Integer>(new Callable<Integer>() {
 
                             @Override
