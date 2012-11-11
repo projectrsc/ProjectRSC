@@ -26,7 +26,7 @@ class Bartender(NpcInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 				self.sendPlayerChat("oh dear i don't seem to have enough coins")
 		elif option == 1:
 			self.sendNpcChat("Ooh I don't know if I should be giving away information", "Makes the computer game too easy")
-			option = self.pickOption(["Oh ah well", "Computer game? What are you talking about?", "Just a small clue?"])
+			option = self.pickOption(["Oh ah well", "Computer game? What are you talking about?", "Just a small clue?"], False)
 			
 			if option == 0:
 				self.sendPlayerChat("Oh ah well")
