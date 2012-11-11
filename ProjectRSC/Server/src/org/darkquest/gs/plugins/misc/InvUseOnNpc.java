@@ -25,6 +25,7 @@ public class InvUseOnNpc implements InvUseOnNpcListener, InvUseOnNpcExecutiveLis
 			player.getActionSender().sendSound("filljug");
 			player.getActionSender().sendMessage("You fill up the bucket with milk");
 			player.getInventory().add(new InvItem(22));
+			player.getActionSender().sendInventory();
 			player.setBusy(false);
 		}
 		return;	
