@@ -240,7 +240,7 @@ public final class PluginHandler {
     public boolean blockDefaultAction(String interfce, final Object[] data, boolean callAction) {
         boolean shouldBlock = false;
         queue.clear();
-        
+        System.out.println("Calling " + interfce);
         if (executivePlugins.containsKey(interfce + "ExecutiveListener")) {
             for (Object c : executivePlugins.get(interfce + "ExecutiveListener")) {
                 try {
@@ -249,13 +249,13 @@ public final class PluginHandler {
                     for (Object o : data) {
                         dataClasses[i++] = o.getClass();
                     }
-                    
+                    System.out.println("Checking " + interfce + "ExecutiveListener");
                     Method m = c.getClass().getMethod("block" + interfce, dataClasses); // invoke
                     shouldBlock = (Boolean) m.invoke(c, data); // return where to block or not
                     
                     // Call this the internal pipeline
                     if(shouldBlock) {
-                       //System.out.println("Has blocking for this npc " + c.getClass().getName());
+                        System.out.println("Has blocking for this npc " + c.getClass().getName());
                         queue.put(interfce, c.getClass());
                     } else if(queue.isEmpty()) { // if nothing is blocking, we can go to default
                     	queue.put(interfce, Default.class); // point here if nothing is blocking

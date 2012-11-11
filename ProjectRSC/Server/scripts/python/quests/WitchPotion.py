@@ -113,7 +113,9 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 			self.displayMessage("You drink from the cauldron", "You feel yourself imbued with power")
 			self.setQuestStage(-1)
 			self.setQuestCompleted()
-		
+		else:
+			self.sendPlayerChat("I'd rather not", "It doesn't look very tasty")
+			
 		self.release()
 	
 	def onPlayerKilledNpc(self, player, npc):

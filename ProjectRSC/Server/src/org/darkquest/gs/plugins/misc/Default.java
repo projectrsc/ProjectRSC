@@ -15,6 +15,6 @@ public class Default implements TalkToNpcListener {
 
 	@Override
 	public void onTalkToNpc(Player p, Npc n) {
-		p.getActionSender().sendMessage("Nothing interesting happens");
+		p.getActionSender().sendMessage("The " + n.getDef().getName() + " does not appear interested in talking");
 	}
 }
