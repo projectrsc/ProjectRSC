@@ -326,6 +326,23 @@ public final class Admins implements CommandListener {
 			int amt = Integer.parseInt(args[1]);
 			player.getInventory().add(new InvItem(item, amt));
 			player.getActionSender().sendInventory();
+		} else if(command.equals("npc")) {
+			int npcId = Integer.parseInt(args[0]);
+			final Npc n = new Npc(npcId, player.getX() + 1, player.getY() + 1, player.getX() - 5, 
+					player.getX() + 5, player.getY() - 5, player.getY() + 5);
+			n.setRespawn(false);
+			World.getWorld().registerNpc(n);
+			World.getWorld().getDelayedEventHandler().add(new SingleEvent(null, 60000) {
+				public void action() {
+					Mob opponent = n.getOpponent();
+					if (opponent != null) {
+						opponent.resetCombat(CombatState.ERROR);
+					}
+					n.resetCombat(CombatState.ERROR);
+					world.unregisterNpc(n);
+					n.remove();
+				}
+			});
 		}
 	}
 
