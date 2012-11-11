@@ -108,11 +108,13 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 	def onObjectAction(self, gameObject, command, player):
 		self.setParticipant(player)
 		self.occupy()
-		
+
 		if self.getQuestStage() == 2:
 			self.displayMessage("You drink from the cauldron", "You feel yourself imbued with power")
 			self.setQuestStage(-1)
 			self.setQuestCompleted()
+		else:
+			self.sendPlayerChat("I'd rather not", "It doesn't look very tasty")
 		
 		self.release()
 	
