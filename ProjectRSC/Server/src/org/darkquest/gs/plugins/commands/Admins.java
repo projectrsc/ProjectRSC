@@ -321,12 +321,12 @@ public final class Admins implements CommandListener {
 			} catch (SQLException e) {
 				player.getActionSender().sendMessage(COMMAND_PREFIX + "A MySQL error has occured! " + e.getMessage());
 			}
-		} /*else if(command.equals("item")) { DEV ONLY
+		} else if(command.equals("item")) { //DEV ONLY
 			int item = Integer.parseInt(args[0]);
 			int amt = Integer.parseInt(args[1]);
 			player.getInventory().add(new InvItem(item, amt));
 			player.getActionSender().sendInventory();
-		} */
+		}
 	}
 
 
