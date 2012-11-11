@@ -114,6 +114,10 @@ public final class Mining implements ObjectActionListener, ObjectActionExecutive
 			owner.getActionSender().sendMessage("You need to be level " + reqlvl + " to use this pick.");
 			return;
 		}
+		if(mineLvl < def.getReqLevel()) { // mine ore check
+			owner.getActionSender().sendMessage("You need to be level " + def.getReqLevel() + " to mine this ore.");
+			return;
+		}
 		if(owner.getFatigue() >= 7500) {
 			owner.getActionSender().sendMessage("You are too tired to mine this rock");
 			return;

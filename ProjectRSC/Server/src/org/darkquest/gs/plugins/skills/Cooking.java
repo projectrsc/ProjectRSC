@@ -8,17 +8,19 @@ import org.darkquest.gs.external.ItemCookingDef;
 import org.darkquest.gs.model.*;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnItemListener;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnObjectListener;
+import org.darkquest.gs.plugins.listeners.executive.InvUseOnItemExecutiveListener;
 import org.darkquest.gs.plugins.listeners.executive.InvUseOnObjectExecutiveListener;
 import org.darkquest.gs.world.World;
 
 import java.util.Arrays;
 
-public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, InvUseOnObjectExecutiveListener {
+public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, InvUseOnObjectExecutiveListener, InvUseOnItemExecutiveListener {
 
     static int[] ids;
 
     static {
-        ids = new int[]{97, 11, 119, 274, 435, 491};
+        //ids = new int[]{97, 11, 119, 274, 435, 491};
+    	ids = new int[]{50, 132, 136, 141, 143, 250, 251, 253, 320, 321, 330, 337, 338, 342, 343, 344, 348};
         Arrays.sort(ids);
     }
 
@@ -101,6 +103,7 @@ public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, In
     public void onInvUseOnItem(Player player, InvItem item1, InvItem item2) {
         // dish ingred id - uncooked dish id
         int[][] stuff = {{252, 254}, {132, 255}, {236, 256}};
+        
         if (item1.getID() == 253 || item2.getID() == 253) {
             for (int i = 0; i < stuff.length; i++) {
                 if (stuff[i][0] == item1.getID() || item2.getID() == stuff[i][0]) {
@@ -113,6 +116,7 @@ public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, In
                 }
             }
         }
+        
         if (item1.getID() == 132 && item2.getID() == 342 || item1.getID() == 342 && item2.getID() == 132) {
             if (player.getInventory().remove(new InvItem(342)) > -1 && player.getInventory().remove(new InvItem(132)) > -1) {
                 player.getInventory().add(new InvItem(344));
@@ -293,6 +297,42 @@ public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, In
             handleCooking(item, player, obj);
             return true;
         } */
+		final ItemCookingDef cookingDef = item.getCookingDef();
+		return cookingDef != null;
+	}
+
+	@Override
+	public boolean blockInvUseOnItem(Player player, InvItem item1, InvItem item2) {
+		if(item1.getID() == 253 || item2.getID() == 253)
+			return true;
+		if(item1.getID() == 132 && item2.getID() == 342 || item1.getID() == 342 && item2.getID() == 132)
+			return true;
+		if(item1.getID() == 348 && item2.getID() == 342 || item1.getID() == 342 && item2.getID() == 348)
+			return true;
+		if(item1.getID() == 132 && item2.getID() == 343 || item1.getID() == 343 && item2.getID() == 132)
+			return true;
+		if(item1.getID() == 348 && item2.getID() == 344 || item1.getID() == 344 && item2.getID() == 348)
+			return true;
+		if(item1.getID() == 337 && item2.getID() == 330 || item1.getID() == 330 && item2.getID() == 337)
+			return true;
+		if(item1.getID() == 338 || item2.getID() == 338)
+			return true;
+		if(item1.getID() == 250 && item2.getID() == 251 || item1.getID() == 251 && item2.getID() == 250)
+			return true;
+		if(item1.getID() == 143 && item2.getID() == 141 || item1.getID() == 141 && item2.getID() == 143)
+			return true;
+		if(item1.getID() == 50 && item2.getID() == 136 || item1.getID() == 136 && item2.getID() == 50)
+			return true;
+		if(item1.getID() == 320 && item2.getID() == 321 || item1.getID() == 321 && item2.getID() == 320)
+			return true;
+		if(item1.getID() == 319 && item2.getID() == 323 || item1.getID() == 323 && item2.getID() == 319)
+			return true;
+		if(item1.getID() == 325 && item2.getID() == 352 || item1.getID() == 352 && item2.getID() == 325)
+			return true;
+		if(item1.getID() == 325 && item2.getID() == 132 || item1.getID() == 132 && item2.getID() == 325)
+			return true;
+		if((item1.getID() == 23 && item2.getID() == 135) || (item2.getID() == 23 && item1.getID() == 135))
+			return true;
 		return false;
 	}
 }
