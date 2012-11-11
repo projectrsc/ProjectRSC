@@ -19,8 +19,7 @@ public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, In
     static int[] ids;
 
     static {
-        //ids = new int[]{97, 11, 119, 274, 435, 491};
-    	ids = new int[]{50, 132, 136, 141, 143, 250, 251, 253, 320, 321, 330, 337, 338, 342, 343, 344, 348};
+        ids = new int[]{97, 11, 119, 274, 435, 491};
         Arrays.sort(ids);
     }
 
