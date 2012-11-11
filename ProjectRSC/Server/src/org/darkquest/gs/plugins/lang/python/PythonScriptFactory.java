@@ -220,7 +220,8 @@ public class PythonScriptFactory implements GenericFactory {
 		}
 		return loadedPythonNpcs;
 	}
-
+	
+	/*
 	@Override
 	public List<PacketHandler> buildHandler(File packetDir) throws Exception {
 		List<PacketHandler> loadedPythonHandlers = new ArrayList<PacketHandler>();
@@ -241,6 +242,6 @@ public class PythonScriptFactory implements GenericFactory {
 			}
 		}
 		return loadedPythonHandlers;
-	} 
+	} */
 
 }
