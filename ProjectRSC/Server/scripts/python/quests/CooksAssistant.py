@@ -37,11 +37,8 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
             self.occupy()
             if stage == 0:
                 self.start_quest()
-            if stage == 1:
+            elif stage == 1:
                 self.request_ingredients()
-            else:
-                self.displayMessage("He looks busy")
-                self.release()
     
     def blockInvUseOnObject(self, gameObj, invItem, player):
         return gameObj.getID() == 133
@@ -52,13 +49,13 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
         option = self.pickOption(self.introduction_question_responses)
         if option == 0:
             self.cook_request_help()
-        if option == 1:
+        elif option == 1:
             self.sendNpcChat("Haha very funny")
             self.release()
-        if option == 2:
+        elif option == 2:
             self.sendNpcChat("No i'm not")
             self.cook_request_help()
-        if option == 3:
+        elif option == 3:
             self.sendNpcChat("Err thank you -it's a pretty ordinary cooks hat really")
             self.release()
 
@@ -71,7 +68,7 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
         if option == 0:
             self.sendNpcChat("oh thank you, thank you", "i need milk, eggs, and flour", "i'd be very grateful if you could get them to me")
             self.setQuestStage(1)
-        if option == 1:
+        elif option == 1:
             self.sendNpcChat("ok, suit yourself")
         self.release()
 
