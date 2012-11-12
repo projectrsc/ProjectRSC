@@ -115,11 +115,7 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 			self.setQuestCompleted()
 		else:
 			self.sendPlayerChat("I'd rather not", "It doesn't look very tasty")
-<<<<<<< HEAD:ProjectRSC/Server/scripts/python/quests/WitchPotion.py
 			
-=======
-		
->>>>>>> 122db485d5fb9f27a93c0af4c9986af6fe65b746:ProjectRSC/Server/scripts/python/quests/unfinished/WitchPotion.py
 		self.release()
 	
 	def onPlayerKilledNpc(self, player, npc):

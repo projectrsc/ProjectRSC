@@ -1,13 +1,13 @@
 from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener
 from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener
-from org.darkquest.gs.plugins import NpcInterface
+from org.darkquest.gs.plugins import PlugInterface
 
 '''
 @author: xEnt
 NPC: Wyson The Gardener
 Location: Falador
 '''
-class Wyson_The_Gardener(NpcInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
+class Wyson_The_Gardener(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 
     NPC_ID = 116
     WOAD_LEAF = 281

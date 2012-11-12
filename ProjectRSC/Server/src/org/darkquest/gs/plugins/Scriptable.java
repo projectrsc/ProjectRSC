@@ -1,6 +1,7 @@
 package org.darkquest.gs.plugins;
 
 import org.darkquest.config.Formulae;
+
 import org.darkquest.gs.event.DelayedEvent;
 
 
@@ -16,8 +17,6 @@ import org.darkquest.gs.model.Player;
 import org.darkquest.gs.states.CombatState;
 import org.darkquest.gs.tools.DataConversions;
 import org.darkquest.gs.world.World;
-import org.python.core.PyInteger;
-import org.python.core.PyObject;
 
 public abstract class Scriptable { 
 
@@ -80,12 +79,6 @@ public abstract class Scriptable {
 		}
 	}
 
-	/*
-	public void displayMessage(String message) {
-		participant.getActionSender().sendMessage(message);
-	}
-	*/
-
 	public void displayAlert(String message) {
 		displayAlert(message, false);
 	}
@@ -130,20 +123,6 @@ public abstract class Scriptable {
 		}
 	}
 	
-	@Deprecated // wait til hikilaka and I update ours
-	public void pickOption(final String[] messages, final PyObject handler) {	
-		participant.setMenuHandler(new MenuHandler(messages) {
-			@Override
-			public void handleReply(int option, String reply) {
-				participant.setBusy(true);
-				sendChat(participant, npc, reply);
-				handler.__call__(new PyInteger(option));
-			}
-		});
-		participant.setBusy(false);
-		participant.getActionSender().sendMenu(messages);
-	}
-	
 	public int pickOption(String[] strs, boolean repeat) {
 		try {
 			long time = System.currentTimeMillis();
@@ -173,8 +152,9 @@ public abstract class Scriptable {
 			participant.setBusy(true);
 			int newOpt = participant.lastOption;
 			participant.lastOption = -2;
-			if(repeat)
+			if(repeat) {
 				sendChat(participant, strs[newOpt]);
+			}
 			return newOpt;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -271,6 +251,15 @@ public abstract class Scriptable {
 		participant.incExp(skillToAdvance.getSkill(), experienceAmount, false, false, false);
 		participant.getActionSender().sendStat(skillToAdvance.getSkill());
 	}
+	
+	public void restoreStat(SkillType skillToRestore, int levelToRestoreTo) {
+		participant.setCurStat(skillToRestore.getSkill(), levelToRestoreTo);
+		participant.getActionSender().sendStat(skillToRestore.getSkill());
+	}
+	
+	public void updateStat(SkillType skillToAdvance) {
+		participant.getActionSender().sendStat(skillToAdvance.getSkill());
+	}
 
 	public void addQuestPoints(int points) {
 		participant.incQuestPoints(points);
@@ -292,16 +281,16 @@ public abstract class Scriptable {
 	}
 
 	//should we remove these two methods?
+	@Deprecated
 	public void blockNpc() {
 		if(npc != null && participant != null) {
-			System.out.println("Called blockNpc");
 			npc.blockedBy(participant);
 		}
 	}
-
+	
+	@Deprecated
 	public void unblockNpc() {
 		if(npc != null && participant != null) {
-			System.out.println("Called unblockNpc");
 			npc.unblock();
 		}
 	}
@@ -360,6 +349,10 @@ public abstract class Scriptable {
 	
 	public int getRandom(int start, int n) {
 		return DataConversions.random(start, n);
+	}
+	
+	public void sendSound(String soundName) {
+		participant.getActionSender().sendSound(soundName);
 	}
 
 	public void sleep(final int milliseconds) {

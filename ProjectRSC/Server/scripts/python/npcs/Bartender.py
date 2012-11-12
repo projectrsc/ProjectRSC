@@ -1,13 +1,13 @@
 from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener
 from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener
-from org.darkquest.gs.plugins import NpcInterface
+from org.darkquest.gs.plugins import PlugInterface
 
 '''
 @author: Mister Hat
 The Bartender NPC in Varrock's Blue Moon Inn
 '''
 
-class Bartender(NpcInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
+class Bartender(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 	
 	def onTalkToNpc(self, player, npc):
 		self.setParticipants(player, npc)

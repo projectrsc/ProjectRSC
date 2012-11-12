@@ -2,6 +2,7 @@ package org.darkquest.gs.plugins;
 
 import java.io.File;
 
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -15,7 +16,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import java.util.List;
 import java.util.Map;
@@ -28,12 +28,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.darkquest.config.Constants;
-import org.darkquest.gs.phandler.PacketHandler;
 import org.darkquest.gs.plugins.lang.python.PythonScriptFactory;
 import org.darkquest.gs.plugins.misc.Default;
 import org.darkquest.gs.world.Shop;
 import org.darkquest.gs.world.World;
-import org.darkquest.ls.Server;
 
 /**
  * Initiates plug-ins that implements some listeners
@@ -177,41 +175,68 @@ public final class PluginHandler {
 
     public void loadPythonScripts() throws Exception {
         File pyQuestsDir = new File(Constants.GameServer.SCRIPTS_DIR +  "/python/quests/");
-
         if(!pyQuestsDir.exists()) {
             try {
                 throw new FileNotFoundException("Python quests directory not found");
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return;
         }
+        
         List<QuestInterface> pyQuests = new ArrayList<QuestInterface>();
         if(pyQuestsDir.listFiles().length > 0) {
         	pyQuests = psf.buildQuests(pyQuestsDir);
         }
 
         File pyNpcsDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/npcs/");
-
         if(!pyNpcsDir.exists()) {
             try {
                 throw new FileNotFoundException("Python npcs directory not found");
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return;
+        }
+        /*
+        File pyMiscDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/misc/");
+        if(!pyMiscDir.exists()) {
+            try {
+                throw new FileNotFoundException("Python misc directory not found");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         
-        List<NpcInterface> pyNpcs = new ArrayList<NpcInterface>();
+        File pyMinigamesDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/minigames/");
+        if(!pyMinigamesDir.exists()) {
+            try {
+                throw new FileNotFoundException("Python minigames directory not found");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } */
+        
+        File pySkillsDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/skills/");
+        if(!pySkillsDir.exists()) {
+            try {
+                throw new FileNotFoundException("Python skills directory not found");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        List<PlugInterface> plugs = new ArrayList<PlugInterface>();
         if(pyQuestsDir.listFiles().length > 0) {
-        	pyNpcs = psf.buildNpcs(pyNpcsDir);
+        	plugs.addAll(psf.buildPlugs(pyNpcsDir));
+        	//plugs.addAll(psf.buildPlugs(pyMiscDir));
+        	//plugs.addAll(psf.buildPlugs(pyMinigamesDir));
+        	plugs.addAll(psf.buildPlugs(pySkillsDir));
         }
 
         for(Class<?> interfce : knownInterfaces) {
             if(!pyQuests.isEmpty())
                 psf.crossCheckQuests(pyQuests, interfce); // will check, register plugin
-            if(!pyNpcs.isEmpty())
-                psf.crossCheckNpcs(pyNpcs, interfce);
+            if(!plugs.isEmpty())
+                psf.crossCheckPlugs(plugs, interfce); // another others
         }
 
         for(QuestInterface q : pyQuests) { // since we need to register them to the world...

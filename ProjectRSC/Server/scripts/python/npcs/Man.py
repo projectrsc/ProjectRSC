@@ -1,12 +1,12 @@
 from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener
 from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener
-from org.darkquest.gs.plugins import NpcInterface
+from org.darkquest.gs.plugins import PlugInterface
 
 '''
 @author: Mister Hat
 Men and farmer dialogue
 '''
-class Man(NpcInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
+class Man(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 	
 	def onTalkToNpc(self, player, npc):
 		if npc.getID() == 11 or npc.getID() == 63:

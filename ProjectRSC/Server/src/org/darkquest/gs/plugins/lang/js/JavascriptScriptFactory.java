@@ -1,15 +1,14 @@
 package org.darkquest.gs.plugins.lang.js;
 
 import java.io.File;
+
 import java.util.List;
 
-import org.darkquest.gs.model.Npc;
-import org.darkquest.gs.plugins.NpcInterface;
-import org.darkquest.gs.plugins.Quest;
+import org.darkquest.gs.phandler.PacketHandler;
+import org.darkquest.gs.plugins.PlugInterface;
 import org.darkquest.gs.plugins.QuestInterface;
 import org.darkquest.gs.plugins.ShopInterface;
 import org.darkquest.gs.plugins.lang.GenericFactory;
-import org.darkquest.gs.world.Shop;
 
 public class JavascriptScriptFactory implements GenericFactory {
 
@@ -26,7 +25,13 @@ public class JavascriptScriptFactory implements GenericFactory {
 	}
 
 	@Override
-	public List<NpcInterface> buildNpcs(File jsNpcsdir) {
+	public List<PlugInterface> buildPlugs(File jsNpcsdir) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PacketHandler> buildHandler(File handlerDir) {
 		// TODO Auto-generated method stub
 		return null;
 	}

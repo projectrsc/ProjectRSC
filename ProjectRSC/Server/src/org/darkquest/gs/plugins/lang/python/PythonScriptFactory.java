@@ -2,6 +2,7 @@ package org.darkquest.gs.plugins.lang.python;
 
 import java.io.File;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.darkquest.gs.phandler.PacketHandler;
-import org.darkquest.gs.plugins.NpcInterface;
+import org.darkquest.gs.plugins.PlugInterface;
 import org.darkquest.gs.plugins.PluginHandler;
 import org.darkquest.gs.plugins.Quest;
 import org.darkquest.gs.plugins.QuestInterface;
@@ -128,43 +129,37 @@ public class PythonScriptFactory implements GenericFactory {
 		}
 	}
 	
-	/**
-	 * TODO: Remove redundant call (should be able to cross check against all entities in one go)
-	 * @param npcHandlers
-	 * @param interfce
-	 */
-	
-	public void crossCheckNpcs(List<NpcInterface> npcHandlers, Class<?> interfce) {
-		for(NpcInterface n : npcHandlers) { // for executive
-			List<Class<?>> interfces = Arrays.asList(n.getClass().getInterfaces());
+	public void crossCheckPlugs(List<PlugInterface> handlers, Class<?> interfce) {
+		for(PlugInterface p : handlers) { // for executive
+			List<Class<?>> interfces = Arrays.asList(p.getClass().getInterfaces());
 			if(interfces.contains(interfce)) {
 				String interfceName = interfce.getName().substring(interfce.getName().lastIndexOf(".") + 1);
 				if(handler.getExecutivePlugins().containsKey(interfceName)) {
 					//System.out.println("Adding to executive plugs " + interfce.getSimpleName());
 					Set<Object> data = handler.getExecutivePlugins().get(interfceName);
-		        	data.add(n);
+		        	data.add(p);
 		        	handler.getExecutivePlugins().put(interfceName, data);
 				} else if(interfceName.endsWith("ExecutiveListener")) {
 					//System.out.println("(EXEC) We should add " + interfceName);
 					Set<Object> data = new HashSet<Object>();
-                    data.add(n);
+                    data.add(p);
                     handler.getExecutivePlugins().put(interfceName, data);
 				}
 			}
 		}
-		for(NpcInterface n : npcHandlers) { // for action
-			List<Class<?>> interfces = Arrays.asList(n.getClass().getInterfaces());
+		for(PlugInterface p : handlers) { // for action
+			List<Class<?>> interfces = Arrays.asList(p.getClass().getInterfaces());
 			if(interfces.contains(interfce)) {
 				String interfceName = interfce.getName().substring(interfce.getName().lastIndexOf(".") + 1);
 				if(handler.getActionPlugins().containsKey(interfceName)) {
 					//System.out.println("Adding to action plugs " + interfce.getSimpleName());
 					Set<Object> data = handler.getActionPlugins().get(interfceName);
-		        	data.add(n);
+		        	data.add(p);
 		        	handler.getActionPlugins().put(interfceName, data);
 				} else if(!interfceName.endsWith("ExecutiveListener")) {
 					//System.out.println("(ACTION) We should add " + interfceName);
 					Set<Object> data = new HashSet<Object>();
-                    data.add(n);
+                    data.add(p);
                     handler.getActionPlugins().put(interfceName, data);
 				}
 			}
@@ -200,8 +195,8 @@ public class PythonScriptFactory implements GenericFactory {
 	}
 
 	@Override
-	public List<NpcInterface> buildNpcs(File pyNpcsDir) throws Exception {
-		List<NpcInterface> loadedPythonNpcs = new ArrayList<NpcInterface>();
+	public List<PlugInterface> buildPlugs(File pyNpcsDir) throws Exception {
+		List<PlugInterface> loadedPythonNpcs = new ArrayList<PlugInterface>();
 		
 		for(File file : pyNpcsDir.listFiles()) {
 			if(file.getAbsoluteFile().isFile() && file.getName().endsWith(".py")) {
@@ -210,9 +205,9 @@ public class PythonScriptFactory implements GenericFactory {
 				if(pythonClass != null) {
 					pythonClass = interpreter.get(file.getName().replace(".py", "").trim());
 					PyObject pObj = pythonClass.__call__();
-					NpcInterface npcHandler = (NpcInterface) pObj.__tojava__(NpcInterface.class);
-					loadedPythonNpcs.add(npcHandler);
-					backedScripts.add(npcHandler);
+					PlugInterface handler = (PlugInterface) pObj.__tojava__(PlugInterface.class);
+					loadedPythonNpcs.add(handler);
+					backedScripts.add(handler);
 				} else {
 					throw new Exception("Syntax error found, unable to convert " + file.getName().replace(".py", "").trim());
 				}
@@ -220,28 +215,10 @@ public class PythonScriptFactory implements GenericFactory {
 		}
 		return loadedPythonNpcs;
 	}
-	
-	/*
-	@Override
-	public List<PacketHandler> buildHandler(File packetDir) throws Exception {
-		List<PacketHandler> loadedPythonHandlers = new ArrayList<PacketHandler>();
-		
-		for(File file : packetDir.listFiles()) {
-			if(file.getAbsoluteFile().isFile() && file.getName().endsWith(".py")) {
-				String pyFile = packetDir.getAbsolutePath() + File.separatorChar + file.getName();
-				interpreter.execfile(pyFile);
-				if(pythonClass != null) {
-					pythonClass = interpreter.get(file.getName().replace(".py", "").trim());
-					PyObject pObj = pythonClass.__call__();
-					PacketHandler pHandler = (PacketHandler) pObj.__tojava__(PacketHandler.class);
-					loadedPythonHandlers.add(pHandler);
-					backedScripts.add(pHandler);
-				} else {
-					throw new Exception("Syntax error found, unable to convert " + file.getName().replace(".py", "").trim());
-				}
-			}
-		}
-		return loadedPythonHandlers;
-	} */
 
+	@Override
+	public List<PacketHandler> buildHandler(File handlerDir) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

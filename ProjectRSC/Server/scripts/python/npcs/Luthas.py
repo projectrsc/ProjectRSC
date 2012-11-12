@@ -1,13 +1,13 @@
 from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener
 from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener
-from org.darkquest.gs.plugins import NpcInterface
+from org.darkquest.gs.plugins import PlugInterface
 from org.darkquest.gs.model import Player, Npc
 
 '''
 @author: xEnt
 This is the Banana collector script!
 '''
-class Luthas(NpcInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
+class Luthas(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 
     NPC_ID = 164
     BANANA_ID = 249
