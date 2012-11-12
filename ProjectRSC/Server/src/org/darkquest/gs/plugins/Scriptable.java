@@ -7,6 +7,7 @@ import org.darkquest.gs.event.DelayedEvent;
 
 import org.darkquest.gs.event.SingleEvent;
 import org.darkquest.gs.external.EntityHandler;
+import org.darkquest.gs.model.Bubble;
 import org.darkquest.gs.model.ChatMessage;
 import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.Item;
@@ -208,6 +209,10 @@ public abstract class Scriptable {
 	public void addItem(int id) {
 		addItem(id, 1);
 	}
+	
+	public InvItem getItem(int itemId) {
+		return new InvItem(itemId, 1);
+	}
 
 	public boolean hasItem(int id) {
 		return hasItem(id, 1);
@@ -339,6 +344,10 @@ public abstract class Scriptable {
 		participant.teleport(x, y, showBubble);
 	}
 	
+	public void showBubble(int itemId) {
+		participant.informGroupOfBubble(new Bubble(participant, itemId));
+	}
+	
 	public void summoningRitual(int offsetx, int offsety) {
 		for(int x = participant.getX(); x < participant.getX() + offsetx; x++) {
 			for(int y = participant.getY(); y < participant.getY() + offsety; y++) {
@@ -366,10 +375,12 @@ public abstract class Scriptable {
 	@Deprecated
 	protected void playMessages(Player player, Mob mob, boolean playerIsSpeaker, String... messages) {
 		for (String message : messages) {
-			if (playerIsSpeaker) {
-				player.informGroupOfChatMessage(new ChatMessage(player, message, mob));
-			} else {
-				player.informGroupOfNpcMessage(new ChatMessage(mob, message, player));
+			if(!message.equalsIgnoreCase("null")) {
+				if (playerIsSpeaker) {
+					player.informGroupOfChatMessage(new ChatMessage(player, message, mob));
+				} else {
+					player.informGroupOfNpcMessage(new ChatMessage(mob, message, player));
+				}
 			}
 			sleep(2200);
 		}

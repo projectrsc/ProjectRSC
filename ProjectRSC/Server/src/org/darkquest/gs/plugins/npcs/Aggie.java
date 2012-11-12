@@ -37,6 +37,9 @@ public final class Aggie implements TalkToNpcListener, TalkToNpcExecutiveListene
 				public void handleReply(final int option, final String reply) {
 					if (option < 0 && option > names.length || option == 3)
 						return;
+					if(reply.equalsIgnoreCase("null")) { // temp fix until switch over
+						return;
+					}
 					ourOption = option;
 					owner.informOfChatMessage(new ChatMessage(owner, reply, npc));
 					world.getDelayedEventHandler().add(new ShortEvent(owner) {

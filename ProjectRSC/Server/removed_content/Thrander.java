@@ -10,8 +10,6 @@ public final class Thrander extends Scriptable implements TalkToNpcListener, Tal
 
 	@Override
 	public void onTalkToNpc(Player p, final Npc n) {
-		//if(n.getID() != 160)
-		//	return;
 		p.setBusy(true);
 		n.blockedBy(p);
 		
