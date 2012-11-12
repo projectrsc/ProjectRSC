@@ -27,10 +27,10 @@ class Thrander(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener, Inv
 		if self.item_directory.has_key(itemID):
 			newItem = self.item_directory.get(itemID)
 			self.displayMessage("You give Thrander a " + item.getDef().getName())
-			self.sleep(50)
+			self.sleep(500)
 			self.displayMessage("Thrander hammers it for a bit")
 			self.removeItem(itemID, 1)
-			self.sleep(500)
+			self.sleep(1000)
 			changedItem = self.getItem(newItem)
 			self.displayMessage("Thrander gives you a " + changedItem.getDef().getName())
 			self.addItem(newItem, 1)

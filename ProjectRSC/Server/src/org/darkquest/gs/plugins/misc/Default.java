@@ -24,7 +24,7 @@ public class Default implements TalkToNpcListener, InvUseOnObjectListener, InvUs
 		p.getActionSender().sendMessage("The " + n.getDef().getName() + " does not appear interested in talking");
 		int dir = Formulae.getDirection(p, n);
 		if (dir != -1) {
-			n.setSprite(n.getSprite());	// change?
+			n.setSprite(-1);	// change?
 		}
 	}
 	
