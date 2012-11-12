@@ -14,6 +14,8 @@ class Sheep(PlugInterface, InvUseOnNpcListener, InvUseOnNpcExecutiveListener):
         if item.getID() == 144:
             self.displayMessage("You attempt to shear the sheep")
             random = self.getRandom(0, 4)
+            self.showBubble(144)
+            self.sleep(2000)
             if random != 0:
                 self.displayMessage("You get some wool")
                 self.addItem(145, 1)
