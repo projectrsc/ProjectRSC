@@ -1,8 +1,5 @@
 package org.darkquest.gs.phandler.client;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ConcurrentModificationException;
-
 import org.darkquest.config.Formulae;
 import org.darkquest.gs.connection.Packet;
 import org.darkquest.gs.event.impl.WalkToMobEvent;
@@ -11,8 +8,6 @@ import org.darkquest.gs.model.Player;
 import org.darkquest.gs.phandler.PacketHandler;
 import org.darkquest.gs.plugins.PluginHandler;
 import org.darkquest.gs.states.Action;
-import org.darkquest.gs.util.Logger;
-import org.darkquest.gs.util.Script;
 import org.darkquest.gs.world.World;
 import org.jboss.netty.channel.Channel;
 
@@ -61,7 +56,7 @@ public final class TalkToNpcHandler implements PacketHandler {
 						npc.setSprite(Formulae.getDirection(owner, npc));
 					}	
 				}
-				
+				/*
 				if (world.npcScripts.containsKey(npc.getID())) {
 					dir = Formulae.getDirection(owner, npc);
 					if (dir != -1) {
@@ -103,8 +98,8 @@ public final class TalkToNpcHandler implements PacketHandler {
 							}
 						}
 					});
-					owner.interpreterThread.start();
-				} else if (PluginHandler.getPluginHandler().blockDefaultAction("TalkToNpc", new Object[]{owner, npc})) {
+					owner.interpreterThread.start(); 
+				} */ if (PluginHandler.getPluginHandler().blockDefaultAction("TalkToNpc", new Object[]{owner, npc})) {
 				
 					return;
 				} else {
