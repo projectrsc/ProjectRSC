@@ -106,4 +106,5 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
         self.release()
     
     def blockTalkToNpc(self, player, npc):
-        return npc.getID() == 7
+        self.setParticipant(player)
+        return npc.getID() == 7 and self.getQuestStage() >= 0
