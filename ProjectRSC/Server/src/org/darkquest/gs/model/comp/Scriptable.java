@@ -1,6 +1,7 @@
 package org.darkquest.gs.model.comp;
 
 import org.darkquest.config.Formulae;
+
 import org.darkquest.gs.event.DelayedEvent;
 import org.darkquest.gs.event.SingleEvent;
 import org.darkquest.gs.external.EntityHandler;
@@ -22,15 +23,14 @@ public class Scriptable {
 	
 	private Player player = null;
 	private Npc activeNpc = null;
+	private Quest activeQuest = null;
+	
+	private static final byte BEGINNING = 0x0;
+	private static final byte COMPLETE = -1;
 	
 	public Scriptable(Player player) {
 		this.player = player;
 	}
-
-	private Quest activeQuest = null;
-	
-	public static final byte BEGINNING = 0x0;
-	public static final byte COMPLETE = -1;
 	
 	public int getQuestStage() {
 		return player.getQuestStage(activeQuest);
@@ -314,7 +314,7 @@ public class Scriptable {
 		}
 	}
 
-	public void attackPlayer(final Npc npc) {
+	public void attackPlayer(final Npc npc) { 
 		npc.attack(player);
 	}
 	
