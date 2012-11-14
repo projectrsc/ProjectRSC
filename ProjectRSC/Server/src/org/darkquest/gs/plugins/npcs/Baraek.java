@@ -4,11 +4,11 @@ import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
-import org.darkquest.gs.plugins.Scriptable;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 
-public final class Baraek extends Scriptable implements TalkToNpcExecutiveListener, TalkToNpcListener {
+public final class Baraek extends ScriptablePlug implements TalkToNpcExecutiveListener, TalkToNpcListener {
 
 	@Override
 	public void onTalkToNpc(Player p, final Npc n) {
@@ -36,6 +36,9 @@ public final class Baraek extends Scriptable implements TalkToNpcExecutiveListen
 							@Override
 							public void handleReply(int option, String reply) {
 								owner.setBusy(true);
+								if(reply.equalsIgnoreCase("null")) { // temp fix until switch over
+									return;
+								}
 								playMessages(owner, n, true, reply);
 								
 								switch (option) {

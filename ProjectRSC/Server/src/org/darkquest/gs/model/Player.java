@@ -27,7 +27,7 @@ import org.darkquest.gs.event.impl.RangeEvent;
 import org.darkquest.gs.external.AgilityCourseDef;
 import org.darkquest.gs.external.EntityHandler;
 import org.darkquest.gs.external.PrayerDef;
-import org.darkquest.gs.model.comp.Scriptable;
+import org.darkquest.gs.model.comp.mob.Scriptable;
 import org.darkquest.gs.phandler.client.WieldHandler;
 import org.darkquest.gs.plugins.PluginHandler;
 import org.darkquest.gs.plugins.Quest;

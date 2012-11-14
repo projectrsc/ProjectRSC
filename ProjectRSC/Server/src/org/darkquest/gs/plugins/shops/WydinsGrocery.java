@@ -6,7 +6,7 @@ import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
-import org.darkquest.gs.plugins.Scriptable;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.ShopInterface;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 import org.darkquest.gs.plugins.listeners.action.WallObjectActionListener;
@@ -15,7 +15,7 @@ import org.darkquest.gs.plugins.listeners.executive.WallObjectActionExecutiveLis
 import org.darkquest.gs.world.Shop;
 import org.darkquest.gs.world.World;
 
-public final class WydinsGrocery extends Scriptable implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener, WallObjectActionExecutiveListener, WallObjectActionListener {
+public final class WydinsGrocery extends ScriptablePlug implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener, WallObjectActionExecutiveListener, WallObjectActionListener {
 
 	private final Shop shop = new Shop(false, 12500, 100, 50, new InvItem(136, 3), new InvItem(133, 1), new InvItem(18, 3), new InvItem(249, 3), new InvItem(236, 1), new InvItem(138, 0), new InvItem(337, 1), new InvItem(319, 3), new InvItem(320, 3), new InvItem(348, 1));
 	

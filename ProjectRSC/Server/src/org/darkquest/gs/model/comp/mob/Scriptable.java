@@ -1,4 +1,4 @@
-package org.darkquest.gs.model.comp;
+package org.darkquest.gs.model.comp.mob;
 
 import org.darkquest.config.Formulae;
 

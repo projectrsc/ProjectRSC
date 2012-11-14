@@ -4,8 +4,14 @@ import org.darkquest.gs.model.ChatMessage;
 import org.darkquest.gs.model.Mob;
 import org.darkquest.gs.model.Player;
 
+/**
+ * Will no longer be use after npcs are converted
+ * @author openfrog
+ *
+ */
+
 @Deprecated
-public class Scriptable { 
+public class ScriptablePlug { 
 	
 	public void sleep(final int milliseconds) {
 		try {

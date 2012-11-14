@@ -4,13 +4,13 @@ import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
-import org.darkquest.gs.plugins.Scriptable;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.ShopInterface;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 import org.darkquest.gs.world.Shop;
 
-public final class GerrantsFishingGear extends Scriptable implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
+public final class GerrantsFishingGear extends ScriptablePlug implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
 
 	private final Shop shop = new Shop(false, 12000, 100, 50, new InvItem(376, 5), new InvItem(377, 5), new InvItem(378, 5), new InvItem(379, 2), new InvItem(375, 2), new InvItem(380, 200), new InvItem(381, 200), new InvItem(349, 30), new InvItem(354, 0), new InvItem(361, 0), new InvItem(351, 0), new InvItem(358, 0), new InvItem(363, 0), new InvItem(356, 0), new InvItem(366, 0), new InvItem(372, 0), new InvItem(369, 0));
 	
