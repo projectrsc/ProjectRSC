@@ -17,94 +17,97 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
     def isMembers(self):
         return False
     
-    def handleReward(self):
-        self.displayMessage("You give some milk, an egg, and some flour to the cook")
-        self.sleep(500)
-        self.removeItem(22, 1)
-        self.removeItem(19, 1)
-        self.removeItem(136, 1)
+    def handleReward(self, player):
+        player.setActiveQuest(self)
         
-        self.displayMessage("Well done. You have completed the cook's assistant quest")
-        self.displayMessage("@gre@You just advanced 1 quest point!")
+        player.displayMessage("You give some milk, an egg, and some flour to the cook")
+        player.sleep(500)
+        player.removeItem(22, 1)
+        player.removeItem(19, 1)
+        player.removeItem(136, 1)
         
-        self.addQuestPoints(1)
-        self.advanceStat(self.SkillType.COOKING, 270)
+        player.displayMessage("Well done. You have completed the cook's assistant quest")
+        player.displayMessage("@gre@You just advanced 1 quest point!")
+        
+        player.addQuestPoints(1)
+        player.advanceStat(player.SkillType.COOKING, 270)
     
     def onTalkToNpc(self, player, npc):        
         if npc.getID() == 7:
-            self.setParticipants(player, npc)
-            stage = self.getQuestStage()
-            self.occupy()
+            player.setActiveNpc(npc)
+            player.setActiveQuest(self)
+            stage = player.getQuestStage()
+            player.occupy()
             if stage == 0:
-                self.start_quest()
+                self.start_quest(player)
             elif stage == 1:
-                self.request_ingredients()
+                self.request_ingredients(player)
     
     def blockInvUseOnObject(self, gameObj, invItem, player):
         return gameObj.getID() == 133
 
-    def start_quest(self):
-        self.sendNpcChat("What am i to do?")
+    def start_quest(self, player):
+        player.sendNpcChat("What am i to do?")
         
-        option = self.pickOption(self.introduction_question_responses)
+        option = player.pickOption(self.introduction_question_responses)
         if option == 0:
-            self.cook_request_help()
+            self.cook_request_help(player)
         elif option == 1:
-            self.sendNpcChat("Haha very funny")
-            self.release()
+            player.sendNpcChat("Haha very funny")
+            player.release()
         elif option == 2:
-            self.sendNpcChat("No i'm not")
-            self.cook_request_help()
+            player.sendNpcChat("No i'm not")
+            self.cook_request_help(player)
         elif option == 3:
-            self.sendNpcChat("Err thank you -it's a pretty ordinary cooks hat really")
-            self.release()
+            player.sendNpcChat("Err thank you -it's a pretty ordinary cooks hat really")
+            player.release()
 
-    def cook_request_help(self):
-        self.sendNpcChat("Ooh dear i'm in a terrible mess"
+    def cook_request_help(self, player):
+        player.sendNpcChat("Ooh dear i'm in a terrible mess"
             , "it's the duke's bithday today", "i'm meant to be making him a big cake for this evening",
             "unfortunately, i've forgotten to buy some of the ingredients", "i'll never get them in time now",
             "i don't suppose you could help me?")
-        option = self.pickOption(self.cook_request_help_responses)
+        option = player.pickOption(self.cook_request_help_responses)
         if option == 0:
-            self.sendNpcChat("oh thank you, thank you", "i need milk, eggs, and flour", "i'd be very grateful if you could get them to me")
-            self.setQuestStage(1)
+            player.sendNpcChat("oh thank you, thank you", "i need milk, eggs, and flour", "i'd be very grateful if you could get them to me")
+            player.setQuestStage(1)
         elif option == 1:
-            self.sendNpcChat("ok, suit yourself")
-        self.release()
+            player.sendNpcChat("ok, suit yourself")
+        player.release()
 
-    def request_ingredients(self):
-        self.sendNpcChat("how are you getting on with finding those ingredients?")
-        milk = self.hasItem(22)
-        eggs = self.hasItem(19)
-        flour = self.hasItem(136)
+    def request_ingredients(self, player):
+        player.sendNpcChat("how are you getting on with finding those ingredients?")
+        milk = player.hasItem(22)
+        eggs = player.hasItem(19)
+        flour = player.hasItem(136)
 
         if not milk and not eggs and not flour:
-            self.sendPlayerChat("i'm afraid i don't have any yet!")
-            self.sendNpcChat("oh dear oh dear!", "i need flour, eggs, and milk", "without them i am doomed!")
+            player.sendPlayerChat("i'm afraid i don't have any yet!")
+            player.sendNpcChat("oh dear oh dear!", "i need flour, eggs, and milk", "without them i am doomed!")
         else:
             if milk and eggs and flour:
-                self.sendPlayerChat("i now have everything you need for your cake", "milk, flour, and an egg!")
-                self.sendNpcChat("i am saved thankyou!")
-                self.setQuestStage(-1)
-                self.setQuestCompleted()
+                player.sendPlayerChat("i now have everything you need for your cake", "milk, flour, and an egg!")
+                player.sendNpcChat("i am saved thankyou!")
+                player.setQuestStage(-1)
+                player.setQuestCompleted()
             else:
-                self.sendPlayerChat("i have found some of the things you asked for:")
+                player.sendPlayerChat("i have found some of the things you asked for:")
                 if milk:
-                    self.sendPlayerChat("i have some milk")
+                    player.sendPlayerChat("i have some milk")
                 if flour:
-                    self.sendPlayerChat("i have some flour")
+                    player.sendPlayerChat("i have some flour")
                 if eggs:
-                    self.sendPlayerChat("i have an egg")
-                self.sendNpcChat("great, but can you get the other ingredients as well?", "you still need to find")
+                    player.sendPlayerChat("i have an egg")
+                player.sendNpcChat("great, but can you get the other ingredients as well?", "you still need to find")
                 if not milk:
-                    self.sendNpcChat("some milk")
+                    player.sendNpcChat("some milk")
                 if not flour:
-                    self.sendNpcChat("some flour")
+                    player.sendNpcChat("some flour")
                 if not eggs:
-                    self.sendNpcChat("an egg")
-                self.sendPlayerChat("ok i'll try to find that for you")
-        self.release()
+                    player.sendNpcChat("an egg")
+                player.sendPlayerChat("ok i'll try to find that for you")
+        player.release()
     
     def blockTalkToNpc(self, player, npc):
-        self.setParticipant(player)
-        return npc.getID() == 7 and self.getQuestStage() >= 0
+        player.setActiveQuest(self)
+        return npc.getID() == 7 and player.getQuestStage() >= 0

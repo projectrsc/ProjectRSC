@@ -1,5 +1,7 @@
 package org.darkquest.gs.plugins;
 
+import org.darkquest.gs.model.Player;
+
 public interface QuestInterface {
 
     public int getQuestId();
@@ -8,5 +10,5 @@ public interface QuestInterface {
 
     public boolean isMembers();
     
-    public void handleReward();
+    public void handleReward(Player player);
 }

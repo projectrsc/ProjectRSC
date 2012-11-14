@@ -145,7 +145,7 @@ public final class Server {
 					ChannelPipeline pipeline = Channels.pipeline();
 					pipeline.addLast("decoder", new RSCProtocolDecoder());
 					pipeline.addLast("encoder", new RSCProtocolEncoder());
-					pipeline.addLast("throttle", ConnectionFilter.getInstance(Constants.GameServer.MAX_THRESHOLD));
+					//pipeline.addLast("throttle", ConnectionFilter.getInstance(Constants.GameServer.MAX_THRESHOLD));
 					pipeline.addLast("handler", new RSCConnectionHandler(engine));
 					return pipeline;
 				}

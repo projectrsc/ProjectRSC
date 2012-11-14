@@ -2,6 +2,8 @@ package org.darkquest.gs.model;
 
 import java.net.InetSocketAddress;
 
+
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -21,6 +23,7 @@ import org.darkquest.gs.builders.ls.SavePacketBuilder;
 import org.darkquest.gs.connection.LSPacket;
 import org.darkquest.gs.connection.RSCPacket;
 import org.darkquest.gs.event.DelayedEvent;
+import org.darkquest.gs.event.SingleEvent;
 import org.darkquest.gs.event.impl.RangeEvent;
 import org.darkquest.gs.external.AgilityCourseDef;
 import org.darkquest.gs.external.EntityHandler;
@@ -38,8 +41,6 @@ import org.darkquest.gs.world.Shop;
 import org.darkquest.gs.world.World;
 import org.jboss.netty.channel.Channel;
 
-import bsh.Interpreter;
-
 /**
  * A single player.
  */
@@ -50,26 +51,13 @@ public final class Player extends Mob {
 		{new InvItem(4), new InvItem(70), new InvItem(376), new InvItem(156), new InvItem(87), 
 		new InvItem(1263)};
 
-	
 	public int click = -1;
-	
-	public Thread interpreterThread = null;
 	
 	public int lastOption = -2;
 	
 	public int lastMineTries = -1;
 	
 	public String[] lastOptions = null;
-	
-	public Interpreter interpreter = new Interpreter();
-
-	public Thread getInterpreterThread() {
-		return interpreterThread;
-	}
-
-	public void setInterpreterThread(Thread interpreterThread) {
-		this.interpreterThread = interpreterThread;
-	}
 
 	public int getLastOption() {
 		return lastOption;
@@ -85,14 +73,6 @@ public final class Player extends Mob {
 
 	public void setLastOptions(String[] lastOptions) {
 		this.lastOptions = lastOptions;
-	}
-
-	public Interpreter getInterpreter() {
-		return interpreter;
-	}
-
-	public void setInterpreter(Interpreter interpreter) {
-		this.interpreter = interpreter;
 	}
 
 	public long lastCommandUsed = System.currentTimeMillis();
@@ -2959,7 +2939,7 @@ public final class Player extends Mob {
 	}
 
 	public void sendQuestComplete(int questId) { // REMEMBER THIS
-		world.getQuest(questId).handleReward();
+		world.getQuest(questId).handleReward(this);
 		actionSender.sendQuestPoints();
 	}
 
@@ -3008,5 +2988,341 @@ public final class Player extends Mob {
 		actionSender.sendFatigue(tempFatigue / 10);
 		World.getWorld().getDelayedEventHandler().add(sleepEvent);
 	}
+	
+	// HELPER METHODS (TEMPORARY, NEED TO FIND A BETTER WAY)
+	
+	public enum SkillType { // Should be moved to Player
+		ATTACK(0), DEFENSE(1), STRENGTH(2), HITS(3), RANGED(4),
+		PRAYER(5), MAGIC(6), COOKING(7), WOODCUT(8), FLETCHING(9),
+		FISHING(10), FIREMAKING(11), CRAFTING(12), SMITHING(13), MINING(14), HERBLAW(15),
+		AGILITY(16), THIEVING(17);
 
+		protected int stat = 0;
+
+		SkillType(int stat) {
+			this.stat = stat;
+		}
+
+		public int getSkill() { 
+			return stat; 
+		}
+	}
+	
+	private Npc activeNpc = null;
+	private Quest activeQuest = null;
+	
+	public static final byte BEGINNING = 0x0;
+	public static final byte COMPLETE = -1;
+	
+	public int getQuestStage() {
+		return getQuestStage(activeQuest);
+	}
+	
+	public void setQuestStage(int stage) {
+		setQuestStage(activeQuest, stage);
+	}
+	
+	public void setQuestCompleted() {
+		sendQuestComplete(activeQuest.getQuestId());
+		setQuestStage(COMPLETE);
+	}
+	
+	public void setActiveNpc(Npc npc) {
+		this.activeNpc = npc;
+	}
+	
+	public void setActiveQuest(Quest q) {
+		this.activeQuest = q;
+	}
+	
+	public void displayMessage(String... messages) {
+		displayMessage(messages, 500);
+	}
+	
+	public void displayMessage(String[] messages, int delay) {
+		for(String message : messages) {
+			getActionSender().sendMessage(message);
+			if(delay > 0)
+				sleep(delay);
+		}
+	}
+
+	public void displayAlert(String message) {
+		displayAlert(message, false);
+	}
+
+	public void displayAlert(String message, boolean big) {
+		getActionSender().sendAlert(message, big);
+	}
+
+	public void sendChat(Mob speaker, Mob receiver, String... messages) {
+		for(String message : messages) {
+			if(speaker instanceof Player) {
+				informGroupOfChatMessage(new ChatMessage(speaker, message, receiver));
+			} else {
+				informGroupOfNpcMessage(new ChatMessage(speaker, message, receiver));
+			}
+			sleep(2200);
+		}
+	}
+
+	public void sendChat(Mob speaker, String... messages) {
+		for(String message : messages) {
+			if(speaker instanceof Player) {
+				informGroupOfChatMessage(new ChatMessage(speaker, message, activeNpc));
+			} else {
+				informGroupOfNpcMessage(new ChatMessage(speaker, message, this));
+			}
+			sleep(2200);
+		}
+	}
+
+	public void sendNpcChat(String... messages) {
+		for(String message : messages) {
+			informGroupOfNpcMessage(new ChatMessage(activeNpc, message, this));
+			sleep(2200);
+		}
+	}
+
+	public void sendPlayerChat(String... messages) {
+		for(String message : messages) {
+			informGroupOfChatMessage(new ChatMessage(this, message, activeNpc));
+			sleep(2200);
+		}
+	}
+	
+	public int pickOption(String[] strs, boolean repeat) {
+		try {
+			long time = System.currentTimeMillis();
+			setBusy(false);
+			lastOption = -2;
+			setMenuHandler(new MenuHandler(strs) {
+				public void handleReply(int option, String reply) {
+					if (option < 0 || option >= getOptions().length || option == 30) {
+						activeNpc.unblock();
+						setBusy(false);
+						owner.lastOption = -1;
+						return;
+					} else {
+						owner.lastOption = option;
+					}
+				}
+			});
+			getActionSender().sendMenu(strs);
+			while (lastOption == -2 && System.currentTimeMillis() - time < 20000) { // timeout
+				sleep(12);
+			}
+			if (lastOption == -1 || lastOption == -2) {
+				setBusy(false);
+				activeNpc.unblock();
+				return -1;
+			} 
+			setBusy(true);
+			int newOpt = lastOption;
+			lastOption = -2;
+			if(repeat) {
+				sendChat(this, strs[newOpt]);
+			}
+			return newOpt;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
+	public int pickOption(String[] strs) {
+		return pickOption(strs, true);
+	}
+
+	public int getRemainingSpace() {
+		return 30 - getInventory().size();
+	}
+
+	public void removeItem(int id, int amount) {
+		if (EntityHandler.getItemDef(id).isStackable()) {
+			getInventory().remove(id, amount);
+		} else {
+			for (int i = 0; i < amount; i++) {
+				getInventory().remove(id, 1);
+			}
+		}
+		getActionSender().sendInventory();
+	}
+
+	public void removeAllItem(int id) {
+		removeItem(id, countItem(id));
+	}
+
+	public void spawnItem(int x, int y, int id, int amount) {
+		spawnItem(x, y, id, amount, 500);
+	}
+
+	public void spawnItem(final int x, final int y, final int id, final int amount, final int spawnFor) {
+		final InvItem item = new InvItem(id, amount);
+
+		World.getWorld().getDelayedEventHandler().add(new DelayedEvent(this, spawnFor) {
+			public void run() {
+				world.registerItem(new Item(item.getID(), x, y, item.getAmount(), Player.this));
+				matchRunning = false;
+			}
+		}); 
+	}
+
+	public void addItem(int id, int amount) {
+		getInventory().add(new InvItem(id, amount));
+		getActionSender().sendInventory();
+	}
+	
+	public void addItem(int id) {
+		addItem(id, 1);
+	}
+	
+	public InvItem getItem(int itemId) {
+		return new InvItem(itemId, 1);
+	}
+
+	public boolean hasItem(int id) {
+		return hasItem(id, 1);
+	}
+	
+	public int rand(int low, int high) {
+		return Formulae.Rand(low, high);
+	}
+
+	public boolean hasItem(int id, int amount) {
+		if (EntityHandler.getItemDef(id).isStackable()) {
+			for (InvItem i : getInventory().getItems()) {
+				if (i.getID() == id && i.getAmount() >= amount)
+					return true;
+			}
+		} else {
+			int count = 0;
+			for (InvItem i : getInventory().getItems()) {
+				if (i.getID() == id)
+					count++;
+			}
+			if (count >= amount)
+				return true;
+		}
+		return false;
+	}
+
+	public int countItem(int id) {
+		return getInventory().countId(id);
+	}
+
+	public int getMaxLevel(SkillType skill) {
+		return getMaxStat(skill.getSkill());
+	}
+
+	public int getCurrentLevel(SkillType skill) {
+		return getCurStat(skill.getSkill());
+	}
+
+	public void advanceStat(SkillType skillToAdvance, int experienceAmount) {
+		 incExp(skillToAdvance.getSkill(), experienceAmount, false, false, false);
+		 getActionSender().sendStat(skillToAdvance.getSkill());
+	}
+	
+	public void restoreStat(SkillType skillToRestore, int levelToRestoreTo) {
+		 setCurStat(skillToRestore.getSkill(), levelToRestoreTo);
+		 getActionSender().sendStat(skillToRestore.getSkill());
+	}
+	
+	public void updateStat(SkillType skillToAdvance) {
+		 getActionSender().sendStat(skillToAdvance.getSkill());
+	}
+
+	public void addQuestPoints(int points) {
+		 incQuestPoints(points);
+		 getActionSender().sendQuestPoints();
+	}
+	
+	public void occupy() {
+		setBusy(true);
+		if(activeNpc != null)
+			activeNpc.blockedBy(this);
+	}
+	
+	public void release() {
+		setBusy(false);
+		if(activeNpc != null)
+			activeNpc.unblock();
+	}
+	
+	public Npc getNpc(int npcId) {
+		return World.getWorld().getNpcById(npcId);
+	}
+
+	public Npc spawnNpc(int npcId, int x, int y, boolean respawn) {
+		return spawnNpc(npcId, x, y, 0, respawn);
+	}
+
+	public Npc spawnNpc(int npcId, int x, int y, int time, boolean respawn) {
+		if (EntityHandler.getNpcDef(npcId) != null) {
+			final Npc n = new Npc(npcId, x, y, x - 5, x + 5, y - 5, y + 5);
+			n.setRespawn(respawn);
+			World.getWorld().registerNpc(n);
+			if(!respawn) {
+				World.getWorld().getDelayedEventHandler().add(new SingleEvent(null, time == 0 ? 300000 : time) {
+					public void action() {
+						Mob opponent = n.getOpponent();
+						if (opponent != null) {
+							opponent.resetCombat(CombatState.ERROR);
+						}
+						n.resetCombat(CombatState.ERROR);
+						world.unregisterNpc(n);
+						n.remove();
+					}
+				});
+			}
+			return n;
+		}
+		return null;
+	}
+
+	public void removeNpc(Npc npc) {
+		World.getWorld().unregisterNpc(npc);
+		npc.remove();
+	}
+	
+	public void faceNpc(Npc n) {
+		int dir = Formulae.getDirection(this, n);
+		if (dir != -1) {
+			setSprite(Formulae.getDirection(n, this));
+			n.setSprite(Formulae.getDirection(this, n));
+		}
+	}
+
+	public void attackPlayer(final Npc npc) {
+		npc.attack(this);
+	}
+	
+	public void showBubble(int itemId) {
+		 informGroupOfBubble(new Bubble(this, itemId));
+	}
+	
+	public void summoningRitual(int offsetx, int offsety) {
+		for(int x =  getX(); x <  getX() + offsetx; x++) {
+			for(int y = getY(); y < getY() + offsety; y++) {
+				getActionSender().sendTeleBubble(x, y, false);
+			}
+		}
+	}
+	
+	public int getRandom(int start, int n) {
+		return DataConversions.random(start, n);
+	}
+	
+	public void sendSound(String soundName) {
+		getActionSender().sendSound(soundName);
+	}
+	
+	public void sleep(final int milliseconds) {
+		try {
+			Thread.sleep(milliseconds);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} 
+	} 
 }

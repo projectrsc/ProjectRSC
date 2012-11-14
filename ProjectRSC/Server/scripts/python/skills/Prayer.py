@@ -9,16 +9,15 @@ Prayer skill
 class Prayer(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener):
 	
 	def onObjectAction(self, gameObject, command, player):
-		self.setParticipant(player)
-		self.displayMessage("You recharge at the altar.")
-		self.sendSound("recharge")
-		maxPray = self.getMaxLevel(self.SkillType.PRAYER)
-		cLevel = self.getCurrentLevel(self.SkillType.PRAYER)
+		player.displayMessage("You recharge at the altar.")
+		player.sendSound("recharge")
+		maxPray = player.getMaxLevel(player.SkillType.PRAYER)
+		cLevel = player.getCurrentLevel(player.SkillType.PRAYER)
 		
 		if gameObject.getID() == 200:
-			maxPray = self.getMaxLevel(self.SkillType.PRAYER) + 2
+			maxPray = player.getMaxLevel(player.SkillType.PRAYER) + 2
 		if cLevel < maxPray:
-			self.restoreStat(self.SkillType.PRAYER, maxPray)
+			player.restoreStat(player.SkillType.PRAYER, maxPray)
          	
 	def blockObjectAction(self, gameObject, command, player):
 		return command == "recharge at"
