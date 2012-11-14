@@ -10,17 +10,19 @@ A cow
 class Cow(PlugInterface, InvUseOnNpcListener, InvUseOnNpcExecutiveListener):
 	
 	def onInvUseOnNpc(self, player, npc, item):
-		player.setActiveNpc(npc)
-		player.occupy()
+		script = player.getScriptHelper()
+		
+		script.setActiveNpc(npc)
+		script.occupy()
 		
 		if item.getID() == 21: # Milk bucket
-			player.removeItem(21, 1)
-			player.showBubble(21)
-			player.sendSound("filljug")
-			player.displayMessage("You fill up the bucket with milk")
-			player.addItem(22, 1)
+			script.removeItem(21, 1)
+			script.showBubble(21)
+			script.sendSound("filljug")
+			script.displayMessage("You fill up the bucket with milk")
+			script.addItem(22, 1)
 			
-		player.release()
+		script.release()
 		
 	def blockInvUseOnNpc(self, player, npc, item):
 		return npc.getID() == 6 and item.getID() == 21

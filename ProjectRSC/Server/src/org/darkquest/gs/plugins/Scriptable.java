@@ -5,12 +5,7 @@ import org.darkquest.gs.model.Mob;
 import org.darkquest.gs.model.Player;
 
 @Deprecated
-public abstract class Scriptable { 
-
-	/**
-	 * Helper methods 
-	 * @param delay
-	 */
+public class Scriptable { 
 	
 	public void sleep(final int milliseconds) {
 		try {
