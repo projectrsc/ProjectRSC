@@ -1,6 +1,8 @@
 package org.darkquest.gs.plugins.skills;
 
 import org.darkquest.config.Formulae;
+
+
 import org.darkquest.gs.event.ShortEvent;
 import org.darkquest.gs.external.EntityHandler;
 import org.darkquest.gs.external.ObjectWoodcuttingDef;
@@ -25,7 +27,7 @@ public final class Woodcutting implements ObjectActionExecutiveListener {
 
         if (owner.isBusy() || !owner.withinRange(object, 2) || def == null) {
             return;
-        }
+        } // START
 
         if (owner.getCurStat(8) < def.getReqLevel()) {
             owner.getActionSender().sendMessage("You need a woodcutting level of " + def.getReqLevel() + " to axe this tree");

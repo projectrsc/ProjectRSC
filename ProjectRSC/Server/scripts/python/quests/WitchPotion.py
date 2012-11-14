@@ -1,4 +1,4 @@
-from org.darkquest.gs.plugins import Quest;
+from org.darkquest.gs.plugins import Quest
 from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener, ObjectActionListener, PlayerKilledNpcListener
 from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, ObjectActionExecutiveListener, PlayerKilledNpcExecutiveListener
 
@@ -46,7 +46,7 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 				
 				if option == 0:
 					script.sendPlayerChat("Yes help me become one with my darker side")
-					self.start_quest(script)
+					self.startQuest(script)
 				elif option == 1:
 					script.sendPlayerChat("No, I have principles and honour")
 					script.sendNpcChat("Suit yourself, but you're missing out")
@@ -56,11 +56,11 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 					
 					option = script.pickOption(["Yes I'd like to improve my magic", "No I'm not interested", "Show me the mysteries of the dark arts"])
 					if option == 0:
-						self.start_quest(script)
+						self.startQuest(script)
 					elif option == 1:
 						script.sendNpcChat("Many aren't to start off with", "But I think you'll be drawn back to this place")
 					elif option == 2:
-						self.start_quest(script)
+						self.startQuest(script)
 			elif option == 1:
 				script.sendNpcChat("Yes it does seem to be getting fairly common knowledge", "I fear I may get a visit from the witch hunters of Falador before long")
 		elif stage == 1:
@@ -98,7 +98,7 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 				
 		script.release()
 	
-	def start_quest(self, script):
+	def startQuest(self, script):
 		script.sendNpcChat(
 			"Ok I'm going to make a potion to help bring out your drarker self",
 			"So that you can perform acts of dark magic with greater ease",

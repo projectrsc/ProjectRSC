@@ -8,6 +8,7 @@ import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnNpcListener;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnObjectListener;
+import org.darkquest.gs.plugins.listeners.action.ObjectActionListener;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 
 /**
@@ -17,7 +18,7 @@ import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
  *
  */
 
-public class Default implements TalkToNpcListener, InvUseOnObjectListener, InvUseOnNpcListener {
+public class Default implements TalkToNpcListener, ObjectActionListener, InvUseOnObjectListener, InvUseOnNpcListener {
 
 	@Override
 	public void onTalkToNpc(Player p, Npc n) {
@@ -35,6 +36,11 @@ public class Default implements TalkToNpcListener, InvUseOnObjectListener, InvUs
 
 	@Override
 	public void onInvUseOnNpc(Player player, Npc npc, InvItem item) {
+		player.getActionSender().sendMessage("Nothing interesting happens");
+	}
+
+	@Override
+	public void onObjectAction(GameObject obj, String command, Player player) {
 		player.getActionSender().sendMessage("Nothing interesting happens");
 	}
 }

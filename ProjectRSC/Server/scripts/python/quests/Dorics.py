@@ -5,11 +5,13 @@ Quest: Doric's Quest
 
 @author: GORF
 '''
-from org.darkquest.gs.plugins import Quest;
-from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, InvUseOnObjectExecutiveListener;
+from org.darkquest.gs.plugins import Quest
+from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, InvUseOnObjectExecutiveListener
 from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener, InvUseOnObjectListener
 
 class Dorics(Quest, TalkToNpcListener, InvUseOnObjectListener, TalkToNpcExecutiveListener, InvUseOnObjectExecutiveListener):
+    
+    bar_ids = [169, 170, 171, 172, 173, 174, 408]
     
     def getQuestId(self):
         return 3
@@ -111,7 +113,7 @@ class Dorics(Quest, TalkToNpcListener, InvUseOnObjectListener, TalkToNpcExecutiv
         return npc.getID() == 144 
     
     def blockInvUseOnObject(self, gameObj, invItem, player):
-        return gameObj.getID() == 177 and invItem.getID() == 168 # dorics anvil and hammer
+        return gameObj.getID() == 177 and self.bar_ids.count(invItem.getID()) > 0 # dorics anvil and hammer
         
     
         

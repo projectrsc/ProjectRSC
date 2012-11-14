@@ -41,35 +41,35 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
             stage = script.getQuestStage()
             script.occupy()
             if stage == 0:
-                self.start_quest(script)
+                self.startQuest(script)
             elif stage == 1:
-                self.request_ingredients(script)
+                self.requestIngredients(script)
     
     def blockInvUseOnObject(self, gameObj, invItem, player):
         return gameObj.getID() == 133
 
-    def start_quest(self, script):
+    def startQuest(self, script):
         script.sendNpcChat("What am i to do?")
         
         option = script.pickOption(self.introduction_question_responses)
         if option == 0:
-            self.cook_request_help(script)
+            self.cookRequestHelp(script)
         elif option == 1:
             script.sendNpcChat("Haha very funny")
             script.release()
         elif option == 2:
             script.sendNpcChat("No i'm not")
-            self.cook_request_help(script)
+            self.cookRequestHelp(script)
         elif option == 3:
             script.sendNpcChat("Err thank you -it's a pretty ordinary cooks hat really")
             script.release()
 
-    def cook_request_help(self, script):
+    def cookRequestHelp(self, script):
         script.sendNpcChat("Ooh dear i'm in a terrible mess"
             , "it's the duke's bithday today", "i'm meant to be making him a big cake for this evening",
             "unfortunately, i've forgotten to buy some of the ingredients", "i'll never get them in time now",
             "i don't suppose you could help me?")
-        option = script.pickOption(self.cook_request_help_responses)
+        option = script.pickOption(self.cookRequestHelp_responses)
         if option == 0:
             script.sendNpcChat("oh thank you, thank you", "i need milk, eggs, and flour", "i'd be very grateful if you could get them to me")
             script.setQuestStage(1)
@@ -77,7 +77,7 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
             script.sendNpcChat("ok, suit yourself")
         script.release()
 
-    def request_ingredients(self, script):
+    def requestIngredients(self, script):
         script.sendNpcChat("how are you getting on with finding those ingredients?")
         milk = script.hasItem(22)
         eggs = script.hasItem(19)

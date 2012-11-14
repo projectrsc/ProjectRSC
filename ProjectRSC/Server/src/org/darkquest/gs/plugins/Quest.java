@@ -1,6 +1,6 @@
 package org.darkquest.gs.plugins;
 
-public abstract class Quest extends ScriptablePlug implements QuestInterface {
+public abstract class Quest implements QuestInterface {
 
     public void sleep(int delay) {
         try {
