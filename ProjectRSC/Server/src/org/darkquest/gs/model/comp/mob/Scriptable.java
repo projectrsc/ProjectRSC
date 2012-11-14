@@ -2,11 +2,15 @@ package org.darkquest.gs.model.comp.mob;
 
 import org.darkquest.config.Formulae;
 
+
 import org.darkquest.gs.event.DelayedEvent;
+import org.darkquest.gs.event.ShortEvent;
 import org.darkquest.gs.event.SingleEvent;
 import org.darkquest.gs.external.EntityHandler;
+import org.darkquest.gs.external.GameObjectLoc;
 import org.darkquest.gs.model.Bubble;
 import org.darkquest.gs.model.ChatMessage;
+import org.darkquest.gs.model.GameObject;
 import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.Item;
 import org.darkquest.gs.model.MenuHandler;
@@ -14,10 +18,12 @@ import org.darkquest.gs.model.Mob;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
 import org.darkquest.gs.model.Player.SkillType;
+import org.darkquest.gs.model.Point;
 import org.darkquest.gs.plugins.Quest;
 import org.darkquest.gs.states.CombatState;
 import org.darkquest.gs.tools.DataConversions;
 import org.darkquest.gs.world.World;
+import org.python.core.PyObject;
 
 public class Scriptable {
 	
@@ -238,6 +244,11 @@ public class Scriptable {
 	public int getCurrentLevel(SkillType skill) {
 		return player.getCurStat(skill.getSkill());
 	}
+	
+	public void advanceStat(SkillType skillToAdvance, double experienceAmount, boolean useFatigue) {
+		player.incExp(skillToAdvance.getSkill(), experienceAmount, useFatigue, false, false);
+		player.getActionSender().sendStat(skillToAdvance.getSkill());
+	}
 
 	public void advanceStat(SkillType skillToAdvance, int experienceAmount) {
 		player.incExp(skillToAdvance.getSkill(), experienceAmount, false, false, false);
@@ -328,6 +339,25 @@ public class Scriptable {
 	
 	public void sendSound(String soundName) {
 		player.getActionSender().sendSound(soundName);
+	}
+	
+	public void spawnObject(int x, int y, int id, int direction, int type, boolean delay, GameObjectLoc loc, int respawnTime) {
+		spawnObject(new Point(x,y), id, direction, type, delay, loc, respawnTime);
+	}
+	
+	public void spawnObject(Point location, int id, int direction, int type, boolean delay, GameObjectLoc loc, int respawnTime) {
+		World.getWorld().registerGameObject(new GameObject(location, id, direction, type));
+		if(delay)
+			World.getWorld().delayedSpawnObject(loc, respawnTime);
+	}
+	
+	// Custom Events
+	public void shortEvent(final PyObject func) {
+		World.getWorld().getDelayedEventHandler().add(new ShortEvent(player) {
+            public void action() {
+            	func.__call__();
+            }
+		});
 	}
 	
 	public void sleep(final int milliseconds) {
