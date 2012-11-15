@@ -9,6 +9,8 @@ The Bartender NPC in Varrock's Blue Moon Inn
 
 class Bartender(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 	
+	BARTENDER = 12
+	
 	def onTalkToNpc(self, player, npc):
 		script = player.getScriptHelper()
 		
@@ -46,4 +48,4 @@ class Bartender(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 		script.release()
 	
 	def blockTalkToNpc(self, player, npc):
-		return npc.getID() == 12
+		return npc.getID() == self.BARTENDER

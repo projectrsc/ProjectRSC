@@ -8,8 +8,11 @@ Men and farmer dialogue
 '''
 class Man(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 	
+	MAN = 11
+	FARMER = 63
+	
 	def onTalkToNpc(self, player, npc):
-		if npc.getID() == 11 or npc.getID() == 63:
+		if npc.getID() == self.MAN or npc.getID() == self.FARMER:
 			script = player.getScriptHelper()
 			
 			script.setActiveNpc(npc)
@@ -64,4 +67,4 @@ class Man(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 		script.release()
 	
 	def blockTalkToNpc(self, player, npc):
-		return npc.getID() == 11 or npc.getID() == 63
+		return npc.getID() == self.MAN or npc.getID() == self.FARMER

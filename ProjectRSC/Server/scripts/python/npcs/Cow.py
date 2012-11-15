@@ -9,20 +9,21 @@ A cow
 
 class Cow(PlugInterface, InvUseOnNpcListener, InvUseOnNpcExecutiveListener):
 	
+	COW = 6
+	BUCKET = 21
+	MILK = 22
+	
 	def onInvUseOnNpc(self, player, npc, item):
 		script = player.getScriptHelper()
 		
 		script.setActiveNpc(npc)
 		script.occupy()
-		
-		if item.getID() == 21: # Milk bucket
-			script.removeItem(21, 1)
-			script.showBubble(21)
-			script.sendSound("filljug")
-			script.displayMessage("You fill up the bucket with milk")
-			script.addItem(22, 1)
-			
+		script.removeItem(self.BUCKET, 1)
+		script.showBubble(self.BUCKET)
+		script.sendSound("filljug")
+		script.displayMessage("You fill up the bucket with milk")
+		script.addItem(self.MILK, 1)
 		script.release()
 		
 	def blockInvUseOnNpc(self, player, npc, item):
-		return npc.getID() == 6 and item.getID() == 21
+		return npc.getID() == self.COW and item.getID() == self.BUCKET

@@ -16,6 +16,7 @@ class Luthas(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
         script = player.getScriptHelper()
         
         script.setActiveNpc(npc)
+        script.occupy()
         script.sendNpcChat("Hello, i am after 20 Bananas, do you have 20 you can sell?")
         opt = script.pickOption(["Yes i will sell you 20 bananas", "No sorry, i don't have any"])
         if opt == 0:

@@ -58,11 +58,13 @@ public class InvActionHandler implements PacketHandler {
         if (PluginHandler.getPluginHandler().blockDefaultAction("InvAction", new Object[]{item, player})) {
             return;
         }
+        
+        /*
         if (item.getID() == 1263 && !player.isSleeping()) {
             player.getActionSender().sendEnterSleep();
 	    	player.startSleepEvent(false);
             return;
-        }
+        } */
 
         if (item.isEdible()) {
             player.setBusy(true);
@@ -505,7 +507,6 @@ public class InvActionHandler implements PacketHandler {
                 case 387: // Disk of Returning
                     player.getActionSender().sendMessage("The disk doesn't seem to work here.");
                     break;
-
                 default:
                     player.getActionSender().sendMessage("Nothing interesting happens");
                     return;

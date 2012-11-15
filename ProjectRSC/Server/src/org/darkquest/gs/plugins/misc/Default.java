@@ -20,6 +20,8 @@ import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 
 public class Default implements TalkToNpcListener, ObjectActionListener, InvUseOnObjectListener, InvUseOnNpcListener {
 
+	//private static final String[] IGNORED_COMMANDS = {"up", "down", "open", "close"};
+	
 	@Override
 	public void onTalkToNpc(Player p, Npc n) {
 		p.getActionSender().sendMessage("The " + n.getDef().getName() + " does not appear interested in talking");
@@ -41,6 +43,6 @@ public class Default implements TalkToNpcListener, ObjectActionListener, InvUseO
 
 	@Override
 	public void onObjectAction(GameObject obj, String command, Player player) {
-		player.getActionSender().sendMessage("Nothing interesting happens");
+		
 	}
 }

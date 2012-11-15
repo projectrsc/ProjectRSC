@@ -245,16 +245,33 @@ public final class Admins implements CommandListener {
 				player.teleport(76, 1642, true);
 			}
 		} else if (command.equals("reload")) {
+			boolean failed = false;
 			if(PluginHandler.getPluginHandler() != null) {
 				player.getActionSender().sendMessage("Reloading all script factories...");
 				if(PluginHandler.getPluginHandler().getPythonScriptFactory().canReload())
 					try {
 						PluginHandler.getPluginHandler().loadPythonScripts();
-						player.getActionSender().sendQuestInfo();
 					} catch (Exception e) {
 						e.printStackTrace();
+					} finally {
+						player.getActionSender().sendQuestInfo();
+						player.getActionSender().sendMessage("@cya@[@whi@DEBUG@cya@]: @red@Error found while compiling scripts");
+						if(!PluginHandler.getPluginHandler().getPythonScriptFactory().getErrorLog().isEmpty()) {
+							failed = true;
+							String errorFound = "@cya@[@whi@DEBUGGER v1@cya@]: ";
+							for(String[] error : PluginHandler.getPluginHandler().getPythonScriptFactory().getErrorLog()) {
+								String line = "";
+								for(String er : error) {
+									line += er;
+								}
+								errorFound += line + " ";
+							}
+							player.getActionSender().sendAlert(errorFound, false);
+							PluginHandler.getPluginHandler().getPythonScriptFactory().getErrorLog().clear();
+						}
 					}
-				player.getActionSender().sendMessage("Complete...");
+				if(!failed)
+					player.getActionSender().sendMessage("Complete...");
 			}
 		} else if (command.equals("check")) {
 			if (args.length < 1) {

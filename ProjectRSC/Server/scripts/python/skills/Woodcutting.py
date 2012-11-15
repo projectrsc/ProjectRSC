@@ -45,16 +45,15 @@ class Woodcutting(PlugInterface, ObjectActionListener, ObjectActionExecutiveList
 	
 	def woodcutEvent(self, player, gameObject, script, woodcut_def, axeId):
 		if Formulae.getLog(woodcut_def, script.getCurrentLevel(player.SkillType.WOODCUT), axeId):
-			script.sleep(1000)
+			script.sleep(1500)
 			script.addItem(woodcut_def.getLogId(), 1)
 			script.displayMessage("You get some wood")
 			script.advanceStat(player.SkillType.WOODCUT, woodcut_def.getExp(), True)
 			if script.getRandom(1, 100) <= woodcut_def.getFell():
 				script.spawnObject(gameObject.getLocation(), 4, gameObject.getDirection(), gameObject.getType(), True, gameObject.getLoc(), woodcut_def.getRespawnTime() * 1000)
-			script.release()
 		else:
 			script.displayMessage("You slip and fail to hit the tree")
-			script.release()
+		script.release()
          	
 	def blockObjectAction(self, gameObject, command, player):
 		return command == "chop"

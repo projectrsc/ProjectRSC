@@ -176,22 +176,15 @@ public class Scriptable {
 	public void removeAllItem(int id) {
 		removeItem(id, countItem(id));
 	}
-	
-	// Region - Move
 
 	public void spawnItem(int x, int y, int id, int amount) {
 		spawnItem(x, y, id, amount, 500);
 	}
 
-	public void spawnItem(final int x, final int y, final int id, final int amount, final int spawnFor) {
+	public void spawnItem(final int x, final int y, final int id, final int amount, final int delayFor) {
 		final InvItem item = new InvItem(id, amount);
-
-		World.getWorld().getDelayedEventHandler().add(new DelayedEvent(player, spawnFor) {
-			public void run() {
-				world.registerItem(new Item(item.getID(), x, y, item.getAmount(), player));
-				matchRunning = false;
-			}
-		}); 
+		sleep(delayFor);
+		World.getWorld().registerItem(new Item(item.getID(), x, y, item.getAmount(), player));
 	}
 
 	public void addItem(int id, int amount) {
@@ -249,9 +242,14 @@ public class Scriptable {
 		player.incExp(skillToAdvance.getSkill(), experienceAmount, useFatigue, false, false);
 		player.getActionSender().sendStat(skillToAdvance.getSkill());
 	}
-
+	
 	public void advanceStat(SkillType skillToAdvance, int experienceAmount) {
 		player.incExp(skillToAdvance.getSkill(), experienceAmount, false, false, false);
+		player.getActionSender().sendStat(skillToAdvance.getSkill());
+	}
+
+	public void advanceStat(SkillType skillToAdvance, int experienceAmount, boolean useFatigue) {
+		player.incExp(skillToAdvance.getSkill(), experienceAmount, useFatigue, false, false);
 		player.getActionSender().sendStat(skillToAdvance.getSkill());
 	}
 	
@@ -288,7 +286,8 @@ public class Scriptable {
 	public Npc spawnNpc(int npcId, int x, int y, boolean respawn) {
 		return spawnNpc(npcId, x, y, 0, respawn);
 	}
-
+	
+	// Fix
 	public Npc spawnNpc(int npcId, int x, int y, int time, boolean respawn) {
 		if (EntityHandler.getNpcDef(npcId) != null) {
 			final Npc n = new Npc(npcId, x, y, x - 5, x + 5, y - 5, y + 5);
@@ -341,23 +340,19 @@ public class Scriptable {
 		player.getActionSender().sendSound(soundName);
 	}
 	
+	public void sendSleep(boolean isBed) {
+		player.getActionSender().sendEnterSleep();
+		player.startSleepEvent(isBed);
+	}
+	
 	public void spawnObject(int x, int y, int id, int direction, int type, boolean delay, GameObjectLoc loc, int respawnTime) {
 		spawnObject(new Point(x,y), id, direction, type, delay, loc, respawnTime);
 	}
 	
-	public void spawnObject(Point location, int id, int direction, int type, boolean delay, GameObjectLoc loc, int respawnTime) {
+	public void spawnObject(Point location, int id, int direction, int type, boolean delayRespawn, GameObjectLoc loc, int respawnTime) {
 		World.getWorld().registerGameObject(new GameObject(location, id, direction, type));
-		if(delay)
+		if(delayRespawn)
 			World.getWorld().delayedSpawnObject(loc, respawnTime);
-	}
-	
-	// Custom Events
-	public void shortEvent(final PyObject func) {
-		World.getWorld().getDelayedEventHandler().add(new ShortEvent(player) {
-            public void action() {
-            	func.__call__();
-            }
-		});
 	}
 	
 	public void sleep(final int milliseconds) {

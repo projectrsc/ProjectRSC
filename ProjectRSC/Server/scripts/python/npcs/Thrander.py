@@ -13,6 +13,8 @@ class Thrander(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener, Inv
 					120:311, 401:407, 214:206, 215:9, 225:121, 434:248, 226:122, 227:123, 406:402, 206:214, 9:215, 121:225,
 					248:434, 122:226, 123:227, 402:406}
 	
+	THRANDER = 160
+	
 	def onTalkToNpc(self, player, npc):
 		script = player.getScriptHelper()
 		script.setActiveNpc(npc)
@@ -26,6 +28,7 @@ class Thrander(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener, Inv
 		newID = 0
 		itemID = item.getID()
 		script.occupy()
+		
 		if self.item_directory.has_key(itemID):
 			newItem = self.item_directory.get(itemID)
 			script.displayMessage("You give Thrander a " + item.getDef().getName())
@@ -36,10 +39,11 @@ class Thrander(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener, Inv
 			changedItem = script.getItem(newItem)
 			script.displayMessage("Thrander gives you a " + changedItem.getDef().getName())
 			script.addItem(newItem, 1)
+			
 		script.release()
 	
 	def blockTalkToNpc(self, player, npc):
-		return npc.getID() == 160
+		return npc.getID() == self.THRANDER
 	
 	def blockInvUseOnNpc(self, player, npc, item):
-		return npc.getID() == 160 and self.item_directory.has_key(item.getID())
+		return npc.getID() == self.THRANDER and self.item_directory.has_key(item.getID())
