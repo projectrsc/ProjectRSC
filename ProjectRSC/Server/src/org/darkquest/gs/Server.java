@@ -35,8 +35,8 @@ public final class Server {
 
 	public static void main(String[] args) throws IOException {//Registering
 		System.out.printf("\t*** ProjectRSC Game Server ***\n\n");
-		//Constants.GameServer.initConfig("server.conf");
-		Constants.GameServer.initConfig("launch_gorf/server.conf"); 
+		Constants.GameServer.initConfig("server.conf");
+		//Constants.GameServer.initConfig("launch_gorf/server.conf"); 
 		new Server();
 	}
 
