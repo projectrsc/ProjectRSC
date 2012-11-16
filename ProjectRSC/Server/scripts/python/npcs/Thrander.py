@@ -29,16 +29,15 @@ class Thrander(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener, Inv
 		itemID = item.getID()
 		script.occupy()
 		
-		if self.item_directory.has_key(itemID):
-			newItem = self.item_directory.get(itemID)
-			script.displayMessage("You give Thrander a " + item.getDef().getName())
-			script.sleep(500)
-			script.displayMessage("Thrander hammers it for a bit")
-			script.removeItem(itemID, 1)
-			script.sleep(1000)
-			changedItem = script.getItem(newItem)
-			script.displayMessage("Thrander gives you a " + changedItem.getDef().getName())
-			script.addItem(newItem, 1)
+		newItem = self.item_directory[itemID]
+		script.displayMessage("You give Thrander a " + item.getDef().getName())
+		script.sleep(500)
+		script.displayMessage("Thrander hammers it for a bit")
+		script.removeItem(itemID, 1)
+		script.sleep(1000)
+		changedItem = script.getItem(newItem)
+		script.displayMessage("Thrander gives you a " + changedItem.getDef().getName())
+		script.addItem(newItem, 1)
 			
 		script.release()
 	

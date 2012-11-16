@@ -255,7 +255,6 @@ public final class Admins implements CommandListener {
 						e.printStackTrace();
 					} finally {
 						player.getActionSender().sendQuestInfo();
-						player.getActionSender().sendMessage("@cya@[@whi@DEBUG@cya@]: @red@Error found while compiling scripts");
 						if(!PluginHandler.getPluginHandler().getPythonScriptFactory().getErrorLog().isEmpty()) {
 							failed = true;
 							String errorFound = "@cya@[@whi@DEBUGGER v1@cya@]: ";
@@ -272,6 +271,8 @@ public final class Admins implements CommandListener {
 					}
 				if(!failed)
 					player.getActionSender().sendMessage("Complete...");
+				else
+					player.getActionSender().sendMessage("@cya@[@whi@DEBUG@cya@]: @red@Error found while compiling scripts");
 			}
 		} else if (command.equals("check")) {
 			if (args.length < 1) {

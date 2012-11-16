@@ -6,6 +6,7 @@ import org.darkquest.config.Formulae;
 import org.darkquest.gs.event.DelayedEvent;
 import org.darkquest.gs.event.ShortEvent;
 import org.darkquest.gs.event.SingleEvent;
+import org.darkquest.gs.event.impl.FightEvent;
 import org.darkquest.gs.external.EntityHandler;
 import org.darkquest.gs.external.GameObjectLoc;
 import org.darkquest.gs.model.Bubble;
@@ -20,6 +21,7 @@ import org.darkquest.gs.model.Player;
 import org.darkquest.gs.model.Player.SkillType;
 import org.darkquest.gs.model.Point;
 import org.darkquest.gs.plugins.Quest;
+import org.darkquest.gs.states.Action;
 import org.darkquest.gs.states.CombatState;
 import org.darkquest.gs.tools.DataConversions;
 import org.darkquest.gs.world.World;
@@ -196,6 +198,10 @@ public class Scriptable {
 		addItem(id, 1);
 	}
 	
+	public boolean isWielding(int itemId) {
+		return player.getInventory().wielding(itemId);
+	}
+	
 	public InvItem getItem(int itemId) {
 		return new InvItem(itemId, 1);
 	}
@@ -288,12 +294,12 @@ public class Scriptable {
 	}
 	
 	// Fix
-	public Npc spawnNpc(int npcId, int x, int y, int time, boolean respawn) {
+	public Npc spawnNpc(int npcId, int x, int y, int time, boolean persist) {
 		if (EntityHandler.getNpcDef(npcId) != null) {
 			final Npc n = new Npc(npcId, x, y, x - 5, x + 5, y - 5, y + 5);
-			n.setRespawn(respawn);
+			n.setRespawn(persist);
 			World.getWorld().registerNpc(n);
-			if(!respawn) {
+			if(!persist) {
 				World.getWorld().getDelayedEventHandler().add(new SingleEvent(null, time == 0 ? 300000 : time) {
 					public void action() {
 						Mob opponent = n.getOpponent();
@@ -326,6 +332,36 @@ public class Scriptable {
 
 	public void attackPlayer(final Npc npc) { 
 		npc.attack(player);
+	}
+	
+	public FightEvent fightNpc(final Npc npc) {
+		return fightNpc(npc, false);
+	}
+	
+	public FightEvent fightNpc(final Npc npc, boolean invincibleMode) {
+		player.resetAll();
+		player.setStatus(Action.FIGHTING_MOB);
+		npc.resetPath();
+		
+		player.setLocation(npc.getLocation(), true);
+
+		for (Player p : player.getViewArea().getPlayersInView()) {
+			p.removeWatchedPlayer(player);
+		}
+	
+		player.setBusy(true);
+		player.setSprite(9);
+		player.setOpponent(npc);
+		player.setCombatTimer();
+		npc.setBusy(true);
+		npc.setSprite(8);
+		npc.setOpponent(player);
+		npc.setCombatTimer();
+		FightEvent fighting = new FightEvent(player, npc);
+		fighting.setLastRun(0);
+		fighting.setOpponentInvincible(invincibleMode);
+		World.getWorld().getDelayedEventHandler().add(fighting);
+		return fighting;
 	}
 	
 	public void showBubble(int itemId) {

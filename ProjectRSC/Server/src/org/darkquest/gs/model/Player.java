@@ -1712,8 +1712,7 @@ public final class Player extends Mob {
 			usernameHash = DataConversions.usernameToHash(username);
 			this.username = DataConversions.hashToUsername(usernameHash);
 
-			World.getWorld().getServer().getLoginConnector().getActionSender()
-			.playerLogin(this);
+			World.getWorld().getServer().getLoginConnector().getActionSender().playerLogin(this);
 
 			World.getWorld().getDelayedEventHandler().add(new DelayedEvent(this, 60000) {
 

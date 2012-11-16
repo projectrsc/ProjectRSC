@@ -79,7 +79,7 @@ class SheepShearer(Quest, TalkToNpcListener, TalkToNpcExecutiveListener):
             elif option == 2:
                 script.sendNpcChat("how can you be lost?", "just follow the road east and south", "you'll end up in Lumbridge fairly quickly")
                 script.release()
-        elif stage == 1: # final stage (not complete)
+        elif stage == 1: # final stage (TODO: not complete)
             script.sendNpcChat("how are you doing getting those balls of wool?")
             
         script.release()
