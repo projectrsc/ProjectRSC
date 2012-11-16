@@ -9,6 +9,7 @@ This is a generic template for an NPC handler (always document what the handler 
 
 class Template(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener):
 	
+	# NPCs USED
 	MY_NPC = -1
 	
 	def onTalkToNpc(self, player, npc):

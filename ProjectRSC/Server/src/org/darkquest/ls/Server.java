@@ -1,6 +1,7 @@
 package org.darkquest.ls;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
@@ -8,6 +9,7 @@ import java.util.Collection;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
 
+import org.darkquest.config.Constants;
 import org.darkquest.ls.codec.FProtocolDecoder;
 import org.darkquest.ls.codec.FProtocolEncoder;
 import org.darkquest.ls.codec.LSProtocolDecoder;
@@ -17,8 +19,8 @@ import org.darkquest.ls.model.World;
 import org.darkquest.ls.net.DatabaseConnection;
 import org.darkquest.ls.net.FConnectionHandler;
 import org.darkquest.ls.net.LSConnectionHandler;
+import org.darkquest.ls.net.filter.ConnectionFilter;
 import org.darkquest.ls.util.Config;
-import org.darkquest.ls.util.DataConversions;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
@@ -28,7 +30,6 @@ import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.SimpleChannelHandler;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
-import org.jboss.netty.handler.codec.oneone.OneToOneDecoder;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
 
 public final class Server {
@@ -60,6 +61,7 @@ public final class Server {
 
 	public static void main(String[] args) throws IOException {
 		String configFile = "ls.conf";
+		//String configFile = "launch_gorf/ls.conf";
 		if (args.length > 0) {
 			File f = new File(args[0]);
 			if (f.exists()) {
@@ -155,6 +157,7 @@ public final class Server {
 				ChannelPipeline pipeline = Channels.pipeline();
 				pipeline.addLast("decoder", decoder);
 				pipeline.addLast("encoder", encoder);
+				pipeline.addLast("throttle", ConnectionFilter.getInstance(Constants.GameServer.MAX_THRESHOLD));
 				pipeline.addLast("handler", handler);
 				return pipeline;
 			}

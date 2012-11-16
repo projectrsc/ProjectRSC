@@ -33,7 +33,7 @@ public class Default implements TalkToNpcListener, ObjectActionListener, InvUseO
 	
 	@Override
     public void onInvUseOnObject(GameObject object, InvItem item, Player owner) {
-		owner.getActionSender().sendMessage("Nothing interesting happens");
+		//owner.getActionSender().sendMessage("Nothing interesting happens"); UNCOMMENT WHEN EVERYTHING IS PY PLUGIN
 	}
 
 	@Override

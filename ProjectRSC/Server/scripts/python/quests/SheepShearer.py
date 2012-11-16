@@ -4,6 +4,7 @@ Created on Nov 13, 2012
 Quest: Sheep Shearer
 
 @author: GORF
+@difficulty: Easy
 '''
 from org.darkquest.gs.plugins import Quest
 from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener
@@ -11,7 +12,16 @@ from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener
 
 class SheepShearer(Quest, TalkToNpcListener, TalkToNpcExecutiveListener):
     
+    # NPCs USED
     FARMER_FRED = 77
+    
+    # ITEMS USED
+    MONEY = 10
+    WOOL = 145
+    BALL_OF_WOOL = 207
+    
+    # CONDITION
+    AMOUNT_NEEDED = 20
     
     def getQuestId(self):
         return 11
@@ -27,7 +37,7 @@ class SheepShearer(Quest, TalkToNpcListener, TalkToNpcExecutiveListener):
         script.setActiveQuest(self)
         
         script.displayMessage("The farmer hands you some coins")
-        script.addItem(10, 60)
+        script.addItem(self.MONEY, 60)
         script.displayMessage("Well done you have completed the sheep shearer quest")
         script.advanceStat(player.SkillType.CRAFTING, 150)
         script.displayMessage("@gre@You have gained 1 quest point!")
@@ -81,7 +91,27 @@ class SheepShearer(Quest, TalkToNpcListener, TalkToNpcExecutiveListener):
                 script.release()
         elif stage == 1: # final stage (TODO: not complete)
             script.sendNpcChat("how are you doing getting those balls of wool?")
-            
+            if script.countItem(self.BALL_OF_WOOL) >= self.AMOUNT_NEEDED:
+                script.sendPlayerChat("i have some")
+                script.sendNpcChat("give em here then")
+                while script.hasItem(self.BALL_OF_WOOL):
+                    script.displayMessage("You give Fred a ball of wool")
+                    script.removeItem(self.BALL_OF_WOOL, 1)
+                    script.sleep(2500)
+                script.sendPlayerChat("that's all of them")
+                script.sendNpcChat("i guess i'd better pay you then")
+                script.release()
+                script.setQuestStage(-1)
+                script.setQuestCompleted()
+            elif script.hasItem(self.BALL_OF_WOOL):
+                script.sendPlayerChat("i have some")
+                script.sendNpcChat("i need more before i can pay you")
+            elif script.hasItem(self.WOOL):
+                script.sendPlayerChat("well i've got some wool", "i've not managed to make it into a ball though")
+                script.sendNpcChat("well go find a spinning wheel then", "and get spinning")
+            else:
+                script.sendPlayerChat("i haven't got any at the moment")
+                script.sendNpcChat("ah well at least you haven't been eaten")
         script.release()
     
     def startQuest(self, script):

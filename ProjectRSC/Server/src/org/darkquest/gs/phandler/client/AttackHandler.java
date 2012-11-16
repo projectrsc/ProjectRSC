@@ -54,9 +54,9 @@ public class AttackHandler implements PacketHandler {
 			if (pl.getLocation().inWilderness() && System.currentTimeMillis() - pl.getLastRun() < 3000) {
 				return;
 			}
+		} else {
+			player.setFollowing(affectedMob); //why the fuck was this uncommented out? 
 		}
-
-		//player.setFollowing(affectedMob); why the fuck was this uncommented out? 
 		player.setStatus(Action.ATTACKING_MOB);
 
 		if (player.getRangeEquip() < 0) {

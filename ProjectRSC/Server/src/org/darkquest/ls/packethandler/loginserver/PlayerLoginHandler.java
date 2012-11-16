@@ -1,9 +1,12 @@
 package org.darkquest.ls.packethandler.loginserver;
 
+import org.darkquest.config.Constants;
+
 import org.darkquest.ls.Server;
 import org.darkquest.ls.model.World;
 import org.darkquest.ls.net.LSPacket;
 import org.darkquest.ls.net.Packet;
+import org.darkquest.ls.net.filter.ConnectionFilter;
 import org.darkquest.ls.packetbuilder.loginserver.PlayerLoginPacketBuilder;
 import org.darkquest.ls.packethandler.PacketHandler;
 import org.darkquest.ls.util.Config;
@@ -13,6 +16,13 @@ import org.jboss.netty.channel.Channel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map.Entry;
+import java.util.TimerTask;
+
+/**
+ * TODO: Rewrite
+ * @author openfrog
+ *
+ */
 
 public final class PlayerLoginHandler implements PacketHandler {
 
@@ -24,13 +34,24 @@ public final class PlayerLoginHandler implements PacketHandler {
 			World world = (World) session.getAttachment();
 			long user = p.readLong();
 			
-			String ip = DataConversions.IPToString(p.readLong());
+			long encoded = p.readLong();
+			String ip = DataConversions.IPToString(encoded);
 			String pass = p.readString().trim();
-			byte loginCode = validatePlayer(user, pass, ip, world);
-
+			byte loginCode = validatePlayer(user, pass, ip, world); 
+			
+			if(ConnectionFilter.getInstance(0).isMaxed(DataConversions.IPToLong(ip))) {
+				loginCode = 8;
+			}
+			
 			builder.setUID(uID);
 			if (loginCode == 0 || loginCode == 1 || loginCode == 99) {//
-
+				// START
+				ConnectionFilter.getInstance(0).incrementAndGet(DataConversions.IPToLong(ip));
+				
+				//System.out.println("Size: " + ConnectionFilter.getInstance(0).getCurrentClients().size());
+				//System.out.println("Initial count: " + initialCount);
+				// END
+				
 				try {
 					Server.db.updateQuery("UPDATE `" + Config.MYSQL_TABLE_PREFIX + "players` SET online=1 WHERE user='" + user + "'");
 				} catch (Exception e) {
@@ -46,6 +67,7 @@ public final class PlayerLoginHandler implements PacketHandler {
 			if (packet != null) {
 				session.write(packet);
 			}
+			session.getParent().disconnect(); // We should try closing the channel immediately as its terminated 
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
