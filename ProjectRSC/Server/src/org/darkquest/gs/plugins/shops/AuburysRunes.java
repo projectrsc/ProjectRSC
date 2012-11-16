@@ -12,7 +12,7 @@ import org.darkquest.gs.world.Shop;
 
 public final class AuburysRunes extends ScriptablePlug implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
 
-	private final Shop shop = new Shop(false, 30000, 100, 50, new InvItem(31, 50), new InvItem(32, 50), new InvItem(33, 50), new InvItem(34, 50), new InvItem(35, 50), new InvItem(36, 50));
+	private final Shop shop = new Shop(false, 3000, 100, 50, new InvItem(31, 50), new InvItem(32, 50), new InvItem(33, 50), new InvItem(34, 50), new InvItem(35, 50), new InvItem(36, 50));
 	
 	@Override
 	public void onTalkToNpc(Player p, final Npc n) {

@@ -12,7 +12,7 @@ import org.darkquest.gs.world.Shop;
 
 public final class LowesArchery extends ScriptablePlug implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
 
-	private final Shop shop = new Shop(false, 30000, 100, 50, new InvItem(11, 200), new InvItem(190, 150), new InvItem(189, 4), new InvItem(188, 2), new InvItem(60, 2));
+	private final Shop shop = new Shop(false, 3000, 100, 50, new InvItem(11, 200), new InvItem(190, 150), new InvItem(189, 4), new InvItem(188, 2), new InvItem(60, 2));
 	
 	@Override
 	public void onTalkToNpc(Player p, final Npc n) {
