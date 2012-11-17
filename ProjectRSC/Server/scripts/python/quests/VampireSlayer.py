@@ -116,8 +116,17 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
                         elif option == 1:
                             script.sendNpcChat("Buy me a beer then I'll teash you what you need to know")
                 else:
-                    script.sendPlayerChat("No, you've had enough")
-                    script.sendNpcChat("Sheys you matey!")
+                    option = script.pickOption(["No, you've had enough", "Ok mate"])
+                    if option == 0:
+                        script.sendNpcChat("Sheys you matey!")
+                    elif option == 1:
+                        if script.hasItem(self.BEER): # WE HAVE A BEER
+                            script.sendNpcChat("Cheersh Matey")
+                            script.sleep(500)
+                            script.removeItem(self.BEER, 1)
+                            script.displayMessage("You give a beer to Dr Harlow")
+                        else:
+                            script.sendNpcChat("I'll just go and buy one")
         # END CODE HERE
         script.release()
     
@@ -193,7 +202,7 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
             script.sendPlayerChat("Thank you very much")
             script.setQuestStage(2)
         else:
-            script.sendNpcChat("You dont sseem to have a beer")
+            script.sendNpcChat("I'll just go and buy one")
         script.release()
     
     def blockTalkToNpc(self, player, npc):
