@@ -47,7 +47,7 @@ class Woodcutting(PlugInterface, ObjectActionListener, ObjectActionExecutiveList
 	def woodcutEvent(self, game_object, script, woodcut_def, axe_id):
 		player = script.getPlayer()
 		script.sleep(1500)
-		
+		print("chop?")
 		if Formulae.getLog(woodcut_def, script.getCurrentLevel(player.SkillType.WOODCUT), axe_id):
 			script.addItem(woodcut_def.getLogId(), 1)
 			script.displayMessage("You get some wood")
