@@ -53,7 +53,7 @@ public final class Mining implements ObjectActionListener, ObjectActionExecutive
 			return;
 		}
 		
-		final GameObject newobject = World.getWorld().getTile(object.getX(), object.getY()).getGameObject();
+		final GameObject newobject = World.getWorld().getTile(object.getX(), object.getY()).getGameObject(); //???
 		final ObjectMiningDef def = EntityHandler.getObjectMiningDef(newobject.getID());
 		
 		if (def == null || def.getRespawnTime() < 1) {
