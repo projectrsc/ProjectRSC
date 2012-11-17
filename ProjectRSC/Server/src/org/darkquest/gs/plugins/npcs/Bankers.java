@@ -3,11 +3,11 @@ package org.darkquest.gs.plugins.npcs;
 import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
-import org.darkquest.gs.plugins.Scriptable;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 
-public class Bankers extends Scriptable implements TalkToNpcExecutiveListener, TalkToNpcListener {
+public class Bankers extends ScriptablePlug implements TalkToNpcExecutiveListener, TalkToNpcListener {
 
 	private final String[] firstOptions = new String[] { "I'd like to access my bank account please", "What is this place?" };
 

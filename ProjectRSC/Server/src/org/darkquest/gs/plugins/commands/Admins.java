@@ -1,6 +1,7 @@
 package org.darkquest.gs.plugins.commands;
 
 import java.sql.ResultSet;
+
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -9,7 +10,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.darkquest.config.Constants;
 import org.darkquest.config.Formulae;
-import org.darkquest.gs.connection.filter.ConnectionFilter;
 import org.darkquest.gs.db.DatabaseManager;
 import org.darkquest.gs.db.query.StaffLog;
 import org.darkquest.gs.event.DelayedEvent;
@@ -29,6 +29,7 @@ import org.darkquest.gs.tools.DataConversions;
 import org.darkquest.gs.world.ActiveTile;
 import org.darkquest.gs.world.TileValue;
 import org.darkquest.gs.world.World;
+import org.darkquest.ls.net.filter.ConnectionFilter;
 
 public final class Admins implements CommandListener {
 
@@ -120,7 +121,7 @@ public final class Admins implements CommandListener {
 			}
 			String ip = args[0];
 			long hashed = DataConversions.IPToLong(ip);
-			
+			// NEED TO CREATE A PACKET FOR THIS EVENT TO HAPPEN
 			if(ConnectionFilter.getInstance(0).getCurrentClients().containsKey(hashed)) {
 				ConnectionFilter.getInstance(0).getCurrentClients().remove(hashed);
 				player.getActionSender().sendMessage("Removed " + ip + " from filter");
@@ -245,16 +246,34 @@ public final class Admins implements CommandListener {
 				player.teleport(76, 1642, true);
 			}
 		} else if (command.equals("reload")) {
+			boolean failed = false;
 			if(PluginHandler.getPluginHandler() != null) {
 				player.getActionSender().sendMessage("Reloading all script factories...");
 				if(PluginHandler.getPluginHandler().getPythonScriptFactory().canReload())
 					try {
 						PluginHandler.getPluginHandler().loadPythonScripts();
-						player.getActionSender().sendQuestInfo();
 					} catch (Exception e) {
 						e.printStackTrace();
+					} finally {
+						player.getActionSender().sendQuestInfo();
+						if(!PluginHandler.getPluginHandler().getPythonScriptFactory().getErrorLog().isEmpty()) {
+							failed = true;
+							String errorFound = "@cya@[@whi@DEBUGGER v1@cya@]: ";
+							for(String[] error : PluginHandler.getPluginHandler().getPythonScriptFactory().getErrorLog()) {
+								String line = "";
+								for(String er : error) {
+									line += er;
+								}
+								errorFound += line + " ";
+							}
+							player.getActionSender().sendAlert(errorFound, false);
+							PluginHandler.getPluginHandler().getPythonScriptFactory().getErrorLog().clear();
+						}
 					}
-				player.getActionSender().sendMessage("Complete...");
+				if(!failed)
+					player.getActionSender().sendMessage("Complete...");
+				else
+					player.getActionSender().sendMessage("@cya@[@whi@DEBUG@cya@]: @red@Error found while compiling scripts");
 			}
 		} else if (command.equals("check")) {
 			if (args.length < 1) {

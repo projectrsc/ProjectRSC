@@ -16,7 +16,7 @@ public final class FightEvent extends DelayedEvent {
 
     private Mob affectedMob;
     private int firstHit, hits;
-    private boolean attacked = false;
+    private boolean attacked = false, invincibleMode = false;
     boolean delay = false;
     int dela = 0;
 
@@ -54,6 +54,10 @@ public final class FightEvent extends DelayedEvent {
 
     public Mob getAffectedMob() {
         return affectedMob;
+    }
+    
+    public void setOpponentInvincible(boolean invincibleMode) {
+    	this.invincibleMode = invincibleMode;
     }
 
     public void run() {
@@ -105,7 +109,6 @@ public final class FightEvent extends DelayedEvent {
             Player player = (Player) opponent;
             if (npc.getCurHits() <= npc.getDef().hits * 0.10 && npc.getCurHits() > 0) {
                 if (!npc.getLocation().inWilderness() && npc.getDef().attackable && !npc.getDef().aggressive) {
-
                     if (DataConversions.inArray(Constants.GameServer.NPCS_THAT_DONT_RETREAT, npc.getID())) {
                         player.getActionSender().sendSound("retreat");
                         npc.unblock();
@@ -151,6 +154,7 @@ public final class FightEvent extends DelayedEvent {
                 } else {
                     combatSound = damage > 0 ? "combat1b" : "combat1a";
                 }
+                //
             }
             Player attackerPlayer = (Player) attacker;
             attackerPlayer.getActionSender().sendSound(combatSound);
@@ -164,6 +168,14 @@ public final class FightEvent extends DelayedEvent {
                     p.setHits(p.getMaxStat(3));
                     p.getActionSender().sendStat(3);
                     return;
+                }
+            }
+            if (opponent instanceof Npc) {
+            	Npc n = (Npc) opponent;
+            	
+            	if(invincibleMode) {
+                	n.setHits(n.getDef().getHits());
+                	return;
                 }
             }
             opponent.killedBy(attacker, false);

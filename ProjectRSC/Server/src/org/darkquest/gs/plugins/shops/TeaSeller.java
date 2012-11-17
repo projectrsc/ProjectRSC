@@ -7,7 +7,7 @@ import org.darkquest.gs.model.Item;
 import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
-import org.darkquest.gs.plugins.Scriptable;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.ShopInterface;
 import org.darkquest.gs.plugins.listeners.action.PickupListener;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
@@ -16,7 +16,7 @@ import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 import org.darkquest.gs.world.Shop;
 import org.darkquest.gs.world.World;
 
-public final class TeaSeller extends Scriptable implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener, PickupExecutiveListener, PickupListener {
+public final class TeaSeller extends ScriptablePlug implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener, PickupExecutiveListener, PickupListener {
 
 	private final Shop shop = new Shop(false, 30000, 100, 50, new InvItem(739, 20));
 	

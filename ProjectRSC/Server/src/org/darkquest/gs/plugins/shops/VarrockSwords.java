@@ -4,13 +4,13 @@ import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
-import org.darkquest.gs.plugins.Scriptable;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.ShopInterface;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 import org.darkquest.gs.world.Shop;
 
-public final class VarrockSwords extends Scriptable implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
+public final class VarrockSwords extends ScriptablePlug implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
 
 	private final Shop shop = new Shop(false, 30000, 110, 50, new InvItem(66, 5), new InvItem(1, 4), new InvItem(67, 4), new InvItem(424, 3), new InvItem(68, 3), new InvItem(69, 2), new InvItem(70, 4), new InvItem(71, 3), new InvItem(72, 3), new InvItem(425, 2), new InvItem(73, 2), new InvItem(74, 1), new InvItem(62, 10), new InvItem(28, 6), new InvItem(63, 5), new InvItem(423, 4), new InvItem(64, 3), new InvItem(65, 2));
 	

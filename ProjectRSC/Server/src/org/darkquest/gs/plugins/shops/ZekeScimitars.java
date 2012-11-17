@@ -4,13 +4,13 @@ import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
-import org.darkquest.gs.plugins.Scriptable;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.ShopInterface;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 import org.darkquest.gs.world.Shop;
 
-public final class ZekeScimitars extends Scriptable implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
+public final class ZekeScimitars extends ScriptablePlug implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
 
 	private final Shop shop = new Shop(false, 25000, 100, 50, new InvItem(82, 5), new InvItem(83, 3), new InvItem(84, 2), new InvItem(85, 1));
 	

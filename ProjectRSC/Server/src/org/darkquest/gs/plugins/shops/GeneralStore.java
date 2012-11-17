@@ -5,13 +5,13 @@ import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
 import org.darkquest.gs.model.Point;
-import org.darkquest.gs.plugins.Scriptable;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.ShopInterface;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 import org.darkquest.gs.world.Shop;
 
-public final class GeneralStore extends Scriptable implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
+public final class GeneralStore extends ScriptablePlug implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
 
 	private Shop baseShop = new Shop(true, 12400, 100, 40, new InvItem(135, 3), new InvItem(140, 2), new InvItem(144, 2), new InvItem(21, 2), new InvItem(166, 2), new InvItem(167, 2), new InvItem(168, 5), new InvItem(1263, 10));
 

@@ -2,6 +2,8 @@ package org.darkquest.gs.model;
 
 import java.net.InetSocketAddress;
 
+
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -25,6 +27,7 @@ import org.darkquest.gs.event.impl.RangeEvent;
 import org.darkquest.gs.external.AgilityCourseDef;
 import org.darkquest.gs.external.EntityHandler;
 import org.darkquest.gs.external.PrayerDef;
+import org.darkquest.gs.model.comp.mob.Scriptable;
 import org.darkquest.gs.phandler.client.WieldHandler;
 import org.darkquest.gs.plugins.PluginHandler;
 import org.darkquest.gs.plugins.Quest;
@@ -38,8 +41,6 @@ import org.darkquest.gs.world.Shop;
 import org.darkquest.gs.world.World;
 import org.jboss.netty.channel.Channel;
 
-import bsh.Interpreter;
-
 /**
  * A single player.
  */
@@ -49,27 +50,33 @@ public final class Player extends Mob {
 	public final static InvItem[] STARTER_ITEMS = 
 		{new InvItem(4), new InvItem(70), new InvItem(376), new InvItem(156), new InvItem(87), 
 		new InvItem(1263)};
+	
+	public enum SkillType { // Our skill set
+		ATTACK(0), DEFENSE(1), STRENGTH(2), HITS(3), RANGED(4),
+		PRAYER(5), MAGIC(6), COOKING(7), WOODCUT(8), FLETCHING(9),
+		FISHING(10), FIREMAKING(11), CRAFTING(12), SMITHING(13), MINING(14), HERBLAW(15),
+		AGILITY(16), THIEVING(17);
 
+		protected int stat = 0;
+
+		SkillType(int stat) {
+			this.stat = stat;
+		}
+
+		public int getSkill() { 
+			return stat; 
+		}
+	}
 	
+	public final Scriptable script = new Scriptable(this); 
+
 	public int click = -1;
-	
-	public Thread interpreterThread = null;
 	
 	public int lastOption = -2;
 	
 	public int lastMineTries = -1;
 	
 	public String[] lastOptions = null;
-	
-	public Interpreter interpreter = new Interpreter();
-
-	public Thread getInterpreterThread() {
-		return interpreterThread;
-	}
-
-	public void setInterpreterThread(Thread interpreterThread) {
-		this.interpreterThread = interpreterThread;
-	}
 
 	public int getLastOption() {
 		return lastOption;
@@ -85,14 +92,6 @@ public final class Player extends Mob {
 
 	public void setLastOptions(String[] lastOptions) {
 		this.lastOptions = lastOptions;
-	}
-
-	public Interpreter getInterpreter() {
-		return interpreter;
-	}
-
-	public void setInterpreter(Interpreter interpreter) {
-		this.interpreter = interpreter;
 	}
 
 	public long lastCommandUsed = System.currentTimeMillis();
@@ -1713,8 +1712,7 @@ public final class Player extends Mob {
 			usernameHash = DataConversions.usernameToHash(username);
 			this.username = DataConversions.hashToUsername(usernameHash);
 
-			World.getWorld().getServer().getLoginConnector().getActionSender()
-			.playerLogin(this);
+			World.getWorld().getServer().getLoginConnector().getActionSender().playerLogin(this);
 
 			World.getWorld().getDelayedEventHandler().add(new DelayedEvent(this, 60000) {
 
@@ -2959,7 +2957,7 @@ public final class Player extends Mob {
 	}
 
 	public void sendQuestComplete(int questId) { // REMEMBER THIS
-		world.getQuest(questId).handleReward();
+		world.getQuest(questId).handleReward(this);
 		actionSender.sendQuestPoints();
 	}
 
@@ -3008,5 +3006,8 @@ public final class Player extends Mob {
 		actionSender.sendFatigue(tempFatigue / 10);
 		World.getWorld().getDelayedEventHandler().add(sleepEvent);
 	}
-
+	
+	public Scriptable getScriptHelper() {
+		return script;
+	}
 }

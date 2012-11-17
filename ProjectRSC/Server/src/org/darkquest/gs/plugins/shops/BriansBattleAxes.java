@@ -4,13 +4,13 @@ import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
-import org.darkquest.gs.plugins.Scriptable;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.ShopInterface;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 import org.darkquest.gs.world.Shop;
 
-public final class BriansBattleAxes extends Scriptable implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
+public final class BriansBattleAxes extends ScriptablePlug implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
 
 	private final Shop shop = new Shop(false, 15000, 100, 50, new InvItem(205, 4), new InvItem(89, 3), new InvItem(90, 2), new InvItem(429, 1), new InvItem(91, 1), new InvItem(92, 1));
 	

@@ -2,6 +2,7 @@ package org.darkquest.gs;
 
 import java.io.IOException;
 
+
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
@@ -9,7 +10,6 @@ import org.darkquest.config.Constants;
 import org.darkquest.gs.connection.RSCConnectionHandler;
 import org.darkquest.gs.connection.RSCProtocolDecoder;
 import org.darkquest.gs.connection.RSCProtocolEncoder;
-import org.darkquest.gs.connection.filter.ConnectionFilter;
 import org.darkquest.gs.core.GameEngine;
 import org.darkquest.gs.core.LoginConnector;
 import org.darkquest.gs.event.DelayedEvent;
@@ -145,7 +145,6 @@ public final class Server {
 					ChannelPipeline pipeline = Channels.pipeline();
 					pipeline.addLast("decoder", new RSCProtocolDecoder());
 					pipeline.addLast("encoder", new RSCProtocolEncoder());
-					pipeline.addLast("throttle", ConnectionFilter.getInstance(Constants.GameServer.MAX_THRESHOLD));
 					pipeline.addLast("handler", new RSCConnectionHandler(engine));
 					return pipeline;
 				}

@@ -437,6 +437,7 @@ public class InvUseOnObject implements PacketHandler {
 						});
 						owner.getActionSender().sendMenu(options);
       				break;
+      				/*
                     case 52: // hopper
                         if (item.getID() == 29) {
 
@@ -454,7 +455,7 @@ public class InvUseOnObject implements PacketHandler {
                                 owner.getActionSender().sendInventory();
                             }
                             return;
-                        }
+                        } */
 
                     case 282: // Fountain of Heroes
                         if (item.getID() == 522) {

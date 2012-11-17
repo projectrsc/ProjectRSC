@@ -1,5 +1,8 @@
 package org.darkquest.gs.phandler;
 
+import java.net.InetSocketAddress;
+
+
 import org.darkquest.config.Constants;
 
 import org.darkquest.config.Formulae;
@@ -24,11 +27,12 @@ public final class PlayerLogin implements PacketHandler {
 	}
 
 	public void handlePacket(org.darkquest.gs.connection.Packet p, Channel session) throws Exception {		
-		byte loginCode = p.readByte();
+		byte loginCode = p.readByte();	
 		RSCPacketBuilder pb = new RSCPacketBuilder();
 		pb.setBare(true);
 		pb.addByte(loginCode);
 		player.getSession().write(pb.toPacket());
+		
 		try {
 			if (loginCode == 0 || loginCode == 1 || loginCode == 99) {
 				player.setOwner(p.readInt());

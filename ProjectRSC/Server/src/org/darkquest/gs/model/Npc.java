@@ -215,12 +215,12 @@ public class Npc extends Mob {
         this.timeout = timeout;
     }
 
-    public boolean isWeakend() {
-        return weakend;
+    public boolean isWeakend() { // should be weaken not weakend rofl
+        return weaken;
     }
 
-    public void setWeakend(boolean weakend) {
-        this.weakend = weakend;
+    public void setWeakend(boolean weaken) {
+        this.weaken = weaken;
     }
 
     public void setDef(NPCDef def) {
@@ -240,7 +240,7 @@ public class Npc extends Mob {
      */
     private DelayedEvent timeout = null;
 
-    public boolean weakend = false;
+    public boolean weaken = false;
 
     public int itemid = -1;
 
@@ -364,6 +364,10 @@ public class Npc extends Mob {
     public int getAttack() {
         return def.getAtt();
     }
+    
+    public void weakenAttack(int offset) {
+    	super.setCombatLevel(Formulae.getCombatLevel((def.getAtt() - offset), def.getDef(), def.getStr(), def.getHits(), 0, 0, 0));
+    }
 
     public Player getChasing() {
         return chasing;
@@ -380,6 +384,10 @@ public class Npc extends Mob {
     public int getDefense() {
         return def.getDef();
     }
+    
+    public void weakenDefense(int offset) {
+    	super.setCombatLevel(Formulae.getCombatLevel(def.getAtt(), (def.getDef() - offset), def.getStr(), def.getHits(), 0, 0, 0));
+    }
 
     public int getHits() {
         return curHits;
@@ -391,6 +399,10 @@ public class Npc extends Mob {
 
     public int getStrength() {
         return def.getStr();
+    }
+    
+    public void weakenStrength(int offset) {
+    	super.setCombatLevel(Formulae.getCombatLevel(def.getAtt(), def.getDef(), (def.getStr() - offset), def.getHits(), 0, 0, 0));
     }
 
     public int getWeaponAimPoints() {

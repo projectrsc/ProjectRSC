@@ -632,19 +632,19 @@ public class SpellHandler implements PacketHandler {
                             Npc np = (Npc) affectedMob;
                             if (spellID == 1) {
                                 if (np.confused) {
-                                    owner.getActionSender().sendMessage("Your oponent is already confused");
+                                    owner.getActionSender().sendMessage("Your opponent is already confused");
                                     return;
                                 }
                             }
                             if (spellID == 5) {
-                                if (np.weakend) {
-                                    owner.getActionSender().sendMessage("Your oponent is already weakend");
+                                if (np.weaken) {
+                                    owner.getActionSender().sendMessage("Your opponent is already weakend");
                                     return;
                                 }
                             }
                             if (spellID == 9) {
                                 if (np.cursed) {
-                                    owner.getActionSender().sendMessage("Your oponent is already cursed");
+                                    owner.getActionSender().sendMessage("Your opponent is already cursed");
                                     return;
                                 }
                             }
@@ -693,7 +693,7 @@ public class SpellHandler implements PacketHandler {
                             if (spellID == 1)
                                 n.confused = true;
                             else if (spellID == 5)
-                                n.weakend = true;
+                                n.weaken = true;
                             else if (spellID == 9)
                                 n.cursed = true;
                         }

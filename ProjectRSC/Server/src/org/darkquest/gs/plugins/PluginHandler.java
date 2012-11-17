@@ -196,7 +196,7 @@ public final class PluginHandler {
                 e.printStackTrace();
             }
         }
-        /*
+        
         File pyMiscDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/misc/");
         if(!pyMiscDir.exists()) {
             try {
@@ -205,7 +205,7 @@ public final class PluginHandler {
                 e.printStackTrace();
             }
         }
-        
+        /*
         File pyMinigamesDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/minigames/");
         if(!pyMinigamesDir.exists()) {
             try {
@@ -227,7 +227,7 @@ public final class PluginHandler {
         List<PlugInterface> plugs = new ArrayList<PlugInterface>();
         if(pyQuestsDir.listFiles().length > 0) {
         	plugs.addAll(psf.buildPlugs(pyNpcsDir));
-        	//plugs.addAll(psf.buildPlugs(pyMiscDir));
+        	plugs.addAll(psf.buildPlugs(pyMiscDir));
         	//plugs.addAll(psf.buildPlugs(pyMinigamesDir));
         	plugs.addAll(psf.buildPlugs(pySkillsDir));
         }
@@ -263,7 +263,7 @@ public final class PluginHandler {
      */
 
     public boolean blockDefaultAction(String interfce, final Object[] data, boolean callAction) {
-        boolean shouldBlock = false;
+        boolean shouldBlock = false, flagStop = false;
         queue.clear();
         System.out.println("Calling " + interfce);
         if (executivePlugins.containsKey(interfce + "ExecutiveListener")) {
@@ -282,6 +282,7 @@ public final class PluginHandler {
                     if(shouldBlock) {
                         System.out.println("Has blocking for this npc " + c.getClass().getName());
                         queue.put(interfce, c.getClass());
+                        flagStop = true;
                     } else if(queue.isEmpty()) { // if nothing is blocking, we can go to default
                     	queue.put(interfce, Default.class); // point here if nothing is blocking
                     }
@@ -294,7 +295,7 @@ public final class PluginHandler {
         
         if (callAction) // call action no matter what
             handleAction(interfce, data);
-        return false; // not sure why it matters if its false or true
+        return flagStop; // not sure why it matters if its false or true
     }
 
     public void handleAction(String interfce, final Object[] data) {

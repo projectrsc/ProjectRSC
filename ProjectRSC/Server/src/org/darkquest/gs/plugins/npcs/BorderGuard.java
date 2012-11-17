@@ -5,13 +5,13 @@ import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
 import org.darkquest.gs.model.Point;
-import org.darkquest.gs.plugins.Scriptable;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.listeners.action.ObjectActionListener;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 import org.darkquest.gs.plugins.listeners.executive.ObjectActionExecutiveListener;
 import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 
-public final class BorderGuard extends Scriptable implements TalkToNpcExecutiveListener, TalkToNpcListener, ObjectActionExecutiveListener, ObjectActionListener {
+public final class BorderGuard extends ScriptablePlug implements TalkToNpcExecutiveListener, TalkToNpcListener, ObjectActionExecutiveListener, ObjectActionListener {
 
 	@Override
 	public void onTalkToNpc(Player p, final Npc n) {

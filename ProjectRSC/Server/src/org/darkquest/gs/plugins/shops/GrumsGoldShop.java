@@ -4,13 +4,13 @@ import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
-import org.darkquest.gs.plugins.Scriptable;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.ShopInterface;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 import org.darkquest.gs.world.Shop;
 
-public final class GrumsGoldShop extends Scriptable implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
+public final class GrumsGoldShop extends ScriptablePlug implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
 
 	private final Shop shop = new Shop(false, 30000, 100, 50, new InvItem(283, 0), new InvItem(284, 0), new InvItem(285, 0), new InvItem(286, 0), new InvItem(287, 0), new InvItem(288, 0), new InvItem(289, 0), new InvItem(290, 0), new InvItem(291, 0), new InvItem(292, 0), new InvItem(301, 0), new InvItem(302, 0));
 	

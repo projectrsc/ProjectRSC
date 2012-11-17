@@ -4,11 +4,11 @@ import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
-import org.darkquest.gs.plugins.Scriptable;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 
-public final class Barmaid extends Scriptable implements TalkToNpcExecutiveListener, TalkToNpcListener {
+public final class Barmaid extends ScriptablePlug implements TalkToNpcExecutiveListener, TalkToNpcListener {
 	private final String notEnoughMoney = "Oh dear. I don't seem to have enough money";
 
 	@Override

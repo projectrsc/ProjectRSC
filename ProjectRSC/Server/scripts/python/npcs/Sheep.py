@@ -7,22 +7,31 @@ from org.darkquest.gs.plugins import PlugInterface
 A sheep
 '''
 class Sheep(PlugInterface, InvUseOnNpcListener, InvUseOnNpcExecutiveListener):
+    
+    SHEEP = 2
+    SHEARS = 144
+    WOOL = 145
 
     def onInvUseOnNpc(self, player, npc, item):
-        self.setParticipant(player)
+        script = player.getScriptHelper()
+        script.setActiveNpc(npc)
         
-        if item.getID() == 144:
-            self.displayMessage("You attempt to shear the sheep")
-            random = self.getRandom(0, 4)
-            self.showBubble(144)
-            self.sleep(2000)
-            if random != 0:
-                self.displayMessage("You get some wool")
-                self.addItem(145, 1)
-            else:
-                self.displayMessage("The sheep manages to get away from you!")
+        script.occupy()
+        script.displayMessage("You attempt to shear the sheep")
+        random = script.getRandom(0, 4)
+        script.showBubble(self.SHEARS)
+        script.sleep(2000)
+        script.faceNpc(npc)
+        
+        if random != 0:
+            script.displayMessage("You get some wool")
+            script.addItem(self.WOOL, 1)
+        else:
+            script.displayMessage("The sheep manages to get away from you!")
+            
+        script.release()
             
     def blockInvUseOnNpc(self, player, npc, item):
-        return npc.getID() == 2
+        return npc.getID() == self.SHEEP and item.getID() == self.SHEARS # REMOVE THE OBJECT IF ITS USED MORE 
     
         
