@@ -38,7 +38,7 @@ class JollyBoarBartender(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveLis
 				"guarded by vicious skeletal warriors",
 				"He said he found the entrance in a ruined town",
 				"deep in the woods to the west of here, behind the palace",
-				"Now how much faith you put in that story is up to you,"
+				"Now how much faith you put in that story is up to you,",
 				"but it probably wouldn't do any harm to have a look"
 			)
 			
