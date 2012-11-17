@@ -25,7 +25,6 @@ import org.darkquest.gs.states.Action;
 import org.darkquest.gs.states.CombatState;
 import org.darkquest.gs.tools.DataConversions;
 import org.darkquest.gs.world.World;
-import org.python.core.PyObject;
 
 public class Scriptable {
 	
@@ -38,6 +37,10 @@ public class Scriptable {
 	
 	public Scriptable(Player player) {
 		this.player = player;
+	}
+	
+	public Player getPlayer() {
+		return player;
 	}
 	
 	public int getQuestStage() {
@@ -368,10 +371,6 @@ public class Scriptable {
 		player.informGroupOfBubble(new Bubble(player, itemId));
 	}
 	
-	public int getRandom(int start, int n) {
-		return DataConversions.random(start, n);
-	}
-	
 	public void sendSound(String soundName) {
 		player.getActionSender().sendSound(soundName);
 	}
@@ -379,6 +378,10 @@ public class Scriptable {
 	public void sendSleep(boolean isBed) {
 		player.getActionSender().sendEnterSleep();
 		player.startSleepEvent(isBed);
+	}
+	
+	public GameObject createNewObject(GameObject object) {
+		return World.getWorld().getTile(object.getX(), object.getY()).getGameObject();
 	}
 	
 	public void spawnObject(int x, int y, int id, int direction, int type, boolean delay, GameObjectLoc loc, int respawnTime) {
@@ -389,6 +392,18 @@ public class Scriptable {
 		World.getWorld().registerGameObject(new GameObject(location, id, direction, type));
 		if(delayRespawn)
 			World.getWorld().delayedSpawnObject(loc, respawnTime);
+	}
+	
+	public int getRandom(int start, int n) {
+		return DataConversions.random(start, n);
+	}
+	
+	public int getTotalPlayers() {
+		return World.getWorld().countPlayers();
+	}
+	
+	public int getTotalNpcs() {
+		return World.getWorld().countNpcs();
 	}
 	
 	public void sleep(final int milliseconds) {
