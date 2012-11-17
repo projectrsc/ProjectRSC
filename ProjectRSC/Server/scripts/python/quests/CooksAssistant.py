@@ -69,7 +69,7 @@ class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUs
             , "it's the duke's bithday today", "i'm meant to be making him a big cake for this evening",
             "unfortunately, i've forgotten to buy some of the ingredients", "i'll never get them in time now",
             "i don't suppose you could help me?")
-        option = script.pickOption(self.cookRequestHelp_responses)
+        option = script.pickOption(self.cook_request_help_responses)
         if option == 0:
             script.sendNpcChat("oh thank you, thank you", "i need milk, eggs, and flour", "i'd be very grateful if you could get them to me")
             script.setQuestStage(1)
