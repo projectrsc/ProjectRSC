@@ -89,16 +89,16 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 		respawn = mining_def.getRespawnTime() * 1000
 		total_players = script.getTotalPlayers()
 		
-		if mining_def.getReqLevel() == 20 or mining_def.getReqLevel() == 40: # SILVER/GOLD
-			respawn = (2 - (total_players / 2000)) * 60000
-		elif mining_def.getReqLevel() == 30: # COAL
-			respawn = (60 - ((3 * total_players) / 200)) * 1000
-		elif mining_def.getReqLevel() == 55: # MITH
-			respawn = (4 - (total_players / 1000)) * 60000
-		elif mining_def.getReqLevel() == 70: # ADDY
-			respawn = (8 - (total_players / 500)) * 60000
-		elif mining_def.getReqLevel() == 85: # RUNE
-			respawn = (25 - (total_players / 160)) * 60000
+		#if mining_def.getReqLevel() == 20 or mining_def.getReqLevel() == 40: # SILVER/GOLD
+		#	respawn = (2 - (total_players / 2000)) * 60000
+		#elif mining_def.getReqLevel() == 30: # COAL
+		#	respawn = (60 - ((3 * total_players) / 200)) * 1000
+		#elif mining_def.getReqLevel() == 55: # MITH
+		#	respawn = (4 - (total_players / 1000)) * 60000
+		#elif mining_def.getReqLevel() == 70: # ADDY
+		#	respawn = (8 - (total_players / 500)) * 60000
+		#elif mining_def.getReqLevel() == 85: # RUNE
+		#	respawn = (25 - (total_players / 160)) * 60000
 		
 		return respawn
 	
