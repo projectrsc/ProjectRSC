@@ -2,9 +2,6 @@ package org.darkquest.gs.model.comp.mob;
 
 import org.darkquest.config.Formulae;
 
-
-import org.darkquest.gs.event.DelayedEvent;
-import org.darkquest.gs.event.ShortEvent;
 import org.darkquest.gs.event.SingleEvent;
 import org.darkquest.gs.event.impl.FightEvent;
 import org.darkquest.gs.external.EntityHandler;
@@ -331,6 +328,13 @@ public class Scriptable {
 			player.setSprite(Formulae.getDirection(n, player));
 			n.setSprite(Formulae.getDirection(player, n));
 		}
+	}
+	
+	public void damagePlayer(final int damage) {
+		player.setLastDamage(damage);
+		player.setHits(player.getHits() - damage);
+		player.getActionSender().sendStat(SkillType.HITS.getSkill());
+		player.informOfModifiedHits(player);
 	}
 
 	public void attackPlayer(final Npc npc) { 

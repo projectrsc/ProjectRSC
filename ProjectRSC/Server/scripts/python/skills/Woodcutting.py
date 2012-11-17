@@ -30,11 +30,12 @@ class Woodcutting(PlugInterface, ObjectActionListener, ObjectActionExecutiveList
 				axe_id = axe
 				break
 		
-		if axe_id < 0:
-			script.displayMessage("You need an axe to chop this tree down")
-			return
 		if player.getFatigue() >= 7500:
 			script.displayMessage("You are too tired to cut this tree")
+			return
+		
+		if axe_id < 0:
+			script.displayMessage("You need an axe to chop this tree down")
 			return
 		
 		axe_name = EntityHandler.getItemDef(axe_id).getName()
