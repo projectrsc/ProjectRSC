@@ -126,7 +126,7 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
                             script.removeItem(self.BEER, 1)
                             script.displayMessage("You give a beer to Dr Harlow")
                         else:
-                            script.sendNpcChat("I'll just go and buy one")
+                            script.sendPlayerChat("I'll just go and buy one")
         # END CODE HERE
         script.release()
     
@@ -202,7 +202,7 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
             script.sendPlayerChat("Thank you very much")
             script.setQuestStage(2)
         else:
-            script.sendNpcChat("I'll just go and buy one")
+            script.sendPlayerChat("I'll just go and buy one")
         script.release()
     
     def blockTalkToNpc(self, player, npc):
