@@ -668,6 +668,7 @@ public final class Formulae {
 	 /**
 	  * Should we get a log from the tree?
 	  */
+	 /*
 	 public static boolean getLog(ObjectWoodcuttingDef def, int woodcutLevel, int axeId) {
 		 int levelDiff = woodcutLevel - def.getReqLevel();
 		 if (levelDiff < 0) {
@@ -700,7 +701,7 @@ public final class Formulae {
 			 return true;
 		 }
 		 return DataConversions.percentChance(offsetToPercent(levelDiff));
-	 }
+	 } */
 
 	 /*
 	  * public static int calcFightHitWithNPC(Mob attacker, Mob defender) { int
@@ -789,6 +790,7 @@ public final class Formulae {
 	 /**
 	  * Should we can get an ore from the rock?
 	  */
+	 /*
 	 public static boolean getOre(ObjectMiningDef def, int miningLevel, int axeId) {
 
 		 int levelDiff = miningLevel - def.getReqLevel();
@@ -819,7 +821,7 @@ public final class Formulae {
 			 break;
 		 }
 		 return DataConversions.percentChance(offsetToPercent(levelDiff + bonus));
-	 }
+	 } */
 
 	 public static int getPotionDose(int id) {
 		 if (DataConversions.inArray(potions1Dose, id)) {

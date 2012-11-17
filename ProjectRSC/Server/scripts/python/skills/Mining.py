@@ -3,7 +3,8 @@ from org.darkquest.gs.plugins.listeners.executive import ObjectActionExecutiveLi
 from org.darkquest.gs.plugins import PlugInterface
 from org.darkquest.gs.external import EntityHandler, GameObjectLoc, ObjectMiningDef, ItemDef
 from org.darkquest.gs.model import Entity, Point
-from org.darkquest.config import Formulae, Constants
+from org.darkquest.config import Constants
+from org.darkquest.gs.tools import DataConversions
 
 '''
 @author: GORF
@@ -17,6 +18,7 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 	
 	REQ_USE_LEVELS = {1262:41, 1261:31, 1260:21, 1259:6, 1258:1, 156:1}
 	RETRIES = {1262:12, 1261:8, 1260:5, 1259:3, 1258:2, 156:1}
+	BONUS = {1262:12, 1261:10, 1260:8, 1259:6, 1258:4, 156:2}
 	
 	def onObjectAction(self, gameObject, command, player):
 		script = player.getScriptHelper()
@@ -102,6 +104,23 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 		
 		return respawn
 	
+	def getOre(self, script, mining_def, mining_level, axe_id):
+		 level_diff = mining_level - mining_def.getReqLevel()
+		 
+		 if level_diff > 50:
+			 return script.getRandom(0, 9) != 1
+			
+		 if level_diff < 0:
+			 return False
+		 
+		 bonus = self.BONUS[axe_id]
+		 level_diff = level_diff + bonus
+		 if level_diff > 40:
+		 	level_diff = 60
+		 else:
+		 	level_diff = 20 + level_diff
+		 return DataConversions.percentChance(level_diff)
+	
 	def handleMining(self, game_object, script, mining_def, axe_id, retries):
 		player = script.getPlayer()
 		if player.lastMineTries == -1: 
@@ -118,7 +137,7 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 		script.sleep(1500)
 		ore = script.getItem(mining_def.getOreId())
 		
-		if Formulae.getOre(mining_def, script.getCurrentLevel(player.SkillType.MINING), axe_id):
+		if self.getOre(script, mining_def, script.getCurrentLevel(player.SkillType.MINING), axe_id):
 			if script.getRandom(0, 200) == 0: # FOUND GEM
 				script.addItem(Formulae.getGem(), 1)
 				script.advanceStat(player.SkillType.MINING, 100, True)
