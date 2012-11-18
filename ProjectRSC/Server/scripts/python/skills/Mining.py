@@ -157,7 +157,7 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 					script.sleep(500)
 					self.handleMining(ore, script)
 		else:
-			script.displayMessage("You only succeed in scratching the rock.")
+			script.displayMessage("You only succeed in scratching the rock. ")
 			player.isMining(False)
 			script.sleep(500)
 			last_tries = player.lastMineTries
