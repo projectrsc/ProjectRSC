@@ -274,13 +274,13 @@ public final class PluginHandler {
                     for (Object o : data) {
                         dataClasses[i++] = o.getClass();
                     }
-                    System.out.println("Checking " + interfce + "ExecutiveListener");
+                    //System.out.println("Checking " + interfce + "ExecutiveListener");
                     Method m = c.getClass().getMethod("block" + interfce, dataClasses); // invoke
                     shouldBlock = (Boolean) m.invoke(c, data); // return where to block or not
                     
                     // Call this the internal pipeline
                     if(shouldBlock) {
-                        System.out.println("Has blocking for this npc " + c.getClass().getName());
+                        //System.out.println("Has blocking for this npc " + c.getClass().getName());
                         queue.put(interfce, c.getClass());
                         flagStop = true;
                     } else if(queue.isEmpty()) { // if nothing is blocking, we can go to default
@@ -323,7 +323,7 @@ public final class PluginHandler {
                     } 
                     
                     if(go) {
-                        System.out.println("INVOKING " + c.getClass().getName());
+                        //System.out.println("INVOKING " + c.getClass().getName());
                         FutureTask<Integer> task = new FutureTask<Integer>(new Callable<Integer>() {
 
                             @Override
