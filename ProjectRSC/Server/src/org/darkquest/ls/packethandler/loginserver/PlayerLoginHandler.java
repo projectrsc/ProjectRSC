@@ -36,9 +36,10 @@ public final class PlayerLoginHandler implements PacketHandler {
 			String pass = p.readString().trim();
 			byte loginCode = validatePlayer(user, pass, ip, world); 
 			
+			/*
 			if(ConnectionFilter.getInstance(0).isMaxed(DataConversions.IPToLong(ip))) {
 				loginCode = 8;
-			}
+			} */
 			
 			builder.setUID(uID);
 			if (loginCode == 0 || loginCode == 1 || loginCode == 99) {//
@@ -68,7 +69,7 @@ public final class PlayerLoginHandler implements PacketHandler {
 			if (packet != null) {
 				session.write(packet);
 			}
-			session.getParent().disconnect(); // We should try closing the channel immediately as its terminated 
+			//session.getParent().disconnect(); // We should try closing the channel immediately as its terminated 
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
