@@ -19,7 +19,7 @@ public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, In
     static int[] ids;
 
     static {
-        ids = new int[]{97, 11, 119, 274, 435, 491};
+        ids = new int[]{97, 11, 119, 435, 491};
         Arrays.sort(ids);
     }
 
@@ -297,7 +297,7 @@ public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, In
             return true;
         } */
 		final ItemCookingDef cookingDef = item.getCookingDef();
-		return cookingDef != null;
+		return cookingDef != null && Arrays.binarySearch(ids, obj.getID()) >= 0;
 	}
 
 	@Override
