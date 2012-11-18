@@ -1,7 +1,5 @@
 package org.darkquest.ls.packethandler.loginserver;
 
-import org.darkquest.config.Constants;
-
 import org.darkquest.ls.Server;
 import org.darkquest.ls.model.World;
 import org.darkquest.ls.net.LSPacket;
@@ -16,7 +14,6 @@ import org.jboss.netty.channel.Channel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map.Entry;
-import java.util.TimerTask;
 
 /**
  * TODO: Rewrite
@@ -46,7 +43,9 @@ public final class PlayerLoginHandler implements PacketHandler {
 			builder.setUID(uID);
 			if (loginCode == 0 || loginCode == 1 || loginCode == 99) {//
 				// START
-				ConnectionFilter.getInstance(0).incrementAndGet(DataConversions.IPToLong(ip));
+				if(ConnectionFilter.getInstance(0) != null) {
+					ConnectionFilter.getInstance(0).incrementAndGet(DataConversions.IPToLong(ip));
+				}
 				
 				//System.out.println("Size: " + ConnectionFilter.getInstance(0).getCurrentClients().size());
 				//System.out.println("Initial count: " + initialCount);
