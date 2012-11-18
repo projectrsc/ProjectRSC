@@ -44,7 +44,8 @@ public final class PlayerLoginHandler implements PacketHandler {
 			if (loginCode == 0 || loginCode == 1 || loginCode == 99) {//
 				// START
 				if(ConnectionFilter.getInstance(0) != null) {
-					ConnectionFilter.getInstance(0).incrementAndGet(DataConversions.IPToLong(ip));
+					int initialCount = ConnectionFilter.getInstance(0).incrementAndGet(DataConversions.IPToLong(ip));
+					System.out.println("Initial count: " + initialCount);
 				}
 				
 				//System.out.println("Size: " + ConnectionFilter.getInstance(0).getCurrentClients().size());
