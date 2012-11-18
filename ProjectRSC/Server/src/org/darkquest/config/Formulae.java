@@ -790,7 +790,7 @@ public final class Formulae {
 	 /**
 	  * Should we can get an ore from the rock?
 	  */
-	 /*
+	 
 	 public static boolean getOre(ObjectMiningDef def, int miningLevel, int axeId) {
 
 		 int levelDiff = miningLevel - def.getReqLevel();
@@ -821,7 +821,7 @@ public final class Formulae {
 			 break;
 		 }
 		 return DataConversions.percentChance(offsetToPercent(levelDiff + bonus));
-	 } */
+	 } 
 
 	 public static int getPotionDose(int id) {
 		 if (DataConversions.inArray(potions1Dose, id)) {
