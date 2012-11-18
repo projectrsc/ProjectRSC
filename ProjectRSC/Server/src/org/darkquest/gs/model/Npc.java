@@ -1,7 +1,7 @@
 package org.darkquest.gs.model;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,8 +23,6 @@ import org.darkquest.gs.world.World;
 
 
 public class Npc extends Mob {
-	
-	private volatile boolean eventExists = false;
 	
 	public void attack(final Player owner) {
 		
@@ -544,10 +542,11 @@ public class Npc extends Mob {
             blocker.setNpc(null);
             blocker = null;
         }
-
+        
+        /*
         if (timeout == null) {
             return;
-        }
+        } */
 
         goingToAttack = false;
         setBusy(false);
