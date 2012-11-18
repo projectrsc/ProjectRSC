@@ -43,10 +43,11 @@ public final class PlayerLoginHandler implements PacketHandler {
 			builder.setUID(uID);
 			if (loginCode == 0 || loginCode == 1 || loginCode == 99) {//
 				// START
+				/*
 				if(ConnectionFilter.getInstance(0) != null) {
 					int initialCount = ConnectionFilter.getInstance(0).incrementAndGet(DataConversions.IPToLong(ip));
 					System.out.println("Initial count: " + initialCount);
-				}
+				} */
 				
 				//System.out.println("Size: " + ConnectionFilter.getInstance(0).getCurrentClients().size());
 				//System.out.println("Initial count: " + initialCount);

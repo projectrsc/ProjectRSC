@@ -157,7 +157,7 @@ public final class Server {
 				ChannelPipeline pipeline = Channels.pipeline();
 				pipeline.addLast("decoder", decoder);
 				pipeline.addLast("encoder", encoder);
-				pipeline.addLast("throttle", ConnectionFilter.getInstance(Constants.GameServer.MAX_THRESHOLD));
+				//pipeline.addLast("throttle", ConnectionFilter.getInstance(Constants.GameServer.MAX_THRESHOLD));
 				pipeline.addLast("handler", handler);
 				return pipeline;
 			}
