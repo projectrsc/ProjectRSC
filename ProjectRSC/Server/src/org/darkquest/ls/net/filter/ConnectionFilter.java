@@ -60,6 +60,8 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 		if(i == null) {
 			count = 0;
 		} else {
+			if(count <= 0)
+				count = 0;
 			count = i - 1;
 		}
 		clientConnections.put(hash, count);
