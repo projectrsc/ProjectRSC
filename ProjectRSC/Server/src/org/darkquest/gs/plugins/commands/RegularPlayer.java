@@ -8,13 +8,10 @@ public final class RegularPlayer implements CommandListener {
 
 	@Override
 	public void onCommand(String command, String[] args, Player player) {
-		if(command.equals("online")) {
-			player.getActionSender().sendMessage("Online players: " + World.getWorld().getPlayers().size());
-			return;
-		}
 		if(command.equals("stuck")) {
 			if(!player.inCombat())
 				player.setBusy(false);
+			return;
 		}
 	}
 }
