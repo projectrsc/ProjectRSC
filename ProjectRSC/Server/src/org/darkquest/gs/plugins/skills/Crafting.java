@@ -9,10 +9,12 @@ import org.darkquest.gs.external.ItemGemDef;
 import org.darkquest.gs.model.*;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnItemListener;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnObjectListener;
+import org.darkquest.gs.plugins.listeners.executive.InvUseOnItemExecutiveListener;
+import org.darkquest.gs.plugins.listeners.executive.InvUseOnObjectExecutiveListener;
 import org.darkquest.gs.tools.DataConversions;
 import org.darkquest.gs.world.World;
 
-public class Crafting implements InvUseOnItemListener, InvUseOnObjectListener {
+public class Crafting implements InvUseOnItemListener, InvUseOnItemExecutiveListener, InvUseOnObjectListener, InvUseOnObjectExecutiveListener {
 
     /**
      * World instance
@@ -369,4 +371,43 @@ public class Crafting implements InvUseOnItemListener, InvUseOnObjectListener {
             p.informOfBubble(bubble);
         }
     }
+
+	@Override
+	public boolean blockInvUseOnItem(Player player, InvItem item1, InvItem item2) {
+		 	if (item1.getID() == 167) {
+	            return true;
+	        } else if (item2.getID() == 167) {
+	            return true;
+	        } else if (item1.getID() == 621) {
+	            return true;
+	        } else if (item2.getID() == 621) {
+	            return true;
+	        }
+	        if (item1.getID() == 39) {
+	            return true;
+	        } else if (item2.getID() == 39) {
+	            return true;
+	        } else if (item1.getID() == 207) {
+	            return true;
+	        } else if (item2.getID() == 207) {
+	            return true;
+	        } else if ((item1.getID() == 50 || item1.getID() == 141 || item1.getID() == 342)) {
+	            return true;
+	        } else if ((item2.getID() == 50 || item2.getID() == 141 || item2.getID() == 342)) {
+	            return true;
+	        }
+		return false;
+	}
+
+	@Override
+	public boolean blockInvUseOnObject(GameObject obj, InvItem item,
+			Player player) {
+		switch (obj.getID()) {
+		case 118:
+			return true;
+		case 813:
+			return true;
+		}
+		return false;
+	}
 }
