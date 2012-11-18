@@ -24,7 +24,14 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 	
 	def onObjectAction(self, gameObject, command, player):
 		script = player.getScriptHelper()
-		mining_def = EntityHandler.getObjectMiningDef(gameObject.getID())
+	
+		new_rock = script.createNewObject(gameObject)
+		
+		if new_rock == None:
+			return
+		
+		mining_def = EntityHandler.getObjectMiningDef(new_rock.getID())
+			
 		cur_level = script.getCurrentLevel(player.SkillType.MINING)
 		
 		if player.isBusy() or not player.withinRange(gameObject, 1):
@@ -68,7 +75,7 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 			script.release()
 			return
 
-		self.handleMining(gameObject, script, mining_def, axe_id, retries)
+		self.handleMining(gameObject, script, mining_def, axe_id, retries, new_rock)
 		script.release()
 	
 	def determineAxe(self, cur_level, script):
@@ -123,7 +130,7 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 		 	level_diff = 20 + level_diff
 		 return DataConversions.percentChance(level_diff)
 	
-	def handleMining(self, game_object, script, mining_def, axe_id, retries):
+	def handleMining(self, game_object, script, mining_def, axe_id, retries, new_rock):
 		player = script.getPlayer()
 		if player.lastMineTries == -1: 
 			player.lastMineTries = 0
@@ -132,9 +139,9 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 		script.sendSound("mine")
 		script.showBubble(1258)
 		script.displayMessage("You swing your pick at the rock...")
-		self.miningEvent(game_object, script, mining_def, axe_id, retries)
+		self.miningEvent(game_object, script, mining_def, axe_id, retries, new_rock)
 	
-	def miningEvent(self, game_object, script, mining_def, axe_id, retries):
+	def miningEvent(self, game_object, script, mining_def, axe_id, retries, new_rock):
 		player = script.getPlayer()
 		script.sleep(1500)
 		ore = script.getItem(mining_def.getOreId())
@@ -151,18 +158,19 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 				script.advanceStat(player.SkillType.MINING, mining_def.getExp(), True)
 				player.lastMineTries = -1
 				respawn = self.determineRespawn(mining_def, script)
-				new_rock = script.createNewObject(game_object)
 				script.spawnObject(game_object.getLocation(), 98, game_object.getDirection(), game_object.getType(), True, new_rock.getLoc(), respawn)
+				
 				if not player.getInventory().full() and Constants.GameServer.BATCH_EVENTS:
 					script.sleep(500)
 					self.handleMining(ore, script)
+				script.release()
 		else:
 			script.displayMessage("You only succeed in scratching the rock. ")
 			player.isMining(False)
 			script.sleep(500)
 			last_tries = player.lastMineTries
 			if last_tries < retries:
-				self.handleMining(game_object, script, mining_def, axe_id, retries)
+				self.handleMining(game_object, script, mining_def, axe_id, retries, new_rock)
 		script.release()
     
 	def blockObjectAction(self, gameObject, command, player):

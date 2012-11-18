@@ -389,6 +389,10 @@ public class Scriptable {
 		player.startSleepEvent(isBed);
 	}
 	
+	public boolean objectExists(GameObject object) {
+		return World.getWorld().getTile(object.getX(), object.getY()).hasGameObject();
+	}
+	
 	public GameObject createNewObject(GameObject object) {
 		return World.getWorld().getTile(object.getX(), object.getY()).getGameObject();
 	}
@@ -400,14 +404,7 @@ public class Scriptable {
 	public void spawnObject(Point location, int id, int direction, int type, boolean delayRespawn, final GameObjectLoc loc, final int respawnTime) {
 		World.getWorld().registerGameObject(new GameObject(location, id, direction, type));
 		if(delayRespawn) {
-			timer.schedule(new TimerTask() {
-
-				@Override
-				public void run() {
-					World.getWorld().registerGameObject(new GameObject(loc));
-				}
-				
-			}, respawnTime);
+			World.getWorld().delayedSpawnObject(loc, respawnTime);
 		}
 	}
 	
