@@ -2,14 +2,16 @@ from org.darkquest.gs.plugins.listeners.action import ObjectActionListener
 from org.darkquest.gs.plugins.listeners.executive import ObjectActionExecutiveListener
 from org.darkquest.gs.plugins import PlugInterface
 from org.darkquest.gs.external import EntityHandler, GameObjectLoc, ObjectMiningDef, ItemDef
-from org.darkquest.gs.model import Entity, Point
+from org.darkquest.gs.model import Entity, Point, GameObject
 from org.darkquest.config import Constants, Formulae
+from org.darkquest.gs.world import World
 from org.darkquest.gs.tools import DataConversions
 
 '''
 @author: GORF
 Mining skill
 '''
+
 class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener):
 	
 	VALID_ROCKS = [176, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 195, 196, 210, 211]
@@ -162,6 +164,6 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 			if last_tries < retries:
 				self.handleMining(game_object, script, mining_def, axe_id, retries)
 		script.release()
-         	
+    
 	def blockObjectAction(self, gameObject, command, player):
 		return command == "mine" or command == "prospect" and player.click == 1
