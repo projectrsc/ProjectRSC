@@ -550,8 +550,8 @@ public class Npc extends Mob {
 
         goingToAttack = false;
         setBusy(false);
-        timeout.stop();
-        timeout = null;
+        //timeout.stop();
+        //timeout = null;
     }
 
     public void updatePosition() {
