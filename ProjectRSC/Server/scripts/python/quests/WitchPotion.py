@@ -76,7 +76,7 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 				script.sendPlayerChat("Yes I have everything")
 				script.sendNpcChat("Excellent, can I have them then?")
 
-				script.displayMessage("You pass the ingredients to Hetty", "Hetty puts all the ingredients in her cauldron", 0)
+				script.displayMessage("You pass the ingredients to Hetty", "Hetty puts all the ingredients in her cauldron")
 				
 				for item in self.INGREDIENTS:
 					script.removeItem(item, 1)
@@ -113,7 +113,11 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 	
 	def onObjectAction(self, gameObject, command, player):
 		script = player.getScriptHelper()
-		stage = script.setActiveQuest(self)
+		
+		script.setActiveNpc(npc)
+		script.setActiveQuest(self)
+		stage = script.getQuestStage()
+
 		script.occupy()
 
 		if stage == 2:
