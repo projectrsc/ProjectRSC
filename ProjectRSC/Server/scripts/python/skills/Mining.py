@@ -3,7 +3,7 @@ from org.darkquest.gs.plugins.listeners.executive import ObjectActionExecutiveLi
 from org.darkquest.gs.plugins import PlugInterface
 from org.darkquest.gs.external import EntityHandler, GameObjectLoc, ObjectMiningDef, ItemDef
 from org.darkquest.gs.model import Entity, Point
-from org.darkquest.config import Constants
+from org.darkquest.config import Constants, Formulae
 from org.darkquest.gs.tools import DataConversions
 
 '''
