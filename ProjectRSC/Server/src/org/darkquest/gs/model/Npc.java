@@ -24,6 +24,8 @@ import org.darkquest.gs.world.World;
 
 public class Npc extends Mob {
 	
+	private volatile boolean eventExists = false;
+	
 	public void attack(final Player owner) {
 		
 		resetPath();
@@ -275,12 +277,11 @@ public class Npc extends Mob {
 
     }
 
-    public synchronized void blockedBy(Player player) {
+    public void blockedBy(Player player) {
         blocker = player;
         player.setNpc(this);
         setBusy(true);
-        boolean eventExists = false;
-
+        /*
         if (timeout != null) {
             ArrayList<DelayedEvent> events = World.getWorld().getDelayedEventHandler().getEvents();
 
@@ -293,6 +294,7 @@ public class Npc extends Mob {
                             // reset its
                             // delay time.
                             eventExists = true;
+                            System.out.println("Event exists..");
                         }
                     }
                     notifyAll();
@@ -304,8 +306,8 @@ public class Npc extends Mob {
         if (eventExists) {
             return;
         }
-
-        timeout = new DelayedEvent(null, 15000) {
+        
+        timeout = new DelayedEvent(null, 10000) {
 
             public Object getIdentifier() {
                 return BLOCKED_IDENTIFIER;
@@ -317,7 +319,7 @@ public class Npc extends Mob {
             }
         };
 
-        World.getWorld().getDelayedEventHandler().add(timeout);
+        World.getWorld().getDelayedEventHandler().add(timeout); */
     }
 
     private Player findVictim() {
