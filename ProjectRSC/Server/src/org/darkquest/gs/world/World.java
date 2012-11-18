@@ -35,8 +35,6 @@ public final class World {
 
 	private final List<QuestInterface> quests = new LinkedList<QuestInterface>();
 	
-	private final Timer timer = new Timer();
-	
 	/**
 	 * NpcScripts are stored in here
 	 */
@@ -190,21 +188,12 @@ public final class World {
 	 * Adds a DelayedEvent that will spawn a GameObject
 	 */
 	public void delayedSpawnObject(final GameObjectLoc loc, final int respawnTime) {
-		timer.schedule(new TimerTask() {
-
-			@Override
-			public void run() {
-				World.getWorld().registerGameObject(new GameObject(loc));
-			}
-			
-		}, respawnTime);
-		/*
 		delayedEventHandler.add(new SingleEvent(null, respawnTime) {
 
 			public void action() {
 				registerGameObject(new GameObject(loc));
 			}
-		}); */
+		}); 
 	}
 
 	/**
