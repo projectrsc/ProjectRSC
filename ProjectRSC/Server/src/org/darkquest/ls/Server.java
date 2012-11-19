@@ -2,6 +2,7 @@ package org.darkquest.ls;
 
 import java.io.File;
 
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
@@ -9,15 +10,11 @@ import java.util.Collection;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
 
-import org.darkquest.config.Constants;
-import org.darkquest.ls.codec.FProtocolDecoder;
-import org.darkquest.ls.codec.FProtocolEncoder;
 import org.darkquest.ls.codec.LSProtocolDecoder;
 import org.darkquest.ls.codec.LSProtocolEncoder;
 import org.darkquest.ls.model.PlayerSave;
 import org.darkquest.ls.model.World;
 import org.darkquest.ls.net.DatabaseConnection;
-import org.darkquest.ls.net.FConnectionHandler;
 import org.darkquest.ls.net.LSConnectionHandler;
 import org.darkquest.ls.net.filter.ConnectionFilter;
 import org.darkquest.ls.util.Config;
@@ -135,7 +132,8 @@ public final class Server {
 		} finally {
 			print("COMPLETE", true);
 		}
-
+		
+		/*
 		try {
 			print("Initializing Frontend Listener", false);
 			frontendAcceptor = createListener(Config.QUERY_IP, Config.QUERY_PORT, new FConnectionHandler(engine), new FProtocolEncoder(), new FProtocolDecoder());
@@ -144,7 +142,7 @@ public final class Server {
 			e.printStackTrace();
 		} finally {
 			print("COMPLETE", true);
-		}
+		} */
 
 		print("\t*** Login Server is ONLINE ***", true);
 	}
