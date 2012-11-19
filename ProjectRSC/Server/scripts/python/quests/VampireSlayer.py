@@ -166,6 +166,7 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
                 fightEvent.setOpponentInvincible(False)
                 script.removeItem(self.STAKE, 1)
                 script.displayMessage("You hammer the stake into the vampire chest")
+                script.setQuestStage(3)
                 break
             elif script.isWielding(self.STAKE) and not script.hasItem(self.HAMMER) and npc.getHits() > 10:
                 script.displayMessage("You are unable to push the stake far in enough, the stake breaks!")
@@ -227,7 +228,7 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
         script = player.getScriptHelper()
         script.setActiveQuest(self)
         stage = script.getQuestStage()
-        return npc.getID() == self.COUNT_DRAYNOR and stage == 2
+        return npc.getID() == self.COUNT_DRAYNOR and stage == 3
     
     def blockObjectAction(self, gameObject, command, player): # WE MUST OVERRIDE THE BLOCKING FOR RANDOM OJBS
         script = player.getScriptHelper()
