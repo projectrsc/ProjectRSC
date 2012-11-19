@@ -255,7 +255,9 @@ public final class Admins implements CommandListener {
 					} catch (Exception e) {
 						e.printStackTrace();
 					} finally {
-						player.getActionSender().sendQuestInfo();
+						for(Player pl : World.getWorld().getPlayers()) {
+							pl.getActionSender().sendQuestInfo();
+						}
 						if(!PluginHandler.getPluginHandler().getPythonScriptFactory().getErrorLog().isEmpty()) {
 							failed = true;
 							String errorFound = "@cya@[@whi@DEBUGGER v1@cya@]: ";
