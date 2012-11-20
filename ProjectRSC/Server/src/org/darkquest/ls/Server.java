@@ -87,8 +87,8 @@ public final class Server {
 			print("COMPLETE", true);
 		}
 		
-		print("Creating Monitor...", false);
-		Monitor.getInstance();
+		//print("Creating Monitor...", false);
+		//Monitor.getInstance();
 		print("COMPLETE", true);
 
 		Server.getServer();
