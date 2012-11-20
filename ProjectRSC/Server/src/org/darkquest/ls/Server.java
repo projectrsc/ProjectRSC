@@ -76,9 +76,6 @@ public final class Server {
 		print("Connecting SQL...", false);
 		db = new DatabaseConnection();
 		print("COMPLETE", true);
-		print("Creating Monitor...", false);
-		Monitor.getInstance();
-		print("COMPLETE", true);
 
 		try {
 			print("Clearing Online Characters", false);
@@ -89,6 +86,10 @@ public final class Server {
 		} finally {
 			print("COMPLETE", true);
 		}
+		
+		print("Creating Monitor...", false);
+		Monitor.getInstance();
+		print("COMPLETE", true);
 
 		Server.getServer();
 
