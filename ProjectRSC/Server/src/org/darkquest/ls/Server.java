@@ -17,6 +17,7 @@ import org.darkquest.ls.model.PlayerSave;
 import org.darkquest.ls.model.World;
 import org.darkquest.ls.net.DatabaseConnection;
 import org.darkquest.ls.net.LSConnectionHandler;
+import org.darkquest.ls.net.monitor.Monitor;
 import org.darkquest.ls.util.Config;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -66,13 +67,17 @@ public final class Server {
 			}
 		}
 		System.out.printf("\t*** ProjectRSC Login Server ***\n\n");
-
+		
+		// TODO: Organize this rofl
 
 		print("Loading Config...", false);
 		Config.initConfig(configFile);
 		print("COMPLETE", true);
 		print("Connecting SQL...", false);
 		db = new DatabaseConnection();
+		print("COMPLETE", true);
+		print("Creating Monitor...", false);
+		Monitor.getInstance();
 		print("COMPLETE", true);
 
 		try {
