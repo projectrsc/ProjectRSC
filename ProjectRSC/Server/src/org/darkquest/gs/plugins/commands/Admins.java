@@ -123,8 +123,8 @@ public final class Admins implements CommandListener {
 			String ip = args[0];
 			long hashed = DataConversions.IPToLong(ip);
 			// NEED TO CREATE A PACKET FOR THIS EVENT TO HAPPEN
-			if(ConnectionFilter.getInstance(0).getCurrentClients().containsKey(hashed)) {
-				ConnectionFilter.getInstance(0).getCurrentClients().remove(hashed);
+			if(ConnectionFilter.getInstance().getCurrentClients().containsKey(hashed)) {
+				ConnectionFilter.getInstance().getCurrentClients().remove(hashed);
 				player.getActionSender().sendMessage("Removed " + ip + " from filter");
 			} else {
 				player.getActionSender().sendMessage(ip + " does not exist");

@@ -27,7 +27,6 @@ public final class Constants {
         public static int WORLD_NUMBER = 0;
 		
 		
-
         /**
          * the client version needed for login
          */
@@ -119,10 +118,10 @@ public final class Constants {
         public static String SCRIPTS_DIR = "../" + File.separator + "scripts";
         
         /**
-         * Connection limit
+         * Connection threshold before blacklisting
          */
         
-        public static final int MAX_THRESHOLD = 3;
+        public static final int MAX_THRESHOLD = 5;
         
         /**
          * when the server was started
@@ -165,7 +164,6 @@ public final class Constants {
             SERVER_IP = props.getProperty("server_ip");
             SERVER_PORT = Integer.parseInt(props.getProperty("server_port"));
             SERVER_LOCATION = props.getProperty("server_location");
-SCRIPTS_DIR = props.getProperty("scripts_dir");
             MYSQL_USER = props.getProperty("mysql_user");
             MYSQL_PASS = props.getProperty("mysql_pass");
             MYSQL_HOST = props.getProperty("mysql_host");
