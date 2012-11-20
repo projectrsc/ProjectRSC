@@ -4,9 +4,9 @@ import java.net.InetSocketAddress;
 
 
 
+
 import org.darkquest.ls.model.World;
 import org.darkquest.ls.net.Packet;
-import org.darkquest.ls.net.filter.ConnectionFilter;
 import org.darkquest.ls.packethandler.PacketHandler;
 import org.darkquest.ls.util.DataConversions;
 import org.jboss.netty.channel.Channel;

@@ -3,6 +3,7 @@ package org.darkquest.ls;
 import java.io.File;
 
 
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
@@ -16,7 +17,6 @@ import org.darkquest.ls.model.PlayerSave;
 import org.darkquest.ls.model.World;
 import org.darkquest.ls.net.DatabaseConnection;
 import org.darkquest.ls.net.LSConnectionHandler;
-import org.darkquest.ls.net.filter.ConnectionFilter;
 import org.darkquest.ls.util.Config;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -155,7 +155,6 @@ public final class Server {
 				ChannelPipeline pipeline = Channels.pipeline();
 				pipeline.addLast("decoder", decoder);
 				pipeline.addLast("encoder", encoder);
-				//pipeline.addLast("throttle", ConnectionFilter.getInstance(Constants.GameServer.MAX_THRESHOLD));
 				pipeline.addLast("handler", handler);
 				return pipeline;
 			}

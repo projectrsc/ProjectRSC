@@ -2,6 +2,7 @@ package org.darkquest.gs.plugins.commands;
 
 import java.sql.ResultSet;
 
+
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.darkquest.config.Constants;
 import org.darkquest.config.Formulae;
+import org.darkquest.gs.connection.filter.ConnectionFilter;
 import org.darkquest.gs.db.DatabaseManager;
 import org.darkquest.gs.db.query.StaffLog;
 import org.darkquest.gs.event.DelayedEvent;
@@ -29,7 +31,6 @@ import org.darkquest.gs.tools.DataConversions;
 import org.darkquest.gs.world.ActiveTile;
 import org.darkquest.gs.world.TileValue;
 import org.darkquest.gs.world.World;
-import org.darkquest.ls.net.filter.ConnectionFilter;
 
 public final class Admins implements CommandListener {
 

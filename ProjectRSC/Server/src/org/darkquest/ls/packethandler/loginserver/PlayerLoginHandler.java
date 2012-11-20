@@ -1,10 +1,10 @@
 package org.darkquest.ls.packethandler.loginserver;
 
 import org.darkquest.ls.Server;
+
 import org.darkquest.ls.model.World;
 import org.darkquest.ls.net.LSPacket;
 import org.darkquest.ls.net.Packet;
-import org.darkquest.ls.net.filter.ConnectionFilter;
 import org.darkquest.ls.packetbuilder.loginserver.PlayerLoginPacketBuilder;
 import org.darkquest.ls.packethandler.PacketHandler;
 import org.darkquest.ls.util.Config;

@@ -1,4 +1,4 @@
-package org.darkquest.ls.net.filter;
+package org.darkquest.gs.connection.filter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
