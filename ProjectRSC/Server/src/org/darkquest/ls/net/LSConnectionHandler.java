@@ -32,11 +32,11 @@ public class LSConnectionHandler extends SimpleChannelHandler {
 	@Override
 	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
 		String ip = ((InetSocketAddress) ctx.getChannel().getRemoteAddress()).getAddress().getHostAddress();
-
+		/*
 		if(!ip.equalsIgnoreCase("127.0.0.1") && Config.LS_IP.equalsIgnoreCase("localhost")) {
 			ctx.getChannel().disconnect();
 			return;
-		}
+		} */
 		
 		Channel session = ctx.getChannel();
 		session.setAttachment(session);
