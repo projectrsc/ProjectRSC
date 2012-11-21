@@ -113,8 +113,7 @@ class WitchPotion(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, ObjectAc
 	
 	def onObjectAction(self, gameObject, command, player):
 		script = player.getScriptHelper()
-		
-		script.setActiveNpc(npc)
+
 		script.setActiveQuest(self)
 		stage = script.getQuestStage()
 
