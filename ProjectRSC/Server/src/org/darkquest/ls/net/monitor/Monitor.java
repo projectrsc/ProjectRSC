@@ -49,6 +49,10 @@ public final class Monitor implements ActionListener {
 		successDecrement(encoded);
 	}
 	
+	public void setCount(final long hash, int count) {
+		successfulAttempts.put(hash, count);
+	}
+	
 	public void successIncrement(final long hash) {
 		final int count;
 		

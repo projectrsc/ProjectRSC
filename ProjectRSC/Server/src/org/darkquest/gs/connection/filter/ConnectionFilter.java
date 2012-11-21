@@ -64,7 +64,7 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 		if(count > maxAllowed && currentBans.contains(encoded)) { // should not happen
 			ctx.getChannel().disconnect();
 			return;
-		} else if(count > maxAllowed && invalidAttempts.containsKey(encoded)) { // timeout and wait 5 minutes
+		} /*else if(count > maxAllowed && invalidAttempts.containsKey(encoded)) { // timeout and wait 5 minutes
 			TimerTask currentCancelTask = cancelQueue.get(encoded);
 			
 			if(currentCancelTask != null) {
@@ -75,7 +75,6 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 
 				@Override
 				public void run() {
-					//System.out.println("Removing");
 					invalidAttempts.remove(encoded);
 					clientConnections.remove(encoded);
 					cancelQueue.remove(encoded);
@@ -86,8 +85,10 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 			cancelQueue.put(encoded, currentCancelTask);
 			ctx.getChannel().disconnect();
 			return;
-		} else if(count > maxAllowed) { // send to blacklist
-			currentBans.add(encoded);
+		} */else if(count > maxAllowed) { // send to blacklist
+			if(!currentBans.contains(encoded)) {
+				currentBans.add(encoded);
+			}
 			toBlacklist(ip, true);// add to blacklist
 	        ctx.getChannel().disconnect();
 			return;
@@ -102,13 +103,12 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 	public void processCleanLogin(Channel channel, boolean isInvalid) {
 		long encoded = DataConversions.IPToLong(((InetSocketAddress) channel.getRemoteAddress()).getAddress().getHostAddress());
 		
-		if(isInvalid) {
-			incrementAndGet(encoded, true);
-		} else { // just remove we can assume its a clean login
-			decrementAndGet(encoded, false);
+		//isInvalid incrementAndGet(encoded, true);
+		
+		decrementAndGet(encoded, false);
 			
-			if(getCurrentAttempts().containsKey(encoded)) // Remove any previous attempts
-				getCurrentAttempts().remove(encoded);
+		if(getCurrentAttempts().containsKey(encoded)) {// Remove any previous attempts
+			getCurrentAttempts().remove(encoded);
 		}
 	}
 	
@@ -122,6 +122,10 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 	
 	public ArrayList<Long> getCurrentBans() {
 		return currentBans;
+	}
+	
+	public void adjustLimit(int nLimit) {
+		this.maxAllowed = nLimit;
 	}
 	
 	public void setTo(final long hash, final int count, final boolean isInvalid) {
@@ -154,8 +158,6 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 			}
 			System.out.println("Adding " + ip + " to blacklist");
 			Runtime.getRuntime().exec(Constants.GameServer.BAN_LOCATION + " " + (ban ? "ban " : "unban ") + ip); //ban.sh with args <ban/unban/unbanall> <ip>
-			if(!ban)
-				currentBans.remove(DataConversions.IPToLong(ip));
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

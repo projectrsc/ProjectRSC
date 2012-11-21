@@ -666,19 +666,17 @@ public final class Player extends Mob {
 				return false;
 			}
 
-			if ((inCombat() && isDueling())
-					&& (victim.inCombat() && victim.isDueling())) {
+			if ((inCombat() && isDueling()) && (victim.inCombat() && victim.isDueling())) {
 				Player opponent = (Player) getOpponent();
 				if (opponent != null && victim.equals(opponent)) {
 					return true;
 				}
 			}
-			if (System.currentTimeMillis() - mob.getCombatTimer() < (mob
-					.getCombatState() == CombatState.RUNNING
+			if (System.currentTimeMillis() - mob.getCombatTimer() < (mob.getCombatState() == CombatState.RUNNING
 					|| mob.getCombatState() == CombatState.WAITING ? 3000 : 500)
 					&& !mob.inCombat()) {
 				return false;
-			}
+			} 
 			int myWildLvl = getLocation().wildernessLevel();
 			int victimWildLvl = victim.getLocation().wildernessLevel();
 			if (myWildLvl < 1 || victimWildLvl < 1) {
@@ -1809,7 +1807,7 @@ public final class Player extends Mob {
 
 	public void removePrayerDrain(int prayerID) {
 		//addPrayerDrain(prayerID);
-		drainer.setDelay(240000);
+		drainer.setDelay(0);
 	}
 
 	public void removeSkull() {

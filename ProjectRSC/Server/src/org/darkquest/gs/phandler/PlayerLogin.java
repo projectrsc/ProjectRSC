@@ -236,9 +236,10 @@ public final class PlayerLogin implements PacketHandler {
 				PluginHandler.getPluginHandler().handleAction("PlayerLogin", new Object[]{player});
 			} else {
 				System.out.println("Not clean login");
+				/*
 				if(ConnectionFilter.getInstance() != null) {
 					ConnectionFilter.getInstance().processCleanLogin(session, true);
-				}
+				} */
 				player.destroy(true);
 			}
 		} catch(Exception e) {

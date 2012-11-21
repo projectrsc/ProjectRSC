@@ -123,11 +123,18 @@ public final class Admins implements CommandListener {
 			String ip = args[0];
 			long hashed = DataConversions.IPToLong(ip);
 			// NEED TO CREATE A PACKET FOR THIS EVENT TO HAPPEN
-			if(ConnectionFilter.getInstance().getCurrentBans().contains(hashed)) {
+			if(ConnectionFilter.getInstance() != null && ConnectionFilter.getInstance().getCurrentBans().contains(hashed)) {
 				ConnectionFilter.getInstance().toBlacklist(ip, false);
+				ConnectionFilter.getInstance().getCurrentClients().remove(hashed);
+				ConnectionFilter.getInstance().getCurrentBans().remove(hashed);
 				player.getActionSender().sendMessage("Removed " + ip + " from filter");
 			} else {
 				player.getActionSender().sendMessage(ip + " does not exist");
+			}
+		} else if (command.equalsIgnoreCase("raiselimit")) { 
+			if(ConnectionFilter.getInstance() != null) {
+				ConnectionFilter.getInstance().adjustLimit(Integer.parseInt(args[0]));
+				player.getActionSender().sendMessage("Adjusted threshold limit to: " + args[0]);
 			}
 		} else if (command.equals("info")) {
 			if (args.length != 1) {
@@ -348,7 +355,7 @@ public final class Admins implements CommandListener {
 			} catch (SQLException e) {
 				player.getActionSender().sendMessage(COMMAND_PREFIX + "A MySQL error has occured! " + e.getMessage());
 			}
-		} /*else if(command.equals("item")) { //DEV ONLY
+		} /* else if(command.equals("item")) { //DEV ONLY
 			int item = Integer.parseInt(args[0]);
 			int amt = Integer.parseInt(args[1]);
 			player.getInventory().add(new InvItem(item, amt));
