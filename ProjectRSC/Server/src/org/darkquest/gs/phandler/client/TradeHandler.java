@@ -65,6 +65,10 @@ public class TradeHandler implements PacketHandler {
                     player.getActionSender().sendMessage("This player has trade requests blocked.");
                     return;
                 }
+                
+                if(!affectedPlayer.withinRange(player.getLocation(), 3)) { // if the person we're trading is not within 3 sqs
+                	return;
+                }
 
                 player.setWishToTrade(affectedPlayer);
                 player.getActionSender().sendMessage(affectedPlayer.isTrading() ? affectedPlayer.getUsername() + " is already in a trade" : "Sending trade request");
