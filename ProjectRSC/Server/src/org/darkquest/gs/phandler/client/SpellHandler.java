@@ -1004,7 +1004,6 @@ public class SpellHandler implements PacketHandler {
                         }
 
                     default:
-                    	System.out.println("Shine bright");
                         if (!checkAndRemoveRunes(owner, spell)) {
                             return;
                         } 
