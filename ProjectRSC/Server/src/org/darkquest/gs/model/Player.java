@@ -1806,8 +1806,7 @@ public final class Player extends Mob {
 	}
 
 	public void removePrayerDrain(int prayerID) {
-		//addPrayerDrain(prayerID);
-		drainer.setDelay(0);
+		addPrayerDrain(prayerID);
 	}
 
 	public void removeSkull() {
@@ -2002,7 +2001,6 @@ public final class Player extends Mob {
 	}// destroy
 
 	public void save() {
-
 		SavePacketBuilder builder = new SavePacketBuilder();
 		builder.setPlayer(this);
 		LSPacket temp = builder.getPacket();
