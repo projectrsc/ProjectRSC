@@ -38,14 +38,14 @@ public final class Monitor implements ActionListener {
 	@Override
 	public void onLogin(Channel channel) {
 		long encoded = DataConversions.IPToLong(((InetSocketAddress) channel.getRemoteAddress()).getAddress().getHostAddress());
-		System.out.println("PROCESS LOGIN");
+		//System.out.println("PROCESS LOGIN");
 		successIncrement(encoded);
 	}
 
 	@Override
 	public void onLogout(Channel channel) {
 		long encoded = DataConversions.IPToLong(((InetSocketAddress) channel.getRemoteAddress()).getAddress().getHostAddress());
-		System.out.println("PROCESS LOGOUT");
+		//System.out.println("PROCESS LOGOUT");
 		successDecrement(encoded);
 	}
 	
@@ -59,7 +59,7 @@ public final class Monitor implements ActionListener {
 		} else {
 			count = i + 1;
 		}
-		System.out.println("current success: " + count);
+		
 		successfulAttempts.put(hash, count);
 	}
 	

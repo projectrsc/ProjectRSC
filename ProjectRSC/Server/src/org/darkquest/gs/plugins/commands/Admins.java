@@ -123,8 +123,8 @@ public final class Admins implements CommandListener {
 			String ip = args[0];
 			long hashed = DataConversions.IPToLong(ip);
 			// NEED TO CREATE A PACKET FOR THIS EVENT TO HAPPEN
-			if(ConnectionFilter.getInstance().getCurrentClients().containsKey(hashed)) {
-				ConnectionFilter.getInstance().getCurrentClients().remove(hashed);
+			if(ConnectionFilter.getInstance().getCurrentBans().contains(hashed)) {
+				ConnectionFilter.getInstance().toBlacklist(ip, false);
 				player.getActionSender().sendMessage("Removed " + ip + " from filter");
 			} else {
 				player.getActionSender().sendMessage(ip + " does not exist");
@@ -252,6 +252,11 @@ public final class Admins implements CommandListener {
 				player.getActionSender().sendMessage("Reloading all script factories...");
 				if(PluginHandler.getPluginHandler().getPythonScriptFactory().canReload())
 					try {
+						for(Player pl : World.getWorld().getPlayers()) {
+							pl.setBusy(true);
+							pl.getActionSender().sendMessage("A magical force stops you momentarily...");
+							pl.setBusy(false);
+						}
 						PluginHandler.getPluginHandler().loadPythonScripts();
 					} catch (Exception e) {
 						e.printStackTrace();

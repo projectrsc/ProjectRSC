@@ -113,6 +113,11 @@ public final class Constants {
         //public static String CONFIG_DIR = "conf" + File.separator + "server"; // GORF ONLY
         
         /**
+         * Ban location
+         */
+        public static String BAN_LOCATION = "../" + File.separator + "ban.sh";
+        
+        /**
          * Script location
          */
         public static String SCRIPTS_DIR = "../" + File.separator + "scripts";
@@ -184,6 +189,7 @@ public final class Constants {
 
             Bank.MAX_SIZE = Integer.parseInt(props.getProperty("max_" + (MEMBER_WORLD ? "members_" : "") + "bank_size"));
             
+            BAN_LOCATION = props.getProperty("ban_location"); 
             SCRIPTS_DIR = props.getProperty("scripts_dir");
             
             START_TIME = System.currentTimeMillis();

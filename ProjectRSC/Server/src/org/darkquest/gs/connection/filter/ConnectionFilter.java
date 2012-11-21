@@ -1,5 +1,6 @@
 package org.darkquest.gs.connection.filter;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.darkquest.config.Constants;
 import org.darkquest.ls.util.DataConversions;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -49,6 +51,7 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 		this.invalidAttempts = new ConcurrentHashMap<Long, Integer>(); // monitors invalid attempts (or ones that werent intentional)
 		this.cancelQueue = new ConcurrentHashMap<Long, TimerTask>(); // monitors scheduled cancellations
 		this.currentBans = new ArrayList<Long>();
+		this.clearBlacklist();
 	}
 	
 	@Override
@@ -72,7 +75,7 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 
 				@Override
 				public void run() {
-					System.out.println("Removing");
+					//System.out.println("Removing");
 					invalidAttempts.remove(encoded);
 					clientConnections.remove(encoded);
 					cancelQueue.remove(encoded);
@@ -85,6 +88,7 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 			return;
 		} else if(count > maxAllowed) { // send to blacklist
 			currentBans.add(encoded);
+			toBlacklist(ip, true);// add to blacklist
 	        ctx.getChannel().disconnect();
 			return;
 		}
@@ -101,12 +105,10 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 		if(isInvalid) {
 			incrementAndGet(encoded, true);
 		} else { // just remove we can assume its a clean login
-			int count = decrementAndGet(encoded, false);
+			decrementAndGet(encoded, false);
 			
 			if(getCurrentAttempts().containsKey(encoded)) // Remove any previous attempts
 				getCurrentAttempts().remove(encoded);
-			
-			System.out.println("De count: " + count); 
 		}
 	}
 	
@@ -118,11 +120,45 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 		return invalidAttempts;
 	}
 	
+	public ArrayList<Long> getCurrentBans() {
+		return currentBans;
+	}
+	
 	public void setTo(final long hash, final int count, final boolean isInvalid) {
 		if(isInvalid)
 			invalidAttempts.put(hash, count);
 		else
 			clientConnections.put(hash, count);
+	}
+	
+	public void clearBlacklist() {
+		try {
+			File f = new File(Constants.GameServer.BAN_LOCATION);
+			if(!f.exists()) {
+				System.out.println("Error: No ban script found at " + Constants.GameServer.BAN_LOCATION);
+				return;
+			}
+			System.out.println("Cleaned blacklist");
+			Runtime.getRuntime().exec(Constants.GameServer.BAN_LOCATION + " unbanall"); //ban.sh with args <ban/unban/unbanall> <ip>
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void toBlacklist(String ip, boolean ban) {
+		try {
+			File f = new File(Constants.GameServer.BAN_LOCATION);
+			if(!f.exists()) {
+				System.out.println("Error: No ban script found at " + Constants.GameServer.BAN_LOCATION);
+				return;
+			}
+			System.out.println("Adding " + ip + " to blacklist");
+			Runtime.getRuntime().exec(Constants.GameServer.BAN_LOCATION + " " + (ban ? "ban " : "unban ") + ip); //ban.sh with args <ban/unban/unbanall> <ip>
+			if(!ban)
+				currentBans.remove(DataConversions.IPToLong(ip));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private int incrementAndGet(long hash, boolean isInvalid) {
