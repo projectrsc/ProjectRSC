@@ -53,7 +53,6 @@ public final class RSCConnectionHandler extends IdleStateAwareChannelHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
     	//e.getCause().printStackTrace();
-         
     }
 
     /**
@@ -94,7 +93,8 @@ public final class RSCConnectionHandler extends IdleStateAwareChannelHandler {
     @Override
     public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) {
         //session.getFilterChain().addFirst("protocolFilter", new ProtocolCodecFilter(new RSCCodecFactory()));
-        Logger.println("Connection from: " + ((InetSocketAddress) ctx.getChannel().getRemoteAddress()).getAddress().getHostAddress());
+        Logger.println("Connection from: " + ((InetSocketAddress) ctx.getChannel().getRemoteAddress()).getAddress().getHostAddress()
+        		+ " - Hostname: " + ((InetSocketAddress) ctx.getChannel().getRemoteAddress()).getHostName());
     }
 
     /**

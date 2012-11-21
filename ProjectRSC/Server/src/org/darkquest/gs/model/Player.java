@@ -782,8 +782,8 @@ public final class Player extends Mob {
 			}
 
 			if (force || canLogout()) {
-				if(this.getUsername() != null) {
-					System.out.println("Logging out " + this.getUsername());
+				if(getUsername() != null) {
+					System.out.println("Logging out " + getUsername());
 				}
 
 				destroy = true;
@@ -805,6 +805,7 @@ public final class Player extends Mob {
 					}
 				});
 			}
+			ioSession.getParent().disconnect();
 		} catch(Exception e) {
 			if(this.getUsername() != null) {
 				System.out.println("EXCEPTION AT PLAYER LOGOUT FOR: " + this.getUsername());

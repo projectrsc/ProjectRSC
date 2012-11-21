@@ -722,9 +722,8 @@ public class SpellHandler implements PacketHandler {
                             owner.getActionSender().sendMessage("You can not use this spell on a Player");
                             return;
                         }
-                        if (!checkAndRemoveRunes(owner, spell)) {
-                            return;
-                        }
+                        
+                        
                         Npc n = (Npc) affectedMob;
                         int damaga = Formulae.Rand(1, 5);
 
@@ -734,6 +733,9 @@ public class SpellHandler implements PacketHandler {
 
                         if (!n.undead) {
                             owner.getActionSender().sendMessage("You must use this spell on undead monsters only");
+                            return;
+                        }
+                        if (!checkAndRemoveRunes(owner, spell)) {
                             return;
                         }
                         if (Formulae.Rand(0, 8) == 2)

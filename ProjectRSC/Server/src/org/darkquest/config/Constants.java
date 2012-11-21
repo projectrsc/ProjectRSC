@@ -27,7 +27,6 @@ public final class Constants {
         public static int WORLD_NUMBER = 0;
 		
 		
-
         /**
          * the client version needed for login
          */
@@ -114,15 +113,20 @@ public final class Constants {
         //public static String CONFIG_DIR = "conf" + File.separator + "server"; // GORF ONLY
         
         /**
+         * Ban location
+         */
+        public static String BAN_LOCATION = "../" + File.separator + "ban.sh";
+        
+        /**
          * Script location
          */
         public static String SCRIPTS_DIR = "../" + File.separator + "scripts";
         
         /**
-         * Connection limit
+         * Connection threshold before blacklisting
          */
         
-        public static final int MAX_THRESHOLD = 3;
+        public static final int MAX_THRESHOLD = 5;
         
         /**
          * when the server was started
@@ -165,7 +169,6 @@ public final class Constants {
             SERVER_IP = props.getProperty("server_ip");
             SERVER_PORT = Integer.parseInt(props.getProperty("server_port"));
             SERVER_LOCATION = props.getProperty("server_location");
-SCRIPTS_DIR = props.getProperty("scripts_dir");
             MYSQL_USER = props.getProperty("mysql_user");
             MYSQL_PASS = props.getProperty("mysql_pass");
             MYSQL_HOST = props.getProperty("mysql_host");
@@ -186,6 +189,7 @@ SCRIPTS_DIR = props.getProperty("scripts_dir");
 
             Bank.MAX_SIZE = Integer.parseInt(props.getProperty("max_" + (MEMBER_WORLD ? "members_" : "") + "bank_size"));
             
+            BAN_LOCATION = props.getProperty("ban_location"); 
             SCRIPTS_DIR = props.getProperty("scripts_dir");
             
             START_TIME = System.currentTimeMillis();

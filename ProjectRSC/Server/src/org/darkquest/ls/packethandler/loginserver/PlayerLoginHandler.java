@@ -1,10 +1,11 @@
 package org.darkquest.ls.packethandler.loginserver;
 
 import org.darkquest.ls.Server;
+
 import org.darkquest.ls.model.World;
 import org.darkquest.ls.net.LSPacket;
 import org.darkquest.ls.net.Packet;
-import org.darkquest.ls.net.filter.ConnectionFilter;
+import org.darkquest.ls.net.monitor.Monitor;
 import org.darkquest.ls.packetbuilder.loginserver.PlayerLoginPacketBuilder;
 import org.darkquest.ls.packethandler.PacketHandler;
 import org.darkquest.ls.util.Config;
@@ -36,22 +37,16 @@ public final class PlayerLoginHandler implements PacketHandler {
 			String pass = p.readString().trim();
 			byte loginCode = validatePlayer(user, pass, ip, world); 
 			
-			if(ConnectionFilter.getInstance(0).isMaxed(DataConversions.IPToLong(ip))) {
+			if(Monitor.getInstance() != null && Monitor.getInstance().hasMaxedLimit(DataConversions.IPToLong(ip))) {
 				loginCode = 8;
-			}
+			} 
 			
 			builder.setUID(uID);
 			if (loginCode == 0 || loginCode == 1 || loginCode == 99) {//
-				// START
-				/*
-				if(ConnectionFilter.getInstance(0) != null) {
-					int initialCount = ConnectionFilter.getInstance(0).incrementAndGet(DataConversions.IPToLong(ip));
-					System.out.println("Initial count: " + initialCount);
-				} */
 				
-				//System.out.println("Size: " + ConnectionFilter.getInstance(0).getCurrentClients().size());
-				//System.out.println("Initial count: " + initialCount);
-				// END
+				if(Monitor.getInstance() != null) {
+					Monitor.getInstance().onLogin(session);
+				}
 				
 				try {
 					Server.db.updateQuery("UPDATE `" + Config.MYSQL_TABLE_PREFIX + "players` SET online=1 WHERE user='" + user + "'");
@@ -68,7 +63,7 @@ public final class PlayerLoginHandler implements PacketHandler {
 			if (packet != null) {
 				session.write(packet);
 			}
-			session.getParent().disconnect(); // We should try closing the channel immediately as its terminated 
+			//session.getParent().disconnect(); // We should try closing the channel immediately as its terminated 
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

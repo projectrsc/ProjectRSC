@@ -1,13 +1,11 @@
 package org.darkquest.gs.phandler;
 
-import java.net.InetSocketAddress;
-
-
 import org.darkquest.config.Constants;
 
 import org.darkquest.config.Formulae;
 import org.darkquest.gs.builders.MiscPacketBuilder;
 import org.darkquest.gs.builders.RSCPacketBuilder;
+import org.darkquest.gs.connection.filter.ConnectionFilter;
 import org.darkquest.gs.model.*;
 import org.darkquest.gs.phandler.client.WieldHandler;
 import org.darkquest.gs.plugins.PluginHandler;
@@ -28,13 +26,14 @@ public final class PlayerLogin implements PacketHandler {
 
 	public void handlePacket(org.darkquest.gs.connection.Packet p, Channel session) throws Exception {		
 		byte loginCode = p.readByte();	
+		
 		RSCPacketBuilder pb = new RSCPacketBuilder();
 		pb.setBare(true);
 		pb.addByte(loginCode);
 		player.getSession().write(pb.toPacket());
 		
 		try {
-			if (loginCode == 0 || loginCode == 1 || loginCode == 99) {
+			if (loginCode == 0 || loginCode == 1 || loginCode == 99) {	
 				player.setOwner(p.readInt());
 
 				player.setGroupID(p.readInt());
@@ -93,6 +92,7 @@ public final class PlayerLogin implements PacketHandler {
 				int invCount = p.readShort();
 				for (int i = 0; i < invCount; i++) {
 					InvItem item = new InvItem(p.readShort(), p.readInt());
+					//System.out.println(item.toString());
 					if (p.readByte() == 1 && item.isWieldable()) {
 						item.setWield(true);
 						player.updateWornItems(item.getWieldableDef().getWieldPos(), item.getWieldableDef().getSprite());
@@ -111,20 +111,11 @@ public final class PlayerLogin implements PacketHandler {
 				player.setBank(bank);
 
 
-
-
 				try {
 
 					int friendCount = p.readShort();
-					System.out.println(friendCount);
 					for (int i = 0; i < friendCount; i++) {
-						//if(i < 50)
-							player.addFriend(p.readLong(), p.readShort());
-						//else {
-						//	p.readLong();
-						//	p.readShort();
-						//}
-							
+						player.addFriend(p.readLong(), p.readShort());	
 					}
 				
 
@@ -232,9 +223,17 @@ public final class PlayerLogin implements PacketHandler {
 
 				player.setLoggedIn(true);
 				player.setBusy(false);
+				
+				if(ConnectionFilter.getInstance() != null) {
+					ConnectionFilter.getInstance().processCleanLogin(session, false);
+				}
 
 				PluginHandler.getPluginHandler().handleAction("PlayerLogin", new Object[]{player});
 			} else {
+				System.out.println("Not clean login");
+				if(ConnectionFilter.getInstance() != null) {
+					ConnectionFilter.getInstance().processCleanLogin(session, true);
+				}
 				player.destroy(true);
 			}
 		} catch(Exception e) {

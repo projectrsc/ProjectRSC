@@ -57,9 +57,10 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
         
         # START CODE HERE
         if npc.getID() == self.MORGAN:
-            if stage == -1: # TODO: GET CORRECT POST_QUEST TEXT
-                script.sendNpcChat("Thank you ridding us of that pesky vampire!")
-                script.sendPlayerChat("You are most welcome")  
+            if stage == -1: 
+                script.sendNpcChat("How are you doing with your quest?")
+                script.sendPlayerChat("I have slain the foul creature")  
+                script.sendNpcChat("Thank you, thank you", "You will always be a hero in our village")
             elif stage == 0:
                 script.sendNpcChat("Please, please help us bold hero!")
                 script.sendPlayerChat("What's the problem?")
@@ -93,40 +94,41 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
                 script.sendNpcChat("Please hurry", "Every day we live in fear of our lives",
                             "Afraid that we will be the vampire's next victim")
         elif npc.getID() == self.HARLOW:
-            if stage == -1: # TODO: GET CORRECT POST_QUEST TEXT
-                script.sendNpcChat("Buy me a drrink pleassh")
-                script.sendPlayerChat("No, you've had enough")
-                script.sendNpcChat("Sheys you matey!")
-            else:
-                script.sendNpcChat("Buy me a drrink pleassh")
-                if stage == 1:
-                    option = script.pickOption(["No, you've had enough", "Ok mate", "Morgan needs your help"])
+            script.sendNpcChat("Buy me a drrink pleassh")
+            if stage == 1:
+                option = script.pickOption(["No, you've had enough", "Ok mate", "Morgan needs your help"])
+                if option == 0:
+                    script.sendNpcChat("Sheys you matey!")
+                elif option == 1:
+                    self.playHowToKillDialog(script)
+                elif option == 2:
+                    script.sendNpcChat("Morgan you sshay?")
+                    script.sendPlayerChat("His village is being terrorized by a vampire",
+                                          "He wanted me to ask you how I should go about stopping it")
+                    script.sendNpcChat("Buy me a beer then I'll teash you what you need to know")
+                    option = script.pickOption(["Ok mate", "But this is your friend Morgan we're talking about"])
                     if option == 0:
-                        script.sendNpcChat("Sheys you matey!")
-                    elif option == 1:
                         self.playHowToKillDialog(script)
-                    elif option == 2:
-                        script.sendNpcChat("Morgan you sshay?")
-                        script.sendPlayerChat("His village is being terrorized by a vampire",
-                                              "He wanted me to ask you how I should go about stopping it")
-                        script.sendNpcChat("Buy me a beer then I'll teash you what you need to know")
-                        option = script.pickOption(["Ok mate", "But this is your friend Morgan we're talking about"])
-                        if option == 0:
-                            self.playHowToKillDialog(script)
-                        elif option == 1:
-                            script.sendNpcChat("Buy me a beer then I'll teash you what you need to know")
-                else:
-                    option = script.pickOption(["No, you've had enough", "Ok mate"])
-                    if option == 0:
-                        script.sendNpcChat("Sheys you matey!")
                     elif option == 1:
-                        if script.hasItem(self.BEER): # WE HAVE A BEER
-                            script.sendNpcChat("Cheersh Matey")
-                            script.sleep(500)
-                            script.removeItem(self.BEER, 1)
-                            script.displayMessage("You give a beer to Dr Harlow")
-                        else:
-                            script.sendPlayerChat("I'll just go and buy one")
+                        script.sendNpcChat("Buy ush a drink anyway")
+            elif stage == 2:
+                option = script.pickOption(["No, you've had enough", "Ok mate"])
+                if option == 0:
+                    script.sendNpcChat("Sheys you matey!")
+                elif option == 1:
+                    self.playHowToKillDialog(script)
+            else:
+                option = script.pickOption(["No, you've had enough", "Ok mate"])
+                if option == 0:
+                    script.sendNpcChat("Sheys you matey!")
+                elif option == 1:
+                    if script.hasItem(self.BEER): # WE HAVE A BEER
+                        script.displayMessage("You give a beer to Dr Harlow")
+                        script.sleep(500)
+                        script.removeItem(self.BEER, 1)
+                        script.sendNpcChat("Cheersh Matey")
+                    else:
+                        script.sendPlayerChat("I'll just go and buy one")
         # END CODE HERE
         script.release()
     
@@ -135,10 +137,11 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
         
         script.setActiveQuest(self)
         stage = script.getQuestStage()
+        
         script.occupy()
 
         script.displayMessage("you search the coffin")
-        script.sleep(2000)
+        script.sleep(500)
         script.displayMessage("A vampire jumps out of the coffin")
         script.spawnNpc(self.COUNT_DRAYNOR, 205, 3382, 300000, False) # SPAWN FOR 5 MINS
         
@@ -150,19 +153,27 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
         script.setActiveQuest(self)
         stage = script.getQuestStage()
         
-        if stage == 2:
-            if script.hasItem(self.GARLIC):
-                npc.weakenAttack(1)
-                npc.weakenDefense(2)
-                npc.weakenStrength(1)
-                script.displayMessage("The vampire appears to weaken")
+        if script.hasItem(self.GARLIC):
+            npc.weakenAttack(1)
+            npc.weakenDefense(2)
+            npc.weakenStrength(1)
+            script.displayMessage("The vampire appears to weaken")
                 
-            fightEvent = script.fightNpc(npc, True) # Grab FightEvent handle
-            while player.isBusy():
-                if script.isWielding(self.STAKE) and script.hasItem(self.HAMMER):
-                    fightEvent.setOpponentInvincible(False)
-                    script.removeItem(self.STAKE, 1)
-                    script.displayMessage("You hammer the stake into the vampire chest")
+        fightEvent = script.fightNpc(npc, True) # Grab FightEvent handle
+        
+        while player.isBusy():
+            if script.isWielding(self.STAKE) and script.hasItem(self.HAMMER) and npc.getHits() <= 10:
+                fightEvent.setOpponentInvincible(False)
+                script.removeItem(self.STAKE, 1)
+                script.displayMessage("You hammer the stake into the vampire chest")
+                script.setQuestStage(3)
+                break
+            elif script.isWielding(self.STAKE) and not script.hasItem(self.HAMMER) and npc.getHits() > 10:
+                script.displayMessage("You are unable to push the stake far in enough, the stake breaks!")
+                script.removeItem(self.STAKE, 1)
+                break
+            elif npc.getHits() <= 0:
+                script.displayMessage("The vampire seems to regenerate")
     
     def onPlayerKilledNpc(self, player, npc):
         script = player.getScriptHelper()
@@ -171,18 +182,17 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
         stage = script.getQuestStage()
         script.occupy()
         
-        if stage == 2:
-            script.setQuestStage(-1)
-            script.setQuestCompleted()
+        script.setQuestStage(-1)
+        script.setQuestCompleted()
         
         script.release() 
     
     def playHowToKillDialog(self, script):
         if script.hasItem(self.BEER): # WE HAVE A BEER
-            script.sendNpcChat("Cheersh Matey")
+            script.displayMessage("You give a beer to Dr Harlow")
             script.sleep(500)
             script.removeItem(self.BEER, 1)
-            script.displayMessage("You give a beer to Dr Harlow")
+            script.sendNpcChat("Cheersh Matey")
             script.sendPlayerChat("So tell me how to kill vampires then")
             script.sendNpcChat("Yesh yesh vampires, I was very good at killing em once")
             script.displayMessage("Dr Harlow appears to sober up slightly")
@@ -191,7 +201,7 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
                                "Otherwise he'll just regenerate", 
                                "Yes your killing blow must be done with a stake",
                                "I jusht happen to have one on me")
-            script.displayMessage("Dr Harlow hands you a stake")
+            script.displayMessage("He hands you a stake")
             script.sleep(500)
             script.addItem(self.STAKE, 1)
             script.sendNpcChat("You'll need a hammer in hand to drive it in properly as well",
@@ -209,10 +219,16 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
         return npc.getID() == self.MORGAN or npc.getID() == self.HARLOW 
     
     def blockPlayerAttackNpc(self, player, npc):
-        return npc.getID() == self.COUNT_DRAYNOR
+        script = player.getScriptHelper()
+        script.setActiveQuest(self)
+        stage = script.getQuestStage()
+        return npc.getID() == self.COUNT_DRAYNOR and stage == 2
     
     def blockPlayerKilledNpc(self, player, npc):
-        return npc.getID() == self.COUNT_DRAYNOR 
+        script = player.getScriptHelper()
+        script.setActiveQuest(self)
+        stage = script.getQuestStage()
+        return npc.getID() == self.COUNT_DRAYNOR and stage == 3
     
     def blockObjectAction(self, gameObject, command, player): # WE MUST OVERRIDE THE BLOCKING FOR RANDOM OJBS
         script = player.getScriptHelper()

@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.darkquest.config.Constants;
 import org.darkquest.gs.Server;
@@ -191,7 +193,7 @@ public final class World {
 			public void action() {
 				registerGameObject(new GameObject(loc));
 			}
-		});
+		}); 
 	}
 
 	/**

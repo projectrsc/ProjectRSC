@@ -2,6 +2,8 @@ package org.darkquest.ls;
 
 import java.io.File;
 
+
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
@@ -9,17 +11,13 @@ import java.util.Collection;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
 
-import org.darkquest.config.Constants;
-import org.darkquest.ls.codec.FProtocolDecoder;
-import org.darkquest.ls.codec.FProtocolEncoder;
 import org.darkquest.ls.codec.LSProtocolDecoder;
 import org.darkquest.ls.codec.LSProtocolEncoder;
 import org.darkquest.ls.model.PlayerSave;
 import org.darkquest.ls.model.World;
 import org.darkquest.ls.net.DatabaseConnection;
-import org.darkquest.ls.net.FConnectionHandler;
 import org.darkquest.ls.net.LSConnectionHandler;
-import org.darkquest.ls.net.filter.ConnectionFilter;
+import org.darkquest.ls.net.monitor.Monitor;
 import org.darkquest.ls.util.Config;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -69,7 +67,8 @@ public final class Server {
 			}
 		}
 		System.out.printf("\t*** ProjectRSC Login Server ***\n\n");
-
+		
+		// TODO: Organize this rofl
 
 		print("Loading Config...", false);
 		Config.initConfig(configFile);
@@ -87,6 +86,10 @@ public final class Server {
 		} finally {
 			print("COMPLETE", true);
 		}
+		
+		print("Creating Monitor...", false);
+		Monitor.getInstance();
+		print("COMPLETE", true);
 
 		Server.getServer();
 
@@ -135,7 +138,8 @@ public final class Server {
 		} finally {
 			print("COMPLETE", true);
 		}
-
+		
+		/*
 		try {
 			print("Initializing Frontend Listener", false);
 			frontendAcceptor = createListener(Config.QUERY_IP, Config.QUERY_PORT, new FConnectionHandler(engine), new FProtocolEncoder(), new FProtocolDecoder());
@@ -144,7 +148,7 @@ public final class Server {
 			e.printStackTrace();
 		} finally {
 			print("COMPLETE", true);
-		}
+		} */
 
 		print("\t*** Login Server is ONLINE ***", true);
 	}
@@ -157,7 +161,6 @@ public final class Server {
 				ChannelPipeline pipeline = Channels.pipeline();
 				pipeline.addLast("decoder", decoder);
 				pipeline.addLast("encoder", encoder);
-				//pipeline.addLast("throttle", ConnectionFilter.getInstance(Constants.GameServer.MAX_THRESHOLD));
 				pipeline.addLast("handler", handler);
 				return pipeline;
 			}

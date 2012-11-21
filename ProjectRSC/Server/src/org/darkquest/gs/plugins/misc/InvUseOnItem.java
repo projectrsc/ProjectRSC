@@ -3,8 +3,9 @@ package org.darkquest.gs.plugins.misc;
 import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.Player;
 import org.darkquest.gs.plugins.listeners.action.InvUseOnItemListener;
+import org.darkquest.gs.plugins.listeners.executive.InvUseOnItemExecutiveListener;
 
-public class InvUseOnItem implements InvUseOnItemListener {
+public class InvUseOnItem implements InvUseOnItemListener, InvUseOnItemExecutiveListener {
 	int[] capes = { 183, 209, 229, 511, 512, 513, 514 };
 	int[] dye = { 238, 239, 272, 282, 515, 516 };
 	int[] newCapes = { 183, 512, 229, 513, 511, 514 };
@@ -105,6 +106,31 @@ public class InvUseOnItem implements InvUseOnItemListener {
 			player.getActionSender().sendInventory();
 		}
 		return true;
+	}
+
+	@Override
+	public boolean blockInvUseOnItem(Player player, InvItem item1, InvItem item2) {
+		if(item1.getID() == 1276 && item2.getID() == 1277)
+			return true;
+		if(item1.getID() == 238 && item2.getID() == 239 || item1.getID() == 239 && item2.getID() == 238)
+			return true;
+		if(item1.getID() == 238 && item2.getID() == 272 || item1.getID() == 272 && item2.getID() == 238)
+			return true;
+		if(item1.getID() == 239 && item2.getID() == 272 || item1.getID() == 272 && item2.getID() == 239)
+			return true;
+		if(item1.getID() == 273 && item2.getID() == 282 || item1.getID() == 282 && item2.getID() == 273)
+			return true;
+		if(item1.getID() == 273 && item2.getID() == 272 || item1.getID() == 272 && item2.getID() == 273)
+			return true;
+		if(item1.getID() == 526)
+			return true;
+	
+		for(int il : capes) {
+			if(il == item1.getID()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

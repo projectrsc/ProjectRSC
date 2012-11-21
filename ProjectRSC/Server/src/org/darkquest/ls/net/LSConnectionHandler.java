@@ -1,8 +1,11 @@
 package org.darkquest.ls.net;
 
+import java.net.InetSocketAddress;
+
 import org.darkquest.ls.LoginEngine;
 import org.darkquest.ls.Server;
 import org.darkquest.ls.model.World;
+import org.darkquest.ls.util.Config;
 import org.jboss.netty.channel.*;
 
 //import org.darkquest.ls.codec.LSCodecFactory;
@@ -28,6 +31,13 @@ public class LSConnectionHandler extends SimpleChannelHandler {
 
 	@Override
 	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
+		String ip = ((InetSocketAddress) ctx.getChannel().getRemoteAddress()).getAddress().getHostAddress();
+		
+		if(!ip.equalsIgnoreCase("127.0.0.1") && Config.LS_IP.equalsIgnoreCase("localhost")) {
+			ctx.getChannel().disconnect();
+			return;
+		} 
+		
 		Channel session = ctx.getChannel();
 		session.setAttachment(session);
 	}

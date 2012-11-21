@@ -1,5 +1,8 @@
 package org.darkquest.gs.model.comp.mob;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.darkquest.config.Formulae;
 
 import org.darkquest.gs.event.SingleEvent;
@@ -28,6 +31,8 @@ public class Scriptable {
 	private Player player = null;
 	private Npc activeNpc = null;
 	private Quest activeQuest = null;
+	
+	private final Timer timer = new Timer();
 	
 	private static final byte BEGINNING = 0x0;
 	private static final byte COMPLETE = -1;
@@ -384,6 +389,10 @@ public class Scriptable {
 		player.startSleepEvent(isBed);
 	}
 	
+	public boolean objectExists(GameObject object) {
+		return World.getWorld().getTile(object.getX(), object.getY()).hasGameObject();
+	}
+	
 	public GameObject createNewObject(GameObject object) {
 		return World.getWorld().getTile(object.getX(), object.getY()).getGameObject();
 	}
@@ -392,10 +401,11 @@ public class Scriptable {
 		spawnObject(new Point(x,y), id, direction, type, delay, loc, respawnTime);
 	}
 	
-	public void spawnObject(Point location, int id, int direction, int type, boolean delayRespawn, GameObjectLoc loc, int respawnTime) {
+	public void spawnObject(Point location, int id, int direction, int type, boolean delayRespawn, final GameObjectLoc loc, final int respawnTime) {
 		World.getWorld().registerGameObject(new GameObject(location, id, direction, type));
-		if(delayRespawn)
+		if(delayRespawn) {
 			World.getWorld().delayedSpawnObject(loc, respawnTime);
+		}
 	}
 	
 	public int getRandom(int start, int n) {
