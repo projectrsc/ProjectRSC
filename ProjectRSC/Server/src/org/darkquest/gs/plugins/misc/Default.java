@@ -19,8 +19,6 @@ import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
  */
 
 public class Default implements TalkToNpcListener, ObjectActionListener, InvUseOnObjectListener, InvUseOnNpcListener {
-
-	//private static final String[] IGNORED_COMMANDS = {"up", "down", "open", "close"};
 	
 	@Override
 	public void onTalkToNpc(Player p, Npc n) {
