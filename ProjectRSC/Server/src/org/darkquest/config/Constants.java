@@ -126,7 +126,7 @@ public final class Constants {
          * Connection threshold before blacklisting
          */
         
-        public static final int MAX_THRESHOLD = 5;
+        public static final int MAX_THRESHOLD = 60;
         
         /**
          * when the server was started
