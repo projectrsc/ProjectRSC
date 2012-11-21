@@ -638,7 +638,7 @@ public class SpellHandler implements PacketHandler {
                             }
                             if (spellID == 5) {
                                 if (np.weaken) {
-                                    owner.getActionSender().sendMessage("Your opponent is already weakend");
+                                    owner.getActionSender().sendMessage("Your opponent is already weakened");
                                     return;
                                 }
                             }
@@ -707,8 +707,8 @@ public class SpellHandler implements PacketHandler {
                         playersToInformm.addAll(affectedMob.getViewArea().getPlayersInView());
                         for (Player p : playersToInformm) {
                             p.informOfProjectile(projectilez);
-                            p.informOfModifiedHits(affectedMob);
-                        }
+                          //  p.informOfModifiedHits(affectedMob); Don't think we need to inform
+                        } 
 
                         finalizeSpell(owner, spell);
                         chasePlayer(owner, player, affectedMob);
@@ -717,7 +717,6 @@ public class SpellHandler implements PacketHandler {
 
                         return;
                     case 19: // Crumble undead
-
                         if (affectedMob instanceof Player) {
                             owner.getActionSender().sendMessage("You can not use this spell on a Player");
                             return;
@@ -1005,9 +1004,10 @@ public class SpellHandler implements PacketHandler {
                         }
 
                     default:
+                    	System.out.println("Shine bright");
                         if (!checkAndRemoveRunes(owner, spell)) {
                             return;
-                        }
+                        } 
                         if (affectedMob instanceof Player && !owner.isDueling()) {
                             Player affectedPlayer = (Player) affectedMob;
                             owner.setSkulledOn(affectedPlayer);

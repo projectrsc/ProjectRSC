@@ -43,7 +43,14 @@ public final class PlayerLogin implements PacketHandler {
 				player.setLastIP(DataConversions.IPToString(p.readLong()));
 				player.setLastLogin(p.readLong());
 				
-				player.setLocation(Point.location(p.readShort(), p.readShort()), true);
+				if (player.getLastLogin() == 0L) {
+					player.setLocation(Point.location(121, 647), true);
+					p.readShort();
+					p.readShort();
+				}
+				else {
+					player.setLocation(Point.location(p.readShort(), p.readShort()), true);
+				}
 
 				player.setFatigue(p.readShort());
 				player.incQuestPoints(p.readShort());
@@ -207,8 +214,6 @@ public final class PlayerLogin implements PacketHandler {
 					
 					player.setChangingAppearance(true);
 					sender.sendAppearanceScreen();
-					
-					player.setLocation(Point.location(121, 647), true);
 				}
 
 				sender.sendWakeUp(false, true);

@@ -1,6 +1,7 @@
 package org.darkquest.gs.core;
 
 import java.util.ArrayList;
+
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -12,11 +13,9 @@ import org.darkquest.gs.builders.PlayerPositionPacketBuilder;
 import org.darkquest.gs.builders.PlayerUpdatePacketBuilder;
 import org.darkquest.gs.builders.WallObjectPositionPacketBuilder;
 import org.darkquest.gs.connection.RSCPacket;
-import org.darkquest.gs.db.query.ChatLog;
 import org.darkquest.gs.model.ChatMessage;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
-import org.darkquest.gs.service.Services;
 import org.darkquest.gs.tools.DataConversions;
 import org.darkquest.gs.util.EntityList;
 import org.darkquest.gs.world.World;
@@ -344,11 +343,11 @@ public final class ClientUpdater {
 			p.destroy(false); // was false - xent
 		} else if (curTime - p.getLastPing() >= 60000) { // 1 minute force logout
 			p.destroy(true);
-		} else if (p.warnedToMove()) {
-			if (curTime - p.getLastMoved() >= 360000 && p.loggedIn() && !p.isAdmin()) {
+		} else if(p.warnedToMove()) {
+			if (curTime - p.getLastMoved() >= 480000 && p.loggedIn() && !p.isAdmin()) { // 360000 (changed for more time)
 				p.destroy(false);
 			}
-		} else if (curTime - p.getLastMoved() >= 300000 && !p.isAdmin()) {
+		} else if (curTime - p.getLastMoved() >= 300000 && !p.isAdmin()) { // 300000
 			p.getActionSender().sendMessage("@cya@You have not moved for 5 mins, please move to a new area to avoid logout.");
 			p.warnToMove();
 		}

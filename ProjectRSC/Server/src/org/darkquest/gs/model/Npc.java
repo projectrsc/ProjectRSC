@@ -25,7 +25,6 @@ import org.darkquest.gs.world.World;
 public class Npc extends Mob {
 	
 	public void attack(final Player owner) {
-		
 		resetPath();
 		setChasing(owner);
 		World.getWorld().getDelayedEventHandler().add(new WalkMobToMobEvent(this, owner, 1) {
@@ -36,6 +35,13 @@ public class Npc extends Mob {
 				}
 				if(affectedMob instanceof Player && owner instanceof Npc) {
 					Player player = (Player)affectedMob;
+					
+					if(player.isSleeping() && player.isPrayerActivated(12)) { // if player is sleeping and has the prayer activated, skip him
+						setChasing(null);
+						resetPath();
+						return;
+					}
+					
 					Npc npc = (Npc)owner;
 					player.resetPath();
 					player.resetAll();
@@ -269,7 +275,7 @@ public class Npc extends Mob {
         super.setID(loc.getId());
         super.setLocation(Point.location(loc.startX(), loc.startY()), true);
         super.setCombatLevel(Formulae.getCombatLevel(def.getAtt(), def.getDef(), def.getStr(), def.getHits(), 0, 0, 0));
-        if (this.loc.getId() == 189 || this.loc.getId() == 53) {
+        if (this.loc.getId() == 189 || this.loc.getId() == 53 || this.loc.getId() == 19) {
             this.def.aggressive = true;
         }
 
@@ -515,7 +521,6 @@ public class Npc extends Mob {
         chaseTimeout = new DelayedEvent(null, 15000) {
 
             public void run() {
-
                 goingToAttack = false;
                 setChasing(null);
                 matchRunning = false;
@@ -557,6 +562,7 @@ public class Npc extends Mob {
     public void updatePosition() {
         long now = System.currentTimeMillis();
         Player victim = findVictim();
+        
         if (!isBusy() && def.isAggressive() && now - getCombatTimer() > 3000 && victim != null) {
             resetPath();
             victim.resetPath();

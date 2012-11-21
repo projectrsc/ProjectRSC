@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 
 
 
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -613,7 +614,7 @@ public final class Player extends Mob {
 			drainer.setDelay((int) (240000 / drainRate));
 		} else if (drainRate <= 0) {
 			drainRate = 0;
-			drainer.setDelay(Integer.MAX_VALUE);
+			drainer.setDelay(240000);
 		}
 	}
 
@@ -785,9 +786,9 @@ public final class Player extends Mob {
 				if(getUsername() != null) {
 					System.out.println("Logging out " + getUsername());
 				}
-
 				destroy = true;
 				actionSender.sendLogout();
+				
 				PluginHandler.getPluginHandler().handleAction("PlayerLogout", new Object[]{this});
 			} else {
 				final long startDestroy = System.currentTimeMillis();
@@ -1807,7 +1808,8 @@ public final class Player extends Mob {
 	}
 
 	public void removePrayerDrain(int prayerID) {
-		addPrayerDrain(prayerID);
+		//addPrayerDrain(prayerID);
+		drainer.setDelay(240000);
 	}
 
 	public void removeSkull() {
