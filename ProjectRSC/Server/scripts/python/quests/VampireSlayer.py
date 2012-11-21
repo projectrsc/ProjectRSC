@@ -231,8 +231,5 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
         return npc.getID() == self.COUNT_DRAYNOR and stage == 3
     
     def blockObjectAction(self, gameObject, command, player): # WE MUST OVERRIDE THE BLOCKING FOR RANDOM OJBS
-        script = player.getScriptHelper()
-        script.setActiveQuest(self)
-        stage = script.getQuestStage()
-        return command == "search" and gameObject.getID() == self.DRAYNOR_MANSION_COFFIN and stage == 2
+        return command == "search" and gameObject.getID() == self.DRAYNOR_MANSION_COFFIN
         
