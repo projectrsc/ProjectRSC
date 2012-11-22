@@ -54,9 +54,15 @@ public class AttackHandler implements PacketHandler {
 			if (pl.getLocation().inWilderness() && System.currentTimeMillis() - pl.getLastRun() < 3000) {
 				return;
 			}
-		} else {
-			player.setFollowing(affectedMob); //why the fuck was this uncommented out? 
-		}
+			// Determine who gets the attack
+			for(Player attackingPlayer : pl.getViewArea().getPlayersInView()) {
+				if(attackingPlayer.getFollowing() == pl) {
+					return;
+				}
+			}
+		} 
+		
+		player.setFollowing(affectedMob);
 		player.setStatus(Action.ATTACKING_MOB);
 
 		if (player.getRangeEquip() < 0) {
@@ -64,6 +70,7 @@ public class AttackHandler implements PacketHandler {
 				public void arrived() {
 					owner.resetPath();
 					owner.resetFollowing();
+					
 					if (owner.isBusy() || affectedMob.isBusy() || !owner.nextTo(affectedMob) || !owner.checkAttack(affectedMob, false) || owner.getStatus() != Action.ATTACKING_MOB) {
 						return;
 					}
