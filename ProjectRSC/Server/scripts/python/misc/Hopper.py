@@ -10,6 +10,7 @@ Called when using the hopper
 class Hopper(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener, InvUseOnObjectListener, InvUseOnObjectExecutiveListener):
 	
 	HOPPER = 52
+	CHEFS_GUILD_HOPPER = 173
 	FLOUR = 23
 	GRAIN = 29
 	
@@ -48,7 +49,7 @@ class Hopper(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener,
 		script.release()
 	
 	def blockInvUseOnObject(self, gameObj, item, player):
-		return gameObj.getID() == self.HOPPER and item.getID() == self.GRAIN
+		return gameObj.getID() == self.HOPPER or self.CHEFS_GUILD_HOPPER and item.getID() == self.GRAIN
 	
 	def blockObjectAction(self, gameObject, command, player):
-		return command == "operate" and gameObject.getID() == self.HOPPER
+		return command == "operate" and gameObject.getID() == self.HOPPER or gameObject.getID() == self.CHEFS_GUILD_HOPPER
