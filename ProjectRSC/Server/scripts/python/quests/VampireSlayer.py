@@ -222,7 +222,7 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
         script = player.getScriptHelper()
         script.setActiveQuest(self)
         stage = script.getQuestStage()
-        return npc.getID() == self.COUNT_DRAYNOR and stage == 2
+        return npc.getID() == self.COUNT_DRAYNOR and stage == 2 or npc.getID() == self.COUNT_DRAYNOR and stage == 3
     
     def blockPlayerKilledNpc(self, player, npc):
         script = player.getScriptHelper()
