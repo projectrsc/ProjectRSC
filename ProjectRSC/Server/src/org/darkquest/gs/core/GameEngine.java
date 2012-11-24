@@ -7,6 +7,7 @@ import java.util.Map;
 import org.darkquest.gs.connection.RSCPacket;
 import org.darkquest.gs.event.impl.DatabaseReconnectionEvent;
 import org.darkquest.gs.event.impl.GarbageCollectionEvent;
+import org.darkquest.gs.event.impl.ReloadFilterEvent;
 import org.darkquest.gs.event.impl.SaveProfileEvent;
 import org.darkquest.gs.event.impl.ShopRestockEvent;
 import org.darkquest.gs.model.Player;
@@ -28,8 +29,6 @@ public final class GameEngine extends Thread {
     private ClientUpdater clientUpdater = new ClientUpdater();
 
     private DelayedEventHandler eventHandler = new DelayedEventHandler();
-    
-    //private PythonService pythonService = new PythonService();
 
     private List<RSCPacket> packetList = new LinkedList<RSCPacket>();
     
@@ -132,10 +131,11 @@ public final class GameEngine extends Thread {
         eventHandler.add(new GarbageCollectionEvent());
         eventHandler.add(new DatabaseReconnectionEvent());
         eventHandler.add(new SaveProfileEvent());
+        eventHandler.add(new ReloadFilterEvent());
         
         for (Shop shop : world.getShops()) {
 			eventHandler.add(new ShopRestockEvent(shop));
-		}
+		} 
 
         while (running) {
             try {
@@ -148,13 +148,5 @@ public final class GameEngine extends Thread {
             processClients();
         }
     }
-
-	/*public PythonService getPythonService() {
-		return pythonService;
-	}
-
-	public void setPythonService(PythonService pythonService) {
-		this.pythonService = pythonService;
-	}*/
 
 }

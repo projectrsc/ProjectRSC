@@ -202,7 +202,7 @@ public class PathGenerator {
 	 * @return - if the path is valid to shoot a projectile too
 	 */
 	public boolean isValid() {
-		return !isWallInbetween();
+		return !isWallInBetween();
 	}
 
 	/**
@@ -211,27 +211,39 @@ public class PathGenerator {
 	 */
 	private boolean isWallAllowed(int x, int y) {
 		TileValue t = World.getWorld().getTileValue(x, y);
-		if (t != null) {
+
+		if(t != null) {
 			for (int i = 0; i < ALLOWED_WALL_ID_TYPES[0].length; i++)
-				if (ALLOWED_WALL_ID_TYPES[0][i] == (t.verticalWallVal & 0xff))
+				if (ALLOWED_WALL_ID_TYPES[0][i] == (t.verticalWallVal & 0xff)) 
 					return true;
 
 			for (int i = 0; i < ALLOWED_WALL_ID_TYPES[1].length; i++)
-				if (ALLOWED_WALL_ID_TYPES[1][i] == (t.horizontalWallVal & 0xff))
+				if (ALLOWED_WALL_ID_TYPES[1][i] == (t.horizontalWallVal & 0xff)) 
 					return true;
 
 			for (int i = 0; i < ALLOWED_WALL_ID_TYPES[2].length; i++)
-				if (ALLOWED_WALL_ID_TYPES[2][i] == t.diagWallVal)
+				if (ALLOWED_WALL_ID_TYPES[2][i] == t.diagWallVal) 
 					return true;
 		}
 		return false;
+	}
+	
+	private boolean isObjectAllowed(int x, int y) {
+		ActiveTile tile = World.getWorld().getTile(x, y);
+		if (tile.hasGameObject()) { // game object is blocking 
+			if(tile.getGameObject().getDoorDef() != null) { // wall type only
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
 	 * @author xEnt Calculations to check if a wall is in between your target
 	 *         your ranging/maging at
+	 *  TODO: Fix being able to range in diagonal direction
 	 */
-	private boolean isWallInbetween() {
+	private boolean isWallInBetween() {
 
 		int enemyX = destX;
 		int enemyY = destY;
@@ -265,11 +277,10 @@ public class PathGenerator {
 				}
 			}
 			if (newX == enemyX && newY == enemyY) {
-				//System.out.println("1");
-				return false;
+				return !isObjectAllowed(ourX, ourY);
 			}
 		}
-		//System.out.println("2");
+		//System.out.println("false");
 		return false; // should not happen.
 	}
 

@@ -261,7 +261,6 @@ public final class Admins implements CommandListener {
 					try {
 						for(Player pl : World.getWorld().getPlayers()) {
 							pl.setBusy(true);
-							pl.getActionSender().sendMessage("A magical force stops you momentarily...");
 							pl.setBusy(false);
 						}
 						PluginHandler.getPluginHandler().loadPythonScripts();
@@ -360,7 +359,7 @@ public final class Admins implements CommandListener {
 			int amt = Integer.parseInt(args[1]);
 			player.getInventory().add(new InvItem(item, amt));
 			player.getActionSender().sendInventory();
-		} else if(command.equals("npc")) {
+		} */else if(command.equals("npc")) {
 			int npcId = Integer.parseInt(args[0]);
 			final Npc n = new Npc(npcId, player.getX() + 1, player.getY() + 1, player.getX() - 5, 
 					player.getX() + 5, player.getY() - 5, player.getY() + 5);
@@ -377,7 +376,7 @@ public final class Admins implements CommandListener {
 					n.remove();
 				}
 			});
-		} */
+		} 
 	}
 
 

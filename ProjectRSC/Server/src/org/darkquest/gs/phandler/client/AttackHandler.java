@@ -85,6 +85,11 @@ public class AttackHandler implements PacketHandler {
 						}
 					}
 					
+					if (affectedMob.getID() == 35) {
+						owner.getActionSender().sendMessage("Delrith can not be attacked without the Silverlight sword");
+						return;
+					}
+					
 					owner.resetAll();
 					owner.setStatus(Action.FIGHTING_MOB);
 					if (affectedMob instanceof Player) {
