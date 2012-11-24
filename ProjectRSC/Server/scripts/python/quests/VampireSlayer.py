@@ -88,7 +88,7 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
                     "I'm sure he wouldn't want me to be killed by a vampire")
                     script.sendPlayerChat("I'll look him up then")
                     script.setQuestStage(1)
-            elif stage == 1 or stage == 2:
+            elif stage == 1 or stage == 2 or stage == 3:
                 script.sendNpcChat("How are you doing with your quest?")
                 script.sendPlayerChat("I'm working on it still")
                 script.sendNpcChat("Please hurry", "Every day we live in fear of our lives",
@@ -111,7 +111,7 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
                         self.playHowToKillDialog(script)
                     elif option == 1:
                         script.sendNpcChat("Buy ush a drink anyway")
-            elif stage == 2:
+            elif stage == 2 or stage == 3:
                 option = script.pickOption(["No, you've had enough", "Ok mate"])
                 if option == 0:
                     script.sendNpcChat("Sheys you matey!")
