@@ -4,6 +4,7 @@ import java.io.File;
 
 
 
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
@@ -11,13 +12,15 @@ import java.util.Collection;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
 
+import org.darkquest.ls.codec.FProtocolDecoder;
+import org.darkquest.ls.codec.FProtocolEncoder;
 import org.darkquest.ls.codec.LSProtocolDecoder;
 import org.darkquest.ls.codec.LSProtocolEncoder;
 import org.darkquest.ls.model.PlayerSave;
 import org.darkquest.ls.model.World;
 import org.darkquest.ls.net.DatabaseConnection;
+import org.darkquest.ls.net.FConnectionHandler;
 import org.darkquest.ls.net.LSConnectionHandler;
-import org.darkquest.ls.net.monitor.Monitor;
 import org.darkquest.ls.util.Config;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -27,8 +30,12 @@ import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.SimpleChannelHandler;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
+import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
+import org.jboss.netty.handler.codec.frame.Delimiters;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
+import org.jboss.netty.handler.codec.string.StringDecoder;
+import org.jboss.netty.handler.codec.string.StringEncoder;
 
 public final class Server {
 
@@ -87,7 +94,7 @@ public final class Server {
 			print("COMPLETE", true);
 		}
 		
-		//print("Creating Monitor...", false);
+		//print("Creating Monitor...", false); WILL REIMPLEMENT WHEN PROXY DETECTION IS ADDED IN
 		//Monitor.getInstance();
 		//print("COMPLETE", true);
 
@@ -139,7 +146,7 @@ public final class Server {
 			print("COMPLETE", true);
 		}
 		
-		/*
+		
 		try {
 			print("Initializing Frontend Listener", false);
 			frontendAcceptor = createListener(Config.QUERY_IP, Config.QUERY_PORT, new FConnectionHandler(engine), new FProtocolEncoder(), new FProtocolDecoder());
@@ -148,7 +155,7 @@ public final class Server {
 			e.printStackTrace();
 		} finally {
 			print("COMPLETE", true);
-		} */
+		} 
 
 		print("\t*** Login Server is ONLINE ***", true);
 	}
@@ -173,6 +180,31 @@ public final class Server {
 
 		return bootstrap.bind(new InetSocketAddress(ip, port));
 	}
+	
+	private Channel createListener(String ip, int port, final SimpleChannelHandler handler, final StringEncoder encoder, final StringDecoder decoder) throws IOException {
+		ServerBootstrap bootstrap = new ServerBootstrap(factory);
+
+		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
+			public ChannelPipeline getPipeline() {
+				ChannelPipeline pipeline = Channels.pipeline();
+				pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
+				        8192, Delimiters.lineDelimiter()));
+				pipeline.addLast("decoder", decoder);
+				pipeline.addLast("encoder", encoder);
+				pipeline.addLast("handler", handler);
+				return pipeline;
+			}
+		});
+
+		bootstrap.setOption("sendBufferSize", 10000);
+		bootstrap.setOption("receiveBufferSize", 10000);
+		bootstrap.setOption("child.tcpNoDelay", true);
+		bootstrap.setOption("child.keepAlive", false);
+
+		return bootstrap.bind(new InetSocketAddress(ip, port));
+	}
+	
+	
 
 	public PlayerSave findSave(long user, World world) {
 		/*PlayerSave save = null;

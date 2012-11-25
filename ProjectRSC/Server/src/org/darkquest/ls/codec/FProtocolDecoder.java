@@ -1,31 +1,23 @@
 package org.darkquest.ls.codec;
 
-import org.darkquest.ls.Server;
 import org.darkquest.ls.net.FPacket;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.handler.codec.frame.FrameDecoder;
-import org.jboss.netty.handler.codec.oneone.OneToOneDecoder;
+import org.jboss.netty.handler.codec.string.StringDecoder;
 
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 
 
 /**
  * A decoder for the Frontend protocol. Parses the incoming data from an
  * IoSession and outputs it as a <code>FPacket</code> object.
  */
-public class FProtocolDecoder extends FrameDecoder {
-	private static CharsetDecoder stringDecoder;
-
-	static {
-		try {
-			stringDecoder = Charset.forName("UTF-8").newDecoder();
-		} catch (Exception e) {
-			Server.error(e);
-		}
+public class FProtocolDecoder extends StringDecoder {
+	
+	public FProtocolDecoder() {
+		super(Charset.forName("UTF-8"));
 	}
 
 	/**
@@ -37,12 +29,13 @@ public class FProtocolDecoder extends FrameDecoder {
 	 * @param msg     The message
 	 * @return Whether enough data was available to create a packet
 	 */
+	
 	@Override
-	protected Object decode(ChannelHandlerContext ctx, Channel channel, ChannelBuffer message) {
-
+	protected Object decode(ChannelHandlerContext ctx, Channel channel, Object message) {
 		if (message instanceof ChannelBuffer) {
 			ChannelBuffer msg = (ChannelBuffer) message;
-			String s = msg.toString().trim();
+			String s = msg.toString(Charset.forName("UTF-8")).trim();
+			//System.out.println("Message: " + s);
 			int delim = s.indexOf(" ");
 
 			int id;
@@ -64,7 +57,7 @@ public class FProtocolDecoder extends FrameDecoder {
 			return new FPacket(channel, id, params);
 		}
 		return null;
-	}
+	} 
 
 
 

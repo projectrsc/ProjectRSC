@@ -1,12 +1,13 @@
 package org.darkquest.ls.codec;
 
 import org.darkquest.ls.Server;
+
 import org.darkquest.ls.net.FPacket;
 import org.jboss.netty.buffer.ByteBufferBackedChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
+import org.jboss.netty.handler.codec.string.StringEncoder;
 
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
@@ -16,7 +17,7 @@ import java.nio.ByteBuffer;
  * Encodes the high level <code>FPacket</code> class into the proper protocol
  * data required for transmission.
  */
-public class FProtocolEncoder extends OneToOneEncoder {
+public class FProtocolEncoder extends StringEncoder {
     /**
      * Converts a <code>RSCPacket</code> object into the raw data needed for
      * transmission.

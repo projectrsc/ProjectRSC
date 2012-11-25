@@ -1,6 +1,10 @@
 package org.darkquest.ls.net;
 
+import java.net.InetSocketAddress;
+
+
 import org.darkquest.ls.LoginEngine;
+import org.darkquest.ls.util.Config;
 import org.jboss.netty.channel.*;
 //import org.darkquest.ls.codec.FCodecFactory;
 
@@ -32,10 +36,25 @@ public class FConnectionHandler extends SimpleChannelHandler {
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
         Channel ch = ctx.getChannel();
-        if (ch.isConnected()) {
-            engine.getFPacketQueue().add((FPacket) e.getMessage());
+        if(e.getMessage() instanceof FPacket) {
+        	if (ch.isConnected()) {
+        		engine.getFPacketQueue().add((FPacket) e.getMessage());
+        	}
         }
     }
+    
+    @Override
+	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
+    	String ip = ((InetSocketAddress) ctx.getChannel().getRemoteAddress()).getAddress().getHostAddress();
+		
+		if(!ip.equalsIgnoreCase("127.0.0.1") && Config.LS_IP.equalsIgnoreCase("localhost")) {
+			ctx.getChannel().disconnect();
+			return;
+		} 
+		System.out.println("Connection from (frontend): " + ip);
+		Channel session = ctx.getChannel();
+		session.setAttachment(session);
+	}
     
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
