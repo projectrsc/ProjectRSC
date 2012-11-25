@@ -30,15 +30,17 @@ class Wyson_The_Gardener(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveLis
                 script.sendNpcChat(["no no thats far too little. woad leaves are hard to get you know",
                                   "i used to have plenty but someone kept stealing them off me"])
             elif opt == 2 or opt == 3:
-                script.sendNpcChat("mmmm ok that sounds fair." if opt == 2 else
-                                  "i used to have plenty but someone kept stealing them off me")
-                amount = (5 * opt) + 5
+                if opt == 2:
+                    script.sendNpcChat("mmmm ok that sounds fair.")
+                else:
+                    script.sendNpcChat("i used to have plenty but someone kept stealing them off me")
+                v_amount = 5 * opt
+                amount = v_amount + 5
                 if script.hasItem(10, amount):
                     script.removeItem(10, amount)
-                    script.displayMessage("you give wyson " + amount + " coins")
+                    script.displayMessage("you give wyson " + str(amount) + " coins")
                     script.addItem(self.WOAD_LEAF)
                     script.displayMessage("wyson the gardener gives you some woad leaves")
-       
                 else:
                     script.sendPlayerChat("i dont have enough coins to buy the leaves. i'll come back later")
         script.release()
