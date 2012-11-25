@@ -1,8 +1,8 @@
 package org.darkquest.gs.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.darkquest.gs.util.CircularArrayList;
 import org.darkquest.gs.world.ActiveTile;
 import org.darkquest.gs.world.World;
 
@@ -16,7 +16,7 @@ public class ViewArea {
     }
 
     public List<GameObject> getGameObjectsInView() {
-        List<GameObject> objects = new ArrayList<GameObject>();
+        List<GameObject> objects = new CircularArrayList<GameObject>(1028);
         ActiveTile[][] viewArea = getViewedArea(21, 21, 21, 21);
         for (int x = 0; x < viewArea.length; x++) {
             for (int y = 0; y < viewArea[x].length; y++) {
@@ -32,7 +32,7 @@ public class ViewArea {
     }
 
     public List<Item> getItemsInView() {
-        List<Item> items = new ArrayList<Item>();
+        List<Item> items = new CircularArrayList<Item>(1028);
         ActiveTile[][] viewArea = getViewedArea(21, 21, 21, 21);
         for (int x = 0; x < viewArea.length; x++) {
             for (int y = 0; y < viewArea[x].length; y++) {
@@ -46,7 +46,7 @@ public class ViewArea {
     }
 
     public List<Npc> getNpcsInView() {
-        List<Npc> npcs = new ArrayList<Npc>();
+        List<Npc> npcs = new CircularArrayList<Npc>(1028);
         ActiveTile[][] viewArea = getViewedArea(15, 15, 16, 16);
         for (int x = 0; x < viewArea.length; x++)
             for (int y = 0; y < viewArea[x].length; y++) {
@@ -62,7 +62,7 @@ public class ViewArea {
     }
 
     public List<Player> getPlayersInView() {
-        List<Player> players = new ArrayList<Player>();
+        List<Player> players = new CircularArrayList<Player>(1028);
         ActiveTile[][] viewArea = getViewedArea(15, 15, 16, 16);
         for (int x = 0; x < viewArea.length; x++)
             for (int y = 0; y < viewArea[x].length; y++) {
