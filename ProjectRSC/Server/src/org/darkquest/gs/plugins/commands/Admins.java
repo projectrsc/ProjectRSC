@@ -17,6 +17,7 @@ import org.darkquest.gs.db.query.StaffLog;
 import org.darkquest.gs.event.DelayedEvent;
 import org.darkquest.gs.event.SingleEvent;
 import org.darkquest.gs.external.EntityHandler;
+import org.darkquest.gs.model.GameObject;
 import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.Item;
 import org.darkquest.gs.model.Mob;
@@ -162,13 +163,6 @@ public final class Admins implements CommandListener {
 			}
 			world.getServer().getLoginConnector().getActionSender().banPlayer(player, DataConversions.usernameToHash(args[0]), banned);
 			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " attempted to " + (banned ? "banned" : "unbanned") + " " + args[0]));
-		} else if (command.equals("info")) {
-			if (args.length != 1) {
-				sendInvalidArguments(player, "info", "name");
-				return;
-			}
-			World.getWorld().getServer().getLoginConnector().getActionSender().requestPlayerInfo(player, DataConversions.usernameToHash(args[0]));
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " requested info for " + args[0]));
 		} else if (command.equalsIgnoreCase("town")) {
 			try {
 				String town = args[0];
@@ -182,27 +176,6 @@ public final class Admins implements CommandListener {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-			}
-		}  else if (command.equals("goto") || command.equals("summon")) {
-			boolean summon = command.equals("summon");
-
-			if (args.length != 1) {
-				sendInvalidArguments(player, summon ? "summon" : "goto", "name");
-				return;
-			}
-			long usernameHash = DataConversions.usernameToHash(args[0]);
-			Player affectedPlayer = world.getPlayer(usernameHash);
-
-			if (affectedPlayer != null) {
-				if (summon) {
-					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " summoned " + affectedPlayer.getUsername() + " from " + affectedPlayer.getLocation().toString() + " to " + player.getLocation().toString()));
-					affectedPlayer.teleport(player.getX(), player.getY(), true);
-				} else {
-					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went from " + player.getLocation() + " to " + affectedPlayer.getUsername() + " at " + affectedPlayer.getLocation().toString()));
-					player.teleport(affectedPlayer.getX(), affectedPlayer.getY(), true);
-				}
-			} else {
-				player.getActionSender().sendMessage(COMMAND_PREFIX + "Invalid player");
 			}
 		} else if (command.equals("blink")) {
 			player.setBlink(!player.blink());
@@ -228,30 +201,6 @@ public final class Admins implements CommandListener {
 				player.teleport(x, y, true);
 			} else {
 				player.getActionSender().sendMessage("Invalid coordinates!");
-			}
-		} else if (command.equalsIgnoreCase("kick")) {
-			Player p = world.getPlayer(DataConversions.usernameToHash(args[0]));
-			if (p == null) {
-				return;
-			}
-			p.destroy(false);
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " kicked " + p.getUsername()));
-		} else if (command.equals("take") || command.equals("put")) {
-			if (args.length != 1) {
-				player.getActionSender().sendMessage("Invalid args. Syntax: TAKE name");
-				return;
-			}
-			Player affectedPlayer = world.getPlayer(DataConversions.usernameToHash(args[0]));
-			if (affectedPlayer == null) {
-				player.getActionSender().sendMessage("Invalid player, maybe they aren't currently online?");
-				return;
-			}
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " took " + affectedPlayer.getUsername() + " from " + affectedPlayer.getLocation().toString() + " to admin room"));
-
-			affectedPlayer.teleport(78, 1642, true);
-
-			if (command.equals("take")) {
-				player.teleport(76, 1642, true);
 			}
 		} else if (command.equals("reload")) {
 			boolean failed = false;
@@ -354,7 +303,7 @@ public final class Admins implements CommandListener {
 			} catch (SQLException e) {
 				player.getActionSender().sendMessage(COMMAND_PREFIX + "A MySQL error has occured! " + e.getMessage());
 			}
-		} /* else if(command.equals("item")) { //DEV ONLY
+		} /*else if(command.equals("item")) { //DEV ONLY
 			int item = Integer.parseInt(args[0]);
 			int amt = Integer.parseInt(args[1]);
 			player.getInventory().add(new InvItem(item, amt));
@@ -376,6 +325,36 @@ public final class Admins implements CommandListener {
 					n.remove();
 				}
 			});
+		} else if(command.equals("object")) {
+		    if (args.length < 1 || args.length > 3) {
+		    	player.getActionSender().sendMessage("Invalid args. Syntax: OBJECT id [direction] (store in db) true/false");
+		    	return;
+		    }
+		    boolean percist = (args.length > 1 ? args[2].equalsIgnoreCase("true") : false);
+		    int id = Integer.parseInt(args[0]);
+		    if (id < 0) {
+		    	GameObject object = world.getTile(player.getLocation()).getGameObject();
+			    if (object != null) {
+				    world.unregisterGameObject(object);
+				    if(percist) {
+				    	player.getActionSender().sendMessage("Deleted object from the database");
+				    	world.getDB().deleteGameObjectFromDatabase(object);
+				    }
+				}
+		    }
+		    else if (EntityHandler.getGameObjectDef(id) != null) {
+		    	int dir = args.length == 2 ? Integer.parseInt(args[1]) : 0;
+		    	GameObject obj = new GameObject(player.getLocation(), id, dir, 0);
+		    	world.registerGameObject(obj);
+		    	if(percist) {
+		    		player.getActionSender().sendMessage("Stored object in the database");
+		    		world.getDB().storeGameObjectToDatabase(obj);
+		    	}
+		    } 
+		    else {
+		    	player.getActionSender().sendMessage("Invalid id");
+		    }
+		    return;
 		} 
 	}
 

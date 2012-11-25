@@ -100,12 +100,11 @@ class Dorics(Quest, TalkToNpcListener, InvUseOnObjectListener, TalkToNpcExecutiv
         stage = script.getQuestStage()
         script.occupy()
         
-        if stage >= 0:
-            if doric.isBusy():
-                script.displayMessage("I'd better go ask Doric if I can use this first")
-            else:
-                script.faceNpc(doric)
-                script.sendNpcChat("Heh who said you could use that?")
+        if doric.isBusy():
+            script.displayMessage("I'd better go ask Doric if I can use this first")
+        else:
+            script.faceNpc(doric)
+            script.sendNpcChat("Heh who said you could use that?")
                 
         script.release()
     
@@ -113,7 +112,10 @@ class Dorics(Quest, TalkToNpcListener, InvUseOnObjectListener, TalkToNpcExecutiv
         return npc.getID() == 144 
     
     def blockInvUseOnObject(self, gameObj, invItem, player):
-        return gameObj.getID() == 177 and self.bar_ids.count(invItem.getID()) > 0 # dorics anvil and hammer
+        script = player.getScriptHelper()
+        script.setActiveQuest(self)
+        stage = script.getQuestStage()
+        return gameObj.getID() == 177 and self.bar_ids.count(invItem.getID()) > 0 and stage >= 0 # dorics anvil and hammer
         
     
         

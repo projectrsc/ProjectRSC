@@ -66,6 +66,10 @@ public final class FightEvent extends DelayedEvent {
             affectedMob.resetCombat(CombatState.ERROR);
             return;
         }
+        if (owner.isSleeping()) {
+        	owner.getActionSender().sendWakeUp(false, false);
+        	owner.getActionSender().sendFatigue(owner.getFatigue());
+        }
 
         Mob attacker, opponent;
 
@@ -182,7 +186,7 @@ public final class FightEvent extends DelayedEvent {
 
             attacker.resetCombat(CombatState.WON);
             opponent.resetCombat(CombatState.LOST);
-        } else {
+        } else { // show hits
             ArrayList<Player> playersToInform = new ArrayList<Player>();
             playersToInform.addAll(opponent.getViewArea().getPlayersInView());
             playersToInform.addAll(attacker.getViewArea().getPlayersInView());

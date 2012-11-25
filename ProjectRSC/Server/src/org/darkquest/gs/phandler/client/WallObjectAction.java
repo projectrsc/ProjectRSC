@@ -41,12 +41,6 @@ public class WallObjectAction implements PacketHandler {
                 player.setSuspiciousPlayer(true);
                 return;
             }
-            
-
-            if (object.getX() == 150 && object.getY() == 554 && object.getID() == 44) {// champs guild door
-    			player.getActionSender().sendMessage("This door will be opened at a later date..");
-    			return;
-    		}
            
             //Services.lookup(DatabaseManager.class).addQuery(new GenericLog(player.getUsername() + " used a door (" + object.getID() + ") at " + player.getLocation()));
           
@@ -93,7 +87,6 @@ public class WallObjectAction implements PacketHandler {
                         }
                         switch (object.getID()) {
                             case 20:
-                            case 44:
                                 replaceGameObject(1, true);
                                 break;
                             case 1:
@@ -252,6 +245,17 @@ public class WallObjectAction implements PacketHandler {
                                     owner.teleport(598, 757, false);
                                 }
                                 break;
+                            case 44: // champs guild door 
+                            	if (object.getX() != 150 && object.getY() != 554) {// champs guild door
+                                	return;
+                        		}
+                            	if(owner.getSkillTotal() < 1000) { // temp
+                            		owner.getActionSender().sendMessage("You need a total of 1000 skill total to enter this guild.");
+                        			return;
+                            	}
+                            	doDoor();
+                            	owner.teleport(150, 554, false);
+                            	break;
                             case 74: // Heroes guild door
                                 if (object.getX() != 372 || object.getY() != 441) {
                                     return;

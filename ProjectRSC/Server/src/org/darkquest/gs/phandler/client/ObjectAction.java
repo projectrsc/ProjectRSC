@@ -35,7 +35,6 @@ public class ObjectAction implements PacketHandler {
 			return;
 		}
 
-
 		player.resetAll();
 		ActiveTile t = world.getTile(p.readShort(), p.readShort());
 		if(t == null)
@@ -137,6 +136,17 @@ public class ObjectAction implements PacketHandler {
 						owner.teleport(222, 110, false);
 						return;
 					}
+					
+					if(object.getID() == 331 && object.getX() == 150 && object.getY() == 558) { // upstairs champs
+						owner.teleport(151, 1505, false);
+						return;
+					}
+					
+					if(object.getID() == 6 && object.getX() == 148 && object.getY() == 1507) { // escape ladder champs
+						owner.teleport(148, 563, false);
+						return;
+					}
+					
 					if (command.equals("climb-up") || command.equals("climb up") || command.equals("go up")) {
 						int[] coords = coordModifier(owner, true, object);
 						owner.teleport(coords[0], coords[1], false);

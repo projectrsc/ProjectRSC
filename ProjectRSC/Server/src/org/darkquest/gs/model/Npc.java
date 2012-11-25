@@ -46,8 +46,14 @@ public class Npc extends Mob {
 					player.resetPath();
 					player.resetAll();
 					player.setStatus(Action.FIGHTING_MOB);
+					player.getActionSender().sendFatigue(player.getFatigue()); // this shouldn't happen, but just in case
 					player.getActionSender().sendSound("underattack");
 					player.getActionSender().sendMessage("You are under attack!");
+					
+					if (player.isSleeping()) {
+		            	player.getActionSender().sendWakeUp(false, false);
+		            	player.getActionSender().sendFatigue(player.getFatigue());
+		            }
 
 					setLocation(player.getLocation(), true);
 					for (Player p : getViewArea().getPlayersInView()) {
@@ -115,7 +121,7 @@ public class Npc extends Mob {
     /**
      * The identifier for the NPC block event
      */
-    private static final int BLOCKED_IDENTIFIER = 69;
+    //private static final int BLOCKED_IDENTIFIER = 69;
     /**
      * World instance
      */
@@ -346,6 +352,9 @@ public class Npc extends Mob {
                         if (p.inCombat()) {
                             continue;
                         }
+                        if (p.isBusy() && p.isMining()) { // ignore that the player is busy mining
+                        	return p;
+                        }
                         if (p.isBusy() || p.isNonaggro() || now - p.getCombatTimer() < (p.getCombatState() == CombatState.RUNNING || p.getCombatState() == CombatState.WAITING ? 3000 : 1500) || !p.nextTo(this) || !p.getLocation().inBounds(loc.minX - 4, loc.minY - 4, loc.maxX + 4, loc.maxY + 4)) {
                             continue;
                         }
@@ -565,6 +574,7 @@ public class Npc extends Mob {
         
         if (!isBusy() && def.isAggressive() && now - getCombatTimer() > 3000 && victim != null) {
             resetPath();
+            
             victim.resetPath();
             victim.resetAll();
             victim.setStatus(Action.FIGHTING_MOB);
@@ -573,8 +583,9 @@ public class Npc extends Mob {
             
             if (victim.isSleeping()) {
             	victim.getActionSender().sendWakeUp(false, false);
+            	victim.getActionSender().sendFatigue(victim.getFatigue());
             }
-
+            
             setLocation(victim.getLocation(), true);
             for (Player p : getViewArea().getPlayersInView()) {
                 p.removeWatchedNpc(this);

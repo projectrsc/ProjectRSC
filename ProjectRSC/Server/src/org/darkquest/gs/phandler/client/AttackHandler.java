@@ -99,8 +99,10 @@ public class AttackHandler implements PacketHandler {
 						affectedPlayer.setStatus(Action.FIGHTING_MOB);
 						affectedPlayer.getActionSender().sendSound("underattack");
 						affectedPlayer.getActionSender().sendMessage("You are under attack!");
+						
 						if (affectedPlayer.isSleeping()) {
 							affectedPlayer.getActionSender().sendWakeUp(false, false);
+							affectedPlayer.getActionSender().sendFatigue(affectedPlayer.getFatigue());
 						}
 						//Services.lookup(DatabaseManager.class).addQuery(new GenericLog(owner.getUsername() + " attacked " + affectedPlayer.getUsername() + " at location " + affectedPlayer.getLocation()));
 					} else if (affectedMob instanceof Npc) {

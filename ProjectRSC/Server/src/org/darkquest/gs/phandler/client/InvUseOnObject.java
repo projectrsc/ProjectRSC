@@ -207,7 +207,7 @@ public class InvUseOnObject implements PacketHandler {
                 }
 
                 switch (object.getID()) {
-                
+                case 177: // dorics anvil
                 case 50: // Anvil
       				int minSmithingLevel = Formulae.minSmithingLevel(item.getID());
       				if(minSmithingLevel < 0) {

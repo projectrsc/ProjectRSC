@@ -1,6 +1,7 @@
 package org.darkquest.gs.phandler.client;
 
 import java.util.ArrayList;
+
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -165,6 +166,11 @@ public class SpellHandler implements PacketHandler {
                     player.getActionSender().sendMessage("This type of spell cannot be used in a duel.");
                     return;
                 }
+                /*// varrock upstairs mus
+                if(Point.location(player.getX(), player.getY()).inBounds(97, 1428, 106, 1440)) {
+                	player.getActionSender().sendMessage("This spell cannot be used here");
+                	return;
+                } */
                 ActiveTile t = world.getTile(p.readShort(), p.readShort());
                 int itemId = p.readShort();
                 Item affectedItem = null;
@@ -553,6 +559,10 @@ public class SpellHandler implements PacketHandler {
                         if (affectedItem.getID() == 575) {
                             owner.getActionSender().sendMessage("You may not telegrab this item");
                             return;
+                        }
+                        if(affectedItem.getLocation().inBounds(97, 1428, 106, 1440)) {
+                        	owner.getActionSender().sendMessage("Telekinetic grab cannot be used in here");
+                        	return;
                         }
                        /* if (affectedItem.getLocation().inBounds(490, 464, 500, 471) || affectedItem.getLocation().inBounds(490, 1408, 500, 1415)) {
                             owner.getActionSender().sendMessage("Telekinetic grab cannot be used in here");
