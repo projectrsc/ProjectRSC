@@ -112,12 +112,12 @@ public class RandomObjects implements ObjectActionExecutiveListener, ObjectActio
 					owner.teleport(91, 649, false);
 				}
 				break;
-			case 254: // Karamja Gate
-				if (!Constants.GameServer.MEMBER_WORLD) {
-					owner.getActionSender().sendMessage("Nothing interesting happens.");
+			case 137: // Karamja Gate
+				if (object.getX() != 434 || object.getY() != 682) {
 					return;
 				}
-				if (object.getX() != 434 || object.getY() != 682) {
+				if (!Constants.GameServer.MEMBER_WORLD) {
+					owner.getActionSender().sendMessage("You need to be on a members server to use this gate");
 					return;
 				}
 				doGate(owner, object);
