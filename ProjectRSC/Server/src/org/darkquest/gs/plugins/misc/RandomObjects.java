@@ -84,7 +84,22 @@ public class RandomObjects implements ObjectActionExecutiveListener, ObjectActio
 				} else {
 					owner.teleport(341, 487, false);
 				}
-				break;
+				break; 
+					case 137: // Members Gate (KBD)
+				if (object.getX() != 285 || object.getY() != 186) {
+					return;
+				}
+				if (!Constants.GameServer.MEMBER_WORLD) {
+					owner.getActionSender().sendMessage("You need to be on a members server to use this gate");
+					return;
+				}
+				doGate(owner, object);
+				if (owner.getX() <= 285) {
+					owner.teleport(284, 186, false);
+				} else {
+					owner.teleport(285, 186, false);
+				}
+				break; 
 			case 138: // Members Gate (Crafting Guild)
 				if (object.getX() != 343 || object.getY() != 581) {
 					return;
