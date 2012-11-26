@@ -71,34 +71,33 @@ public class RandomObjects implements ObjectActionExecutiveListener, ObjectActio
 				replaceGameObject(135, false, owner, object);
 				break;
 			case 137: // Members Gate (Doriks)
-				if (object.getX() != 341 || object.getY() != 487) {
-					return;
+				if (object.getX() == 341 && object.getY() == 487) {
+					if (!Constants.GameServer.MEMBER_WORLD) {
+						owner.getActionSender().sendMessage("You need to be on a members server to use this gate");
+						return;
+					}
+					doGate(owner, object);
+					if (owner.getX() <= 341) {
+						owner.teleport(342, 487, false);
+					} else {
+						owner.teleport(341, 487, false);
+					}
+					break;
 				}
-				if (!Constants.GameServer.MEMBER_WORLD) {
-					owner.getActionSender().sendMessage("You need to be on a members server to use this gate");
-					return;
-				}
-				doGate(owner, object);
-				if (owner.getX() <= 341) {
-					owner.teleport(342, 487, false);
-				} else {
-					owner.teleport(341, 487, false);
-				}
-				if (object.getX() != 434 || object.getY() != 682) {
-					return;
-				}
-				if (!Constants.GameServer.MEMBER_WORLD) {
-					owner.getActionSender().sendMessage("You need to be on a members server to use this gate");
-					return;
-				}
-				doGate(owner, object);
-				if (owner.getX() <= 434) {
-					owner.teleport(435, 682, false);
-				} else {
-					owner.teleport(434, 682, false);
-				}
-				
+				if (object.getX() == 434 && object.getY() == 682) {
+
+					if (!Constants.GameServer.MEMBER_WORLD) {
+						owner.getActionSender().sendMessage("You need to be on a members server to use this gate");
+						return;
+					}
+					doGate(owner, object);
+					if (owner.getX() <= 434) {
+						owner.teleport(435, 682, false);
+					} else {
+						owner.teleport(434, 682, false);
+					}
 				break; 
+				}
 					
 			case 138: // Members Gate (Crafting Guild)
 				if (object.getX() != 343 || object.getY() != 581) {
