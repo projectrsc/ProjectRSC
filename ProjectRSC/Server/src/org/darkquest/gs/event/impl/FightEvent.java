@@ -66,7 +66,7 @@ public final class FightEvent extends DelayedEvent {
             affectedMob.resetCombat(CombatState.ERROR);
             return;
         }
-        if (owner.isSleeping()) {
+        if (owner.isSleeping() && !owner.isPrayerActivated(12)) {
         	owner.getActionSender().sendWakeUp(false, false);
         	owner.getActionSender().sendFatigue(owner.getFatigue());
         }
