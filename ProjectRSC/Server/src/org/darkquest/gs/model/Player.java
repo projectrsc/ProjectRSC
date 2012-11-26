@@ -4,7 +4,8 @@ import java.net.InetSocketAddress;
 
 
 
-
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -2297,8 +2298,16 @@ public final class Player extends Mob {
 	}
 
 	public void setSuspiciousPlayer(boolean suspicious) {
-		Logger.println(this.getUsername() + " was set suspicious! \n");
-		//Services.lookup(DatabaseManager.class).addQuery(new GenericLog(username + " was set suspicious!"));
+		String stacktrace = "";
+		Exception e = new Exception();
+		StringWriter sw = new StringWriter();
+	    	PrintWriter pw = new PrintWriter(sw, true);
+	    	e.printStackTrace(pw);
+	    	pw.flush();
+	    	sw.flush();
+	    	stacktrace = sw.toString();
+		this.suspicious = suspicious;
+		Logger.println(this.getUsername() + " was set suspicious! Stacktrace: \n" + stacktrace);
 	}
 
 	public void setTradeConfirmAccepted(boolean b) {
