@@ -84,7 +84,22 @@ public class RandomObjects implements ObjectActionExecutiveListener, ObjectActio
 				} else {
 					owner.teleport(341, 487, false);
 				}
-				break;
+				if (object.getX() != 434 || object.getY() != 682) {
+					return;
+				}
+				if (!Constants.GameServer.MEMBER_WORLD) {
+					owner.getActionSender().sendMessage("You need to be on a members server to use this gate");
+					return;
+				}
+				doGate(owner, object);
+				if (owner.getX() <= 434) {
+					owner.teleport(435, 682, false);
+				} else {
+					owner.teleport(434, 682, false);
+				}
+				
+				break; 
+					
 			case 138: // Members Gate (Crafting Guild)
 				if (object.getX() != 343 || object.getY() != 581) {
 					return;
@@ -111,21 +126,7 @@ public class RandomObjects implements ObjectActionExecutiveListener, ObjectActio
 					owner.teleport(91, 649, false);
 				}
 				break;
-			case 254: // Karamja Gate
-				if (!Constants.GameServer.MEMBER_WORLD) {
-					owner.getActionSender().sendMessage("Nothing interesting happens.");
-					return;
-				}
-				if (object.getX() != 434 || object.getY() != 682) {
-					return;
-				}
-				doGate(owner, object);
-				if (owner.getX() <= 434) {
-					owner.teleport(435, 682, false);
-				} else {
-					owner.teleport(434, 682, false);
-				}
-				break;
+
 			case 563: // King Lanthlas Gate
 				if (object.getX() != 660 || object.getY() != 551) {
 					return;
@@ -231,15 +232,22 @@ public class RandomObjects implements ObjectActionExecutiveListener, ObjectActio
 						owner.teleport(owner.getX(), 142, false);
 					}
 				}
-				if (object.getX() == 285 || object.getY() == 185) { // Lesser demon gate
-					doGate(owner, object);
-					if (owner.getX() <= 284) {
+				if (!Constants.GameServer.MEMBER_WORLD) {
+					owner.getActionSender().sendMessage("Nothing interesting happens.");
+					return;
+				}
+				if (object.getX() == 285 || object.getY() == 185) {
+					return;
+				}
+				doGate(owner, object);
+		if (owner.getX() <= 284) {
 						owner.teleport(285, 185, false);
 					} else {
 						owner.teleport(284, 185, false);
-					}
 				}
+				
 				break;//handleRefill
+						
 			case 319: // Lava Maze Gate
 				if (object.getX() != 243 || object.getY() != 178) {
 					return;
