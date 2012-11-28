@@ -221,7 +221,7 @@ public final class PlayerLogin implements PacketHandler {
 				sender.sendMessage("@que@" + Constants.GameServer.MOTD);
 				sender.sendQuestInfo();
 
-				if (player.isAdmin()) {
+				if (player.isAdmin() || player.isMod()) {
 					player.setnopk(true);
 					player.setnonaggro(true);
 				}
@@ -235,8 +235,8 @@ public final class PlayerLogin implements PacketHandler {
 
 				PluginHandler.getPluginHandler().handleAction("PlayerLogin", new Object[]{player});
 			} else {
-				System.out.println("Not clean login");
 				/*
+				 * System.out.println("Not clean login");
 				if(ConnectionFilter.getInstance() != null) {
 					ConnectionFilter.getInstance().processCleanLogin(session, true);
 				} */
