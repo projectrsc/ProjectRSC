@@ -55,11 +55,11 @@ public class AttackHandler implements PacketHandler {
 				return;
 			}
 			// Determine who gets the attack
-			for(Player attackingPlayer : pl.getViewArea().getPlayersInView()) {
+			/*for(Player attackingPlayer : pl.getViewArea().getPlayersInView()) { 
 				if(attackingPlayer.getFollowing() == pl) {
 					return;
 				}
-			}
+			} */
 		} 
 		
 		player.setFollowing(affectedMob);
