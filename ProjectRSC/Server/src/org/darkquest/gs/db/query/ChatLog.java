@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import org.darkquest.config.Constants;
 
-public final class ChatLog extends DatabaseLog {
+public final class ChatLog extends GameLog {
 
 	private final String sender, message;
 
@@ -40,6 +40,11 @@ public final class ChatLog extends DatabaseLog {
 		statement.setString(3, revievers == null ? "no one" : sb.toString());
 		statement.setLong(4, time);
 		return statement;
+	}
+
+	@Override
+	public GameLog build() {
+		return this;
 	}
 
 }

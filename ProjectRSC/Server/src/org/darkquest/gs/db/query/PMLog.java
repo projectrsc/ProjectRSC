@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import org.darkquest.config.Constants;
 
-public final class PMLog extends DatabaseLog {
+public final class PMLog extends GameLog {
 
 	private final String sender, message, reciever;
 	
@@ -25,6 +25,11 @@ public final class PMLog extends DatabaseLog {
 		statement.setString(3, reciever);
 		statement.setLong(4, time);
 		return statement;
+	}
+
+	@Override
+	public GameLog build() {
+		return this;
 	}
 
 }

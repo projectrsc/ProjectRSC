@@ -1,11 +1,13 @@
 package org.darkquest.gs.db;
 
 import java.util.concurrent.ArrayBlockingQueue;
+
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.darkquest.config.Constants;
-import org.darkquest.gs.db.query.DatabaseLog;
+import org.darkquest.gs.db.query.GameLog;
 import org.darkquest.gs.service.Service;
 import org.darkquest.gs.util.Logger;
 
@@ -13,7 +15,7 @@ public final class DatabaseManager extends Service implements Runnable {
 
 	private final DBConnection connection = new DBConnection();
 
-	private final BlockingQueue<DatabaseLog> queries = new ArrayBlockingQueue<DatabaseLog>(5000);
+	private final BlockingQueue<GameLog> queries = new ArrayBlockingQueue<GameLog>(5000);
 
 	private final AtomicBoolean running = new AtomicBoolean(true);
 	
@@ -42,11 +44,12 @@ public final class DatabaseManager extends Service implements Runnable {
 		while (running.get() && connection.isConnected()) {
 			if (queries.size() > 0) {
 				try {
-					DatabaseLog log = queries.poll();
+					GameLog log = queries.poll();
 
 					if (log != null) {
 						log.prepareStatement(connection.getConnection()).execute();
 					}
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -66,7 +69,7 @@ public final class DatabaseManager extends Service implements Runnable {
 		Logger.println("Shutting down database thread.. executing remaining queries");
 		while (queries.size() < 1 && connection.isConnected()) {
 			try {
-				DatabaseLog log = queries.poll();
+				GameLog log = queries.poll();
 
 				if (log != null) {
 					log.prepareStatement(connection.getConnection()).execute();
@@ -77,7 +80,7 @@ public final class DatabaseManager extends Service implements Runnable {
 		}
 	}
 
-	public void addQuery(DatabaseLog log) {
+	public void addQuery(GameLog log) {
 		if (!running.get()) {
 			return;
 		}

@@ -352,8 +352,8 @@ public class Npc extends Mob {
                         if (p.inCombat()) {
                             continue;
                         }
-                        if (p.isBusy() && p.isMining()) { // ignore that the player is busy mining
-                        	return p;
+                        if(p.isSleeping() && p.isPrayerActivated(12)) { // skip if they are sleeping and prayer is activated
+                        	continue;
                         }
                         if (p.isBusy() || p.isNonaggro() || now - p.getCombatTimer() < (p.getCombatState() == CombatState.RUNNING || p.getCombatState() == CombatState.WAITING ? 3000 : 1500) || !p.nextTo(this) || !p.getLocation().inBounds(loc.minX - 4, loc.minY - 4, loc.maxX + 4, loc.maxY + 4)) {
                             continue;
@@ -363,8 +363,6 @@ public class Npc extends Mob {
                                 return p;
                             }
                         }
-
-
                     }
                 }
             }
@@ -462,41 +460,37 @@ public class Npc extends Mob {
 			//
 			int hit = DataConversions.random(0, total);
 			total = 0;
-			if (!this.getDef().name.equalsIgnoreCase("ghost")) {
-				if (this.getCombatLevel() >= 90 && Constants.GameServer.MEMBER_WORLD) { // key halves?
-					if (Formulae.Rand(0, 3000) == 500) {
-						if (Formulae.Rand(0, 1) == 1) {
-							world.registerItem(new Item(1276, getX(), getY(), 1, owner));
-						} else {
-							world.registerItem(new Item(1277, getX(), getY(), 1, owner));
-						}
+			if (getCombatLevel() >= 90 && Constants.GameServer.MEMBER_WORLD) { // key halves?
+				if (Formulae.Rand(0, 3000) == 500) {
+					if (Formulae.Rand(0, 1) == 1) {
+						world.registerItem(new Item(1276, getX(), getY(), 1, owner));
+					} else {
+						world.registerItem(new Item(1277, getX(), getY(), 1, owner));
 					}
-				}
-				for (ItemDropDef drop : drops) {
-					if (drop == null) {
-						continue;
-					}
-					if (drop.getWeight() == 0) {
-						world.registerItem(new Item(drop.getID(), getX(), getY(), drop.getAmount(), owner));
-						continue;
-					}
-
-					if (hit >= total && hit < (total + drop.getWeight())) {
-						if (drop.getID() != -1) {
-							if (EntityHandler.getItemDef(drop.getID()).members && Constants.GameServer.MEMBER_WORLD) {
-								world.registerItem(new Item(drop.getID(), getX(), getY(), drop.getAmount(), owner));
-								break;
-							} 
-							if (!EntityHandler.getItemDef(drop.getID()).members) {
-								world.registerItem(new Item(drop.getID(), getX(), getY(), drop.getAmount(), owner));
-								break;
-							}
-						}
-					}
-					total += drop.getWeight();
 				}
 			}
-		
+			for (ItemDropDef drop : drops) {
+				if (drop == null) {
+					continue;
+				}
+			if (drop.getWeight() == 0) {
+				world.registerItem(new Item(drop.getID(), getX(), getY(), drop.getAmount(), owner));
+				continue;
+			}
+			if (hit >= total && hit < (total + drop.getWeight())) {
+				if (drop.getID() != -1) {
+					if (EntityHandler.getItemDef(drop.getID()).members && Constants.GameServer.MEMBER_WORLD) {
+						world.registerItem(new Item(drop.getID(), getX(), getY(), drop.getAmount(), owner));
+						break;
+					} 
+					if (!EntityHandler.getItemDef(drop.getID()).members) {
+						world.registerItem(new Item(drop.getID(), getX(), getY(), drop.getAmount(), owner));
+						break;
+					}
+				}
+			}
+			total += drop.getWeight();
+		}
 		//World.getQuestManager().handleNpcKilled(this, owner);
     }
 

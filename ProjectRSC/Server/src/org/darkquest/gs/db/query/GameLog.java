@@ -5,16 +5,18 @@ import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-public abstract class DatabaseLog {
+public abstract class GameLog {
 	
 	protected final String query;
 		
 	protected final long time;
 	
-	public DatabaseLog(String query) {
+	public GameLog(String query) {
 		this.query = query;
 		this.time = System.currentTimeMillis() / 1000;
 	}
+	
+	public abstract GameLog build(); // add any logic here
 	
 	public abstract PreparedStatement prepareStatement(Connection connection) throws SQLException;
 	

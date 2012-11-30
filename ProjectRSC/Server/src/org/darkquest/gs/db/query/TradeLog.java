@@ -17,15 +17,32 @@ import org.darkquest.gs.model.InvItem;
  */
 
 
-public final class TradeLog extends DatabaseLog {
+public final class TradeLog extends GameLog {
 
 	private String player1, player2, playerOnesOffer, playerTwosOffer;
-
+	private List<InvItem> player1Offer, player2Offer;
+	
 	public TradeLog(String player1, String player2, List<InvItem> player1Offer, List<InvItem> player2Offer) {
 		super("INSERT INTO `" + Constants.GameServer.MYSQL_TABLE_PREFIX + "trade_logs`(`player1`, `player2`, `player1_items`, `player2_items`, `time`) VALUES(?, ?, ?, ?, ?)");
 		this.player1 = player1;
 		this.player2 = player2;
-		
+		this.player1Offer = player1Offer;
+		this.player2Offer = player2Offer;
+	}
+
+	@Override
+	public PreparedStatement prepareStatement(Connection connection) throws SQLException {
+		PreparedStatement statement = connection.prepareStatement(query);
+		statement.setString(1, player1);
+		statement.setString(2, player2);
+		statement.setString(3, playerOnesOffer);
+		statement.setString(4, playerTwosOffer);
+		statement.setLong(5, time);
+		return statement;
+	}
+
+	@Override
+	public GameLog build() {
 		StringBuilder sb = new StringBuilder();
 		
 		for (InvItem i : player1Offer) {
@@ -42,17 +59,7 @@ public final class TradeLog extends DatabaseLog {
 		}
 		
 		playerTwosOffer = sb.toString();
-	}
-
-	@Override
-	public PreparedStatement prepareStatement(Connection connection) throws SQLException {
-		PreparedStatement statement = connection.prepareStatement(query);
-		statement.setString(1, player1);
-		statement.setString(2, player2);
-		statement.setString(3, playerOnesOffer);
-		statement.setString(4, playerTwosOffer);
-		statement.setLong(5, time);
-		return statement;
+		return this;
 	}
 
 }

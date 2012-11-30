@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import org.darkquest.config.Constants;
 
-public final class GameReport extends DatabaseLog {
+public final class GameReport extends GameLog {
 
 	private final String reporter, reported;
 
@@ -31,6 +31,11 @@ public final class GameReport extends DatabaseLog {
 		statement.setByte(4, reason);
 		statement.setBoolean(5, mute);
 		return statement;
+	}
+
+	@Override
+	public GameLog build() {
+		return this;
 	}
 
 }

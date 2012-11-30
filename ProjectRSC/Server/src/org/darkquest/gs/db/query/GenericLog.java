@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import org.darkquest.config.Constants;
 
-public final class GenericLog extends DatabaseLog {
+public final class GenericLog extends GameLog {
 	
 	private final String message;
 	
@@ -21,6 +21,11 @@ public final class GenericLog extends DatabaseLog {
 		statement.setString(1, message);
 		statement.setLong(2, time);
 		return statement;
+	}
+
+	@Override
+	public GameLog build() {
+		return this;
 	}
 	
 }
