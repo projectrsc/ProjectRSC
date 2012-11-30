@@ -37,9 +37,10 @@ public final class PlayerLoginHandler implements PacketHandler {
 			String pass = p.readString().trim();
 			byte loginCode = validatePlayer(user, pass, ip, world); 
 			
+			/*
 			if(Monitor.getInstance() != null && Monitor.getInstance().hasMaxedLimit(DataConversions.IPToLong(ip))) {
 				loginCode = 8;
-			} 
+			} */
 			
 			builder.setUID(uID);
 			if (loginCode == 0 || loginCode == 1 || loginCode == 99) {//
