@@ -3,6 +3,7 @@ package org.darkquest.gs;
 import java.io.IOException;
 
 
+
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
@@ -21,7 +22,6 @@ import org.darkquest.gs.util.Logger;
 import org.darkquest.gs.world.World;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
@@ -51,7 +51,9 @@ public final class Server {
 
 	private DelayedEvent updateEvent;
 
-	private ChannelFactory factory;
+	private NioServerSocketChannelFactory factory;
+	
+	//private NioDatagramChannelFactory udpFactory;
 
 	public Server() {
 		running = true;
@@ -123,10 +125,14 @@ public final class Server {
 		} finally {
 			Server.print("COMPLETE", true);
 		}
+		
+		//int cores = 1; // default to one
 
 		try {
 			Server.print("Initializing NIO", false);
-			factory = new NioServerSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newCachedThreadPool());
+			//cores = Runtime.getRuntime().availableProcessors() * 2; // TODO: split between udp/tcp
+			// According to Netty docs, we'll need at least cores * 2 for workers, and one thread per boss (listening port)
+			factory = new NioServerSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newCachedThreadPool());
 		} catch (Exception e) {
 			Server.print("ERROR", true);
 			e.printStackTrace();
@@ -136,10 +142,9 @@ public final class Server {
 		}
 
 		try {
-			Server.print("Configurating Netty", false);
-
-
+			Server.print("Configurating Bootstraps", false);
 			ServerBootstrap bootstrap = new ServerBootstrap(factory);
+			//ConnectionlessBootstrap udpBootstrap = new ConnectionlessBootstrap();
 
 			bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 				public ChannelPipeline getPipeline() {

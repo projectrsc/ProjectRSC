@@ -643,12 +643,12 @@ public final class Player extends Mob {
 	}
 
 	public boolean canLogout() {
-		/*if (this.location.inWilderness()) {
-			if (System.currentTimeMillis() - this.getLastMoved() < 10000) {
+		if (location.inWilderness()) {
+			if (System.currentTimeMillis() - getLastMoved() < 10000) {
 				getActionSender().sendMessage("You must stand peacefully in one place for 10 seconds!");
 				return false;
 			}
-		}*/
+		}
 		return !isBusy() && System.currentTimeMillis() - getCombatTimer() > 10000;
 	}
 

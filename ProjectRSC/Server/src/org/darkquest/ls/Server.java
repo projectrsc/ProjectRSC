@@ -2,9 +2,6 @@ package org.darkquest.ls;
 
 import java.io.File;
 
-
-
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
@@ -24,7 +21,6 @@ import org.darkquest.ls.net.LSConnectionHandler;
 import org.darkquest.ls.util.Config;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
@@ -112,20 +108,8 @@ public final class Server {
 
 	private final TreeMap<Integer, World> worlds = new TreeMap<Integer, World>();
 
-	private ChannelFactory factory;
-
 	private Server() {
 		try {
-			print("Initializing NIO", false);
-			factory = new NioServerSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newCachedThreadPool());
-		} catch(Exception e) {
-			print("ERROR", true);
-		} finally {
-			print("COMPLETE", true);
-		}
-
-		try {
-
 			print("Initializing LoginEngine", false);
 			engine = new LoginEngine(this);
 			engine.start();
@@ -161,7 +145,7 @@ public final class Server {
 	}
 
 	private Channel createListener(String ip, int port, final SimpleChannelHandler handler, final OneToOneEncoder encoder, final FrameDecoder decoder) throws IOException {
-		ServerBootstrap bootstrap = new ServerBootstrap(factory);
+		ServerBootstrap bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newCachedThreadPool()));
 
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			public ChannelPipeline getPipeline() {
@@ -182,7 +166,8 @@ public final class Server {
 	}
 	
 	private Channel createListener(String ip, int port, final SimpleChannelHandler handler, final StringEncoder encoder, final StringDecoder decoder) throws IOException {
-		ServerBootstrap bootstrap = new ServerBootstrap(factory);
+		// We'll only need one boss and worker thread since it should only be access by localhost
+		ServerBootstrap bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newSingleThreadExecutor()));
 
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			public ChannelPipeline getPipeline() {

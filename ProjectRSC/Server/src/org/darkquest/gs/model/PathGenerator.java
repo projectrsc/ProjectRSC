@@ -231,7 +231,8 @@ public class PathGenerator {
 	private boolean isObjectAllowed(int x, int y) {
 		ActiveTile tile = World.getWorld().getTile(x, y);
 		if (tile.hasGameObject()) { // game object is blocking 
-			if(tile.getGameObject().getDoorDef() != null) { // wall type only
+			if(tile.getGameObject().getDoorDef() != null &&
+					tile.getGameObject().getDoorDef().getName().equalsIgnoreCase("door")) { // wall type only
 				return false;
 			}
 		}

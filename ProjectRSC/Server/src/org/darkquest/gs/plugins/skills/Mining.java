@@ -158,7 +158,7 @@ public final class Mining implements ObjectActionListener, ObjectActionExecutive
 						int respawn = def.getRespawnTime() * 1000;
 						
 						//formulae for silver, coal, gold, mith, addy, and rune rocks for respawn times
-						if (def.getReqLevel() == 20) { //silver
+						/*if (def.getReqLevel() == 20) { //silver
 							respawn = (2 - (world.countPlayers() / 2000)) * 60000; //same as gold
 						} else if (def.getReqLevel() == 30) { //coal
 							respawn = (60 - ((3 * world.countPlayers()) / 200)) * 1000; //this is already in seconds
@@ -170,7 +170,7 @@ public final class Mining implements ObjectActionListener, ObjectActionExecutive
 							respawn = (8 - (world.countPlayers() / 500)) * 60000;
 						} else if (def.getReqLevel() == 85) { //rune
 							respawn = (25 - (world.countPlayers() / 160)) * 60000;
-						}
+						} */
 						world.delayedSpawnObject(newobject.getLoc(), respawn);						
 					}
 					owner.getActionSender().sendInventory();
