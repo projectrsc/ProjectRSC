@@ -36,6 +36,8 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 		
 		if player.isBusy() or not player.withinRange(gameObject, 1):
 			return
+		elif player.inCombat():
+			print("should be able to do both?")
 		
 		if mining_def == None or mining_def.getRespawnTime() < 1:
 			script.displayMessage("There is currently no ore available in this rock.")
@@ -74,7 +76,8 @@ class Mining(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener)
 			script.displayMessage("You are too tired to mine this rock")
 			script.release()
 			return
-
+		
+		player.isMining(True)
 		self.handleMining(gameObject, script, mining_def, axe_id, retries, new_rock)
 		script.release()
 	
