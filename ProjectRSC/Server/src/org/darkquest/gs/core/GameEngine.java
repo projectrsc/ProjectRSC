@@ -1,6 +1,8 @@
 package org.darkquest.gs.core;
 
 import java.util.LinkedList;
+
+
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +15,6 @@ import org.darkquest.gs.event.impl.ShopRestockEvent;
 import org.darkquest.gs.model.Player;
 import org.darkquest.gs.phandler.PacketHandler;
 import org.darkquest.gs.plugins.PluginHandler;
-//import org.darkquest.gs.plugins.python.PythonService;
 import org.darkquest.gs.service.Services;
 import org.darkquest.gs.service.impl.PacketHandlers;
 import org.darkquest.gs.util.Logger;
@@ -34,15 +35,11 @@ public final class GameEngine extends Thread {
     
     private final Object packetListLock = new Object(); // Don't change.
 
-    private long lastSentClientUpdate = System.currentTimeMillis();
-    private long lastSentClientUpdateFast = System.currentTimeMillis();
+    private long lastSentClientUpdate = System.nanoTime() / 1000000;
+    private long lastSentClientUpdateFast = System.nanoTime() / 1000000;
 
     private boolean running = true;
     long time = 0;
-
-    public GameEngine() {
-		
-    }
 
     public void addPacket(RSCPacket packet) {
         // Add the packet to the packet list. NOTE: This must be done
@@ -57,7 +54,7 @@ public final class GameEngine extends Thread {
             p.save();
             p.getActionSender().sendLogout();
         }
-        World.getWorld().getServer().getLoginConnector().getActionSender().saveProfiles();
+        World.getWorld().getServer().getLoginConnector().getActionSender().saveProfiles(false);
     }
 
     public void kill() {
@@ -66,7 +63,7 @@ public final class GameEngine extends Thread {
     }
 
     private void processClients() {
-        long now = System.currentTimeMillis();
+        long now = System.nanoTime() / 1000000;
         if (now - lastSentClientUpdate >= 600) {
             lastSentClientUpdate = now;
             clientUpdater.doMajor();
@@ -124,7 +121,7 @@ public final class GameEngine extends Thread {
     }
 
     public void run() {
-        time = System.currentTimeMillis();
+        time = System.nanoTime() / 1000000;
 
         PluginHandler.getPluginHandler().handleAction("Startup", new Object[]{});
 
@@ -135,7 +132,7 @@ public final class GameEngine extends Thread {
         
         for (Shop shop : world.getShops()) {
 			eventHandler.add(new ShopRestockEvent(shop));
-		} 
+		}  
 
         while (running) {
             try {

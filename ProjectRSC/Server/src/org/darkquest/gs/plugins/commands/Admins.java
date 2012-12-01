@@ -1,16 +1,7 @@
 package org.darkquest.gs.plugins.commands;
 
-import java.sql.ResultSet;
-
-
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-
 import org.darkquest.config.Constants;
-import org.darkquest.config.Formulae;
+
 import org.darkquest.gs.connection.filter.ConnectionFilter;
 import org.darkquest.gs.db.DatabaseManager;
 import org.darkquest.gs.db.query.StaffLog;
@@ -19,18 +10,14 @@ import org.darkquest.gs.event.SingleEvent;
 import org.darkquest.gs.external.EntityHandler;
 import org.darkquest.gs.model.GameObject;
 import org.darkquest.gs.model.InvItem;
-import org.darkquest.gs.model.Item;
 import org.darkquest.gs.model.Mob;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
-import org.darkquest.gs.model.Point;
 import org.darkquest.gs.plugins.PluginHandler;
 import org.darkquest.gs.plugins.listeners.action.CommandListener;
 import org.darkquest.gs.service.Services;
 import org.darkquest.gs.states.CombatState;
 import org.darkquest.gs.tools.DataConversions;
-import org.darkquest.gs.world.ActiveTile;
-import org.darkquest.gs.world.TileValue;
 import org.darkquest.gs.world.World;
 
 public final class Admins implements CommandListener {
@@ -38,8 +25,6 @@ public final class Admins implements CommandListener {
 	private final World world = World.getWorld();
 
 	private static final String COMMAND_PREFIX = "@red@SERVER: @whi@";
-
-	private DelayedEvent maskEvent;
 
 	@Override
 	public void onCommand(String command, String[] args, Player player) {
@@ -75,6 +60,7 @@ public final class Admins implements CommandListener {
 					p.getActionSender().sendAlert(message, false);
 					p.getActionSender().startShutdown(seconds);
 				}
+				World.getWorld().getServer().getLoginConnector().getActionSender().saveProfiles(true);
 			}
 			Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " used UPDATE " + minutes + ":" + remainder + " " + reason));
 		} else if (command.equals("appearance")) {
@@ -133,14 +119,6 @@ public final class Admins implements CommandListener {
 				ConnectionFilter.getInstance().adjustLimit(Integer.parseInt(args[0]));
 				player.getActionSender().sendMessage("Adjusted threshold limit to: " + args[0]);
 			}
-		} else if (command.equals("info")) {
-			if (args.length != 1) {
-				sendInvalidArguments(player, "info", "name");
-				return; 
-			}
-
-			world.getServer().getLoginConnector().getActionSender().requestPlayerInfo(player, DataConversions.usernameToHash(args[0]));
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " used INFO " + args[0]));
 		} else if (command.equals("say")) {
 			String newStr = "@whi@";
 
@@ -163,14 +141,6 @@ public final class Admins implements CommandListener {
 			player.setBlink(!player.blink());
 			player.getActionSender().sendMessage(COMMAND_PREFIX + "Your blink status is now " + player.blink());
 			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " changed blink status to " + player.blink()));
-		} else if (command.equals("invis")) {
-			if (player.isInvis()) {
-				player.setinvis(false);
-			} else {
-				player.setinvis(true);
-			}
-			player.getActionSender().sendMessage(COMMAND_PREFIX + "You are now " + (player.isInvis() ? "invisible" : "visible"));
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went " + (player.isInvis() ? "in" : "") + "visible"));
 		} else if (command.equals("teleport")) {
 			if (args.length != 2) {
 				player.getActionSender().sendMessage("Invalid args. Syntax: TELEPORT x y");
@@ -272,7 +242,31 @@ public final class Admins implements CommandListener {
 		    	player.getActionSender().sendMessage("Invalid id");
 		    }
 		    return;
-		} 
+		} else if(command.equals("setglobalexp")) {
+			if (args.length != 2) {
+				player.getActionSender().sendMessage("Invalid args. Syntax: setglobalexp rate(double) lengthoftime(minutes)");
+				return;
+			}
+			final double curExpRate = Constants.GameServer.EXP_RATE;
+			double changedRate = Double.parseDouble(args[0]);
+			int time = Integer.parseInt(args[1]) * 60000;
+			for(Player p : World.getWorld().getPlayers()) {
+				p.getActionSender().sendMessage("@cya@Global exp rate has changed to @yel@x" + changedRate);
+				p.getActionSender().sendMessage("@cya@This rate will last for @yel@" + Integer.parseInt(args[1]) + " minutes");
+			}
+			Constants.GameServer.EXP_RATE = changedRate;
+			world.getDelayedEventHandler().add(new DelayedEvent(null, time) {
+				
+				@Override
+				public void run() {
+					Constants.GameServer.EXP_RATE = curExpRate;
+					for(Player p : World.getWorld().getPlayers()) {
+						p.getActionSender().sendMessage("@cya@Global exp rate has changed back to @yel@x" + curExpRate);
+					}
+				}
+				
+			});
+		}
 	}
 
 

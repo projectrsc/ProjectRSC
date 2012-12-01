@@ -51,7 +51,7 @@ public class AttackHandler implements PacketHandler {
 			if (pl.inCombat() && player.getRangeEquip() < 0) {
 				return;
 			}
-			if (pl.getLocation().inWilderness() && System.currentTimeMillis() - pl.getLastRun() < 3000) {
+			if (pl.getLocation().inWilderness() && System.nanoTime() / 1000000 - pl.getLastRun() < 3000) {
 				return;
 			}
 			// Determine who gets the attack
@@ -143,6 +143,7 @@ public class AttackHandler implements PacketHandler {
 				radius = 5;
 			if (player.getRangeEquip() == 189)
 				radius = 4;
+			
 			World.getWorld().getDelayedEventHandler().add(new WalkToMobEvent(player, affectedMob, radius) {
 				public void arrived() {
 					owner.resetPath();
@@ -184,8 +185,7 @@ public class AttackHandler implements PacketHandler {
 						if (affectedPlayer.getNpc() != null) {
 							affectedPlayer.getNpc().unblock();
 							affectedPlayer.setNpc(null);
-						}
-						
+						}	
 						//Services.lookup(DatabaseManager.class).addQuery(new GenericLog(owner.getUsername() + " ranged " + affectedPlayer.getUsername() + " at location " + affectedPlayer.getLocation()));
 					}
 					if (Formulae.getRangeDirection(owner, affectedMob) != -1)

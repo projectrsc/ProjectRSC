@@ -13,11 +13,12 @@ public class PlayerLogoutHandler implements PacketHandler {
     public void handlePacket(Packet p, Channel session) throws Exception {
     	try {
         long user = p.readLong();
-        p.readLong();
+        p.readLong(); // what's this?
         
+        /*
         if(Monitor.getInstance() != null) {
 			Monitor.getInstance().onLogout(session);
-		}
+		} */
         
         World world = (World) session.getAttachment();
         world.unregisterPlayer(user);

@@ -64,7 +64,6 @@ public final class PlayerLoginHandler implements PacketHandler {
 			if (packet != null) {
 				session.write(packet);
 			}
-			//session.getParent().disconnect(); // We should try closing the channel immediately as its terminated 
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -75,7 +74,8 @@ public final class PlayerLoginHandler implements PacketHandler {
 		byte returnVal = 0;
 
 		try {
-			ResultSet result = Server.db.getQuery("SELECT `sub_expires`, `pass`, `salt`, `banned`, `owner`, `group_id` FROM `" + Config.MYSQL_TABLE_PREFIX + "players` WHERE `user`='" + user + "'");            if (!result.next()) {
+			ResultSet result = Server.db.getQuery("SELECT `sub_expires`, `pass`, `salt`, `banned`, `owner`, `group_id` FROM `" + Config.MYSQL_TABLE_PREFIX + "players` WHERE `user`='" + user + "'");            
+			if (!result.next()) {
 				return 2;
 			}
 

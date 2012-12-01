@@ -337,7 +337,7 @@ public final class ClientUpdater {
 		if (p.destroyed()) {
 			return;
 		}
-		long curTime = System.currentTimeMillis();
+		long curTime = System.nanoTime() / 1000000;
 
 		if (curTime - p.getLastPing() >= 30000) {
 			p.destroy(false); // was false - xent

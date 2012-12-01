@@ -102,14 +102,6 @@ public final class TalkToNpcHandler implements PacketHandler {
 				} */ if (PluginHandler.getPluginHandler().blockDefaultAction("TalkToNpc", new Object[]{owner, npc})) {
 				
 					return;
-				} else {
-					dir = Formulae.getDirection(owner, npc);
-					if (dir != -1) {
-						if(world.npcScripts.containsKey(npc.getID())) {
-							owner.setSprite(Formulae.getDirection(npc, owner));
-							npc.setSprite(Formulae.getDirection(owner, npc));
-						}	
-					}
 				}
 			}
 		});

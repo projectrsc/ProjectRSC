@@ -166,7 +166,7 @@ public class Entity {
             currentCoords = nextStep(currentCoords[0], currentCoords[1], e);
             if (currentCoords == null) {
                 return false;
-            }
+            } 
         }
         return true;
     }

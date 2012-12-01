@@ -212,9 +212,10 @@ public final class MiscPacketBuilder {
 		queuePacket(s.toPacket());
 	}
 
-	public void saveProfiles() {
+	public void saveProfiles(boolean finalize) {
 		LSPacketBuilder s = new LSPacketBuilder();
 		s.setID(9);
+		s.addByte(finalize ? (byte) 1 : 0);
 		s.setHandler(connector, new PacketHandler() {
 			public void handlePacket(Packet p, Channel session)
 					throws Exception {

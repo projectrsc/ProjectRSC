@@ -15,10 +15,9 @@ import java.util.Set;
 public class PlayerSave {
 
 	public static final String[] statArray = {"attack", "defense", "strength", "hits", "ranged", "prayer", "magic", "cooking", "woodcut", "fletching", "fishing", "firemaking", "crafting", "smithing", "mining", "herblaw", "agility", "thieving"};
-
+	
 	public static PlayerSave loadPlayer(long user) {
 		PlayerSave save = new PlayerSave(user);
-
 		ResultSet result;
 
 		try {

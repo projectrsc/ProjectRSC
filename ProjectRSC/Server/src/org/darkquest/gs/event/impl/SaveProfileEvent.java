@@ -7,7 +7,7 @@ import org.darkquest.gs.world.World;
 
 public final class SaveProfileEvent extends DelayedEvent {
 	
-	public static final int SAVE_TIME = 300000;
+	public static final int SAVE_TIME = 300000; // 5 mins 300000
 
     public SaveProfileEvent() {
         super(null, SAVE_TIME);
@@ -25,7 +25,7 @@ public final class SaveProfileEvent extends DelayedEvent {
                 p.setLastSaveTime(now);
             }
         }
-        World.getWorld().getServer().getLoginConnector().getActionSender().saveProfiles();
+        World.getWorld().getServer().getLoginConnector().getActionSender().saveProfiles(false);
     }
 
 }

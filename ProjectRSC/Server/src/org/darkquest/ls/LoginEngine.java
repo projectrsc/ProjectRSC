@@ -127,7 +127,7 @@ public final class LoginEngine extends Thread {
                     handler.handlePacket(p, p.getSession());
                 } catch (Exception e) {
                 	e.printStackTrace();
-                   // Server.error("Exception with p[" + p.getID() + "]: " + e);
+                	Server.error("Exception with p[" + p.getID() + "]: " + e);
                 }
             } else {
             	

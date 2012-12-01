@@ -19,6 +19,7 @@ import org.darkquest.ls.net.DatabaseConnection;
 import org.darkquest.ls.net.FConnectionHandler;
 import org.darkquest.ls.net.LSConnectionHandler;
 import org.darkquest.ls.util.Config;
+import org.darkquest.ls.util.DataConversions;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelPipeline;
@@ -130,7 +131,6 @@ public final class Server {
 			print("COMPLETE", true);
 		}
 		
-		
 		try {
 			print("Initializing Frontend Listener", false);
 			frontendAcceptor = createListener(Config.QUERY_IP, Config.QUERY_PORT, new FConnectionHandler(engine), new FProtocolEncoder(), new FProtocolDecoder());
@@ -188,30 +188,12 @@ public final class Server {
 
 		return bootstrap.bind(new InetSocketAddress(ip, port));
 	}
-	
-	
 
 	public PlayerSave findSave(long user, World world) {
-		/*PlayerSave save = null;
-
-		for (World w : getWorlds()) {
-			PlayerSave s = w.getSave(user);
-
-			if (s != null) {
-				w.unassosiateSave(s);
-				save = s;
-				System.out.println("Found cached save for " + DataConversions.hashToUsername(user));
-				break;
-			}
+		if(!world.isBlocking() && world.getPlayerCache().contains(user)) {
+			System.out.println("Found cached save for " + DataConversions.hashToUsername(user));
+			return world.getPlayerCache().get(user);
 		}
-
-		if (save == null) {
-			System.out.println("No save found for " + DataConversions.hashToUsername(user) + ", loading fresh");
-			save = PlayerSave.loadPlayer(user);
-		}
-		if(save != null)
-			world.assosiateSave(save);
-		return save;*/
 		return PlayerSave.loadPlayer(user);
 	}
 

@@ -12,19 +12,20 @@ import org.jboss.netty.channel.Channel;
 public final class PlayerSaveHandler implements PacketHandler {
 
     public void handlePacket(Packet p, Channel session) throws Exception {
-
         World world = (World) session.getAttachment();
         long usernameHash = p.readLong();
         int owner = p.readInt();
+        
         PlayerSave save = Server.getServer().findSave(usernameHash, world);
+        
         if (save == null) {
             System.out.println("Error loading data for: " + DataConversions.hashToUsername(usernameHash));
             return;
-        }
+        } 
 
         if (owner != save.getOwner()) {
             System.out.println("WARNING ATTEMPTED DUPE");
-        }
+        } 
 
         save.setOwner(owner);
         save.setLogin(p.readLong(), p.readLong());
@@ -91,8 +92,12 @@ public final class PlayerSaveHandler implements PacketHandler {
         }
 
         save.setLastUpdate(System.currentTimeMillis());
-        if (!save.save()) {
-            System.out.println("Error saving: " + save.getUsername());
+    
+        if(!world.isBlocking() && !world.getPlayerCache().contains(usernameHash)) { // push to internal cache
+        	System.out.println("Saving " + save.getUsername() + "...to cache");
+        	world.getPlayerCache().put(usernameHash, save);
+        } else if(!save.save()) { // push to SQL instead 
+        	System.out.println("Error saving: " + save.getUsername());
         }
     }
 

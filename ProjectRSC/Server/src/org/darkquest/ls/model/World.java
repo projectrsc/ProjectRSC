@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.darkquest.ls.Server;
+import org.darkquest.ls.model.collections.LRUCache;
 import org.darkquest.ls.packetbuilder.loginserver.MiscPacketBuilder;
 import org.darkquest.ls.util.Config;
 import org.darkquest.ls.util.DataConversions;
@@ -14,14 +15,13 @@ import org.jboss.netty.channel.Channel;
 public final class World {
 
 	private final TreeMap<Long, Integer> players = new TreeMap<Long, Integer>();
-
 	private final TreeMap<Long, PlayerSave> saves = new TreeMap<Long, PlayerSave>();
-
+	private final LRUCache<Long, PlayerSave> cachedSaves = new LRUCache<Long, PlayerSave>();
 	private final MiscPacketBuilder actionSender = new MiscPacketBuilder();
 
 	private int id;
 
-	private boolean members;
+	private boolean members, blocking;
 
 	private String location;
 
@@ -54,7 +54,11 @@ public final class World {
 		}
 		return contains;
 	}
-
+	
+	public LRUCache<Long, PlayerSave> getPlayerCache() {
+		return cachedSaves;
+	}
+	
 	public void assosiateSave(PlayerSave save) {
 		saves.put(save.getUser(), save);
 	}
@@ -65,7 +69,7 @@ public final class World {
 
 	public PlayerSave getSave(long user) {
 		return saves.get(user);
-	}
+	} 
 
 	public void registerPlayer(long user, String ip) {
 		Server server = Server.getServer();
@@ -97,8 +101,7 @@ public final class World {
 		}
 	}
 
-	public void unregisterPlayer(long user) {
-		
+	public void unregisterPlayer(long user) {		
 			players.remove(user);
 			try {
 				for (World w : Server.getServer().getWorlds()) {
@@ -140,6 +143,14 @@ public final class World {
 	public void setMembers(boolean members) {
 		this.members = members;
 	}
+	
+	public void setBlocking(boolean blocking) { // blocking event when shutting down
+		this.blocking = blocking;
+	}
+	
+	public boolean isBlocking() {
+		return blocking;
+	}
 
 	public Channel getChannel() {
 		return channel;
@@ -152,10 +163,10 @@ public final class World {
 	public MiscPacketBuilder getActionSender() {
 		return actionSender;
 	}
-
+	
 	public Collection<Entry<Long, PlayerSave>> getAssosiatedSaves() {
 		return saves.entrySet();
-	}
+	} 
 
 	public Collection<Entry<Long, Integer>> getPlayers() {
 		return players.entrySet();

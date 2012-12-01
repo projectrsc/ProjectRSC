@@ -64,7 +64,6 @@ public final class RegisterWorld implements PacketHandler {
 				}
 			} else {
 				World world = (World) session.getAttachment();
-
 				server.unregisterWorld(world);
 				System.out.println("UnRegistering world: " + world.getID());
 				session.setAttachment(null);
