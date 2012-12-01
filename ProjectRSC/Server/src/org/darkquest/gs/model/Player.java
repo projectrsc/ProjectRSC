@@ -653,7 +653,7 @@ public final class Player extends Mob {
 				getActionSender().sendMessage("You must stand peacefully in one place for 10 seconds!");
 				return false;
 			}
-		}
+		} 
 		return !isBusy() && System.nanoTime() / 1000000 - getCombatTimer() > 10000;
 	}
 
