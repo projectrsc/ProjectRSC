@@ -3,11 +3,11 @@ package org.darkquest.ls.model.collections;
 import java.util.LinkedHashMap;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.darkquest.ls.model.PlayerSave;
 
@@ -69,12 +69,12 @@ public class LRUCache<K,V> {
 	}
 	
 	/**
-	 * Iterator
+	 * Entry set
 	 * @return iterator
 	 */
 	
-	public Iterator<Entry<K, V>> iterator() {
-		return map.entrySet().iterator();
+	public synchronized Set<Entry<K, V>> entrySet() {
+		return map.entrySet();
 	}
 	
 	/**

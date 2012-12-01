@@ -30,14 +30,12 @@ public final class SaveProfilesRequestHandler implements PacketHandler {
         	iterator.remove(); 
         }
         
-        Iterator<Entry<Long, PlayerSave>> cachedIterator = world.getPlayerCache().iterator();
-        
-        while(cachedIterator.hasNext()) { // cached players 
-            System.out.println("Found cached entry, saving and removing...");
-            PlayerSave profile = cachedIterator.next().getValue();
+        for(Entry<Long, PlayerSave> saves : world.getPlayerCache().entrySet()) {
+        	System.out.println("Found cached entry, saving and removing...");
+            PlayerSave profile = saves.getValue();
             world.getPlayerCache().get(profile.getUser()).save();
-            world.getPlayerCache().remove(profile.getUser());
         }
+        world.getPlayerCache().clear();
         
         if(shutdownEvent) {
         	System.out.println("Blocking cached access");

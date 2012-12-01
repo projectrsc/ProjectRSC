@@ -497,7 +497,7 @@ public class SpellHandler implements PacketHandler {
                 }
                 break;
             case 28: // High level alchemy
-                if (affectedItem.getID() == 10) {
+                if (affectedItem.getID() == 10 || affectedItem.getID() == 1262) {
                     player.getActionSender().sendMessage("You cannot alchemy that");
                     return;
                 }
