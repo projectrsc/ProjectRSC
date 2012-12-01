@@ -35,8 +35,8 @@ public final class GameEngine extends Thread {
     
     private final Object packetListLock = new Object(); // Don't change.
 
-    private long lastSentClientUpdate = System.nanoTime() / 1000000;
-    private long lastSentClientUpdateFast = System.nanoTime() / 1000000;
+    private long lastSentClientUpdate = System.currentTimeMillis();
+    private long lastSentClientUpdateFast = System.currentTimeMillis();
 
     private boolean running = true;
     long time = 0;
@@ -63,7 +63,7 @@ public final class GameEngine extends Thread {
     }
 
     private void processClients() {
-        long now = System.nanoTime() / 1000000;
+        long now = System.currentTimeMillis();
         if (now - lastSentClientUpdate >= 600) {
             lastSentClientUpdate = now;
             clientUpdater.doMajor();
@@ -121,7 +121,7 @@ public final class GameEngine extends Thread {
     }
 
     public void run() {
-        time = System.nanoTime() / 1000000;
+        time = System.currentTimeMillis();
 
         PluginHandler.getPluginHandler().handleAction("Startup", new Object[]{});
 

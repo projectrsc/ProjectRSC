@@ -56,8 +56,8 @@ public abstract class Mob extends Entity {
     /**
      * Time of last movement, used for timeout
      */
-    protected long lastMovement = System.nanoTime() / 1000000;
-    public long lastTimeShot = System.nanoTime() / 1000000;
+    protected long lastMovement = System.currentTimeMillis();
+    public long lastTimeShot = System.currentTimeMillis();
     protected int mobSprite = 1;
     private int[][] mobSprites = new int[][]{{3, 2, 1}, {4, -1, 0}, {5, 6, 7}};
     /**
@@ -253,7 +253,7 @@ public abstract class Mob extends Entity {
     }
 
     public void setCombatTimer() {
-        combatTimer = System.nanoTime() / 1000000;
+        combatTimer = System.currentTimeMillis();
     }
 
     public abstract void setHits(int lvl);
@@ -263,7 +263,7 @@ public abstract class Mob extends Entity {
     }
 
     public void setLastMoved() {
-        lastMovement = System.nanoTime() / 1000000;
+        lastMovement = System.currentTimeMillis();
     }
 
     public void setLocation(Point p) {

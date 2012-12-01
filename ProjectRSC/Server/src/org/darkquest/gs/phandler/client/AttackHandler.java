@@ -51,7 +51,7 @@ public class AttackHandler implements PacketHandler {
 			if (pl.inCombat() && player.getRangeEquip() < 0) {
 				return;
 			}
-			if (pl.getLocation().inWilderness() && System.nanoTime() / 1000000 - pl.getLastRun() < 3000) {
+			if (pl.getLocation().inWilderness() && System.currentTimeMillis() - pl.getLastRun() < 3000) {
 				return;
 			}
 			// Determine who gets the attack

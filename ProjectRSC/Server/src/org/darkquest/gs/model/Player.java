@@ -97,7 +97,7 @@ public final class Player extends Mob {
 		this.lastOptions = lastOptions;
 	}
 
-	public long lastCommandUsed = System.nanoTime() / 1000000;
+	public long lastCommandUsed = System.currentTimeMillis();
 
 	public static final String MEMBER_MESSAGE = "This feature is only available on a members server";
 
@@ -141,14 +141,14 @@ public final class Player extends Mob {
 
 	public Npc lastNpcChasingYou = null;
 	
-	public long lastNPCChat = System.nanoTime() / 1000000;
+	public long lastNPCChat = System.currentTimeMillis();
 	
 	private boolean muted = false;
 
 	private long muteTime = 0L;
 
 	public void setMuteTime(long muteTime) {
-		if (muteTime == -1 || muteTime > (System.nanoTime() / 1000000 / 1000)) {
+		if (muteTime == -1 || muteTime > (System.currentTimeMillis() / 1000)) {
 			muted = true;
 		}
 		this.muteTime = muteTime;
@@ -341,7 +341,7 @@ public final class Player extends Mob {
 	/**
 	 * The last menu reply this player gave in a quest
 	 */
-	public long lastCast = System.nanoTime() / 1000000;
+	public long lastCast = System.currentTimeMillis();
 	/**
 	 * Time of last charge spell
 	 */
@@ -360,7 +360,7 @@ public final class Player extends Mob {
 	 */
 	private long lastLogin = 0;
 
-	public long lastPacketRecTime = System.nanoTime() / 1000000 / 1000;
+	public long lastPacketRecTime = System.currentTimeMillis() / 1000;
 	/**
 	 * Queue of last 100 packets, used for auto detection purposes
 	 */
@@ -369,17 +369,17 @@ public final class Player extends Mob {
 	/**
 	 * Last time a 'ping' was received
 	 */
-	private long lastPing = System.nanoTime() / 1000000;
+	private long lastPing = System.currentTimeMillis();
 
-	public long lastRange = System.nanoTime() / 1000000;
+	public long lastRange = System.currentTimeMillis();
 	/**
 	 * Time last report was sent, used to throttle reports
 	 */
 	private long lastReport = 0;
 
-	private long lastRun = System.nanoTime() / 1000000;
+	private long lastRun = System.currentTimeMillis();
 
-	private long lastSaveTime = System.nanoTime() / 1000000 + DataConversions.random(600000, 1800000);
+	private long lastSaveTime = System.currentTimeMillis() + DataConversions.random(600000, 1800000);
 	/**
 	 * The time of the last spell cast, used as a throttle
 	 */
@@ -540,7 +540,7 @@ public final class Player extends Mob {
 		currentIP = ((InetSocketAddress) ios.getRemoteAddress()).getAddress().getHostAddress();
 		//else
 		//	currentIP = hostname;
-		currentLogin = System.nanoTime() / 1000000;
+		currentLogin = System.currentTimeMillis();
 		actionSender = new MiscPacketBuilder(this);
 		setBusy(true);
 	}
@@ -554,7 +554,7 @@ public final class Player extends Mob {
 	}
 
 	public void addAttackedBy(Player p) {
-		attackedBy.put(p.getUsernameHash(), System.nanoTime() / 1000000);
+		attackedBy.put(p.getUsernameHash(), System.currentTimeMillis());
 	}
 
 	public void addFriend(long id, int world) {
@@ -585,7 +585,7 @@ public final class Player extends Mob {
 	}
 
 	public void addPacket(RSCPacket p) {
-		long now = System.nanoTime() / 1000000;
+		long now = System.currentTimeMillis();
 		if (now - lastCount > 3000) {
 			lastCount = now;
 			packetCount = 0;
@@ -636,7 +636,7 @@ public final class Player extends Mob {
 			super.setAppearnceChanged(true);
 		}
 		skullEvent
-		.setLastRun(System.nanoTime() / 1000000 - (1200000 - timeLeft));
+		.setLastRun(System.currentTimeMillis() - (1200000 - timeLeft));
 	}
 
 	public void addToDuelOffer(InvItem item) {
@@ -649,20 +649,20 @@ public final class Player extends Mob {
 
 	public boolean canLogout() {
 		if (location.inWilderness() && !isMod()) {
-			if (System.nanoTime() / 1000000 - getLastMoved() < 10000) {
+			if (System.currentTimeMillis() - getLastMoved() < 10000) {
 				getActionSender().sendMessage("You must stand peacefully in one place for 10 seconds!");
 				return false;
 			}
 		} 
-		return !isBusy() && System.nanoTime() / 1000000 - getCombatTimer() > 10000;
+		return !isBusy() && System.currentTimeMillis() - getCombatTimer() > 10000;
 	}
 
 	public boolean canReport() {
-		return System.nanoTime() / 1000000 - lastReport > 60000;
+		return System.currentTimeMillis() - lastReport > 60000;
 	}
 
 	public boolean castTimer() {
-		return System.nanoTime() / 1000000 - lastSpellCast > 1600;
+		return System.currentTimeMillis() - lastSpellCast > 1600;
 	}
 
 	public boolean checkAttack(Mob mob, boolean missile) {
@@ -678,7 +678,7 @@ public final class Player extends Mob {
 					return true;
 				}
 			}
-			if (System.nanoTime() / 1000000 - mob.getCombatTimer() < (mob.getCombatState() == CombatState.RUNNING
+			if (System.currentTimeMillis() - mob.getCombatTimer() < (mob.getCombatState() == CombatState.RUNNING
 					|| mob.getCombatState() == CombatState.WAITING ? 3000 : 500)
 					&& !mob.inCombat()) {
 				return false;
@@ -795,7 +795,7 @@ public final class Player extends Mob {
 				
 				PluginHandler.getPluginHandler().handleAction("PlayerLogout", new Object[]{this});
 			} else {
-				final long startDestroy = System.nanoTime() / 1000000;
+				final long startDestroy = System.currentTimeMillis();
 				World.getWorld().getDelayedEventHandler().add(new DelayedEvent(this, 3000) {
 
 					public void run() {
@@ -908,7 +908,7 @@ public final class Player extends Mob {
 	}
 
 	public int getDaysSubscriptionLeft() {
-		long now = (System.nanoTime() / 1000000 / 1000);
+		long now = (System.currentTimeMillis() / 1000);
 		if (subscriptionExpires == 0 || now >= subscriptionExpires) {
 			return 0;
 		}
@@ -1431,7 +1431,7 @@ public final class Player extends Mob {
 	}
 
 	public boolean isCharged() {
-		return System.nanoTime() / 1000000 - lastCharge < 600000;
+		return System.currentTimeMillis() - lastCharge < 600000;
 	}
 
 	public boolean isDuelConfirmAccepted() {
@@ -1796,7 +1796,7 @@ public final class Player extends Mob {
 	}
 
 	public void ping() {
-		lastPing = System.nanoTime() / 1000000;
+		lastPing = System.currentTimeMillis();
 	}
 
 	public void remove() {
@@ -2041,7 +2041,7 @@ public final class Player extends Mob {
 	}
 
 	public void setArrowFired() {
-		lastArrow = System.nanoTime() / 1000000;
+		lastArrow = System.currentTimeMillis();
 	}
 
 	public void setBank(Bank b) {
@@ -2049,7 +2049,7 @@ public final class Player extends Mob {
 	}
 
 	public void setCastTimer() {
-		lastSpellCast = System.nanoTime() / 1000000;
+		lastSpellCast = System.currentTimeMillis();
 	}
 
 	public void setChangingAppearance(boolean b) {
@@ -2057,7 +2057,7 @@ public final class Player extends Mob {
 	}
 
 	public void setCharged() {
-		lastCharge = System.nanoTime() / 1000000;
+		lastCharge = System.currentTimeMillis();
 	}
 
 	public void setCombatStyle(int style) {
@@ -2180,7 +2180,7 @@ public final class Player extends Mob {
 	}
 
 	public void setLastReport() {
-		lastReport = System.nanoTime() / 1000000;
+		lastReport = System.currentTimeMillis();
 	}
 
 	public void setLastSaveTime(long save) {

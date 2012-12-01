@@ -273,7 +273,7 @@ public class SpellHandler implements PacketHandler {
     }
 
     private void finalizeSpell(Player player, SpellDef spell) {
-        player.lastCast = System.nanoTime() / 1000000;
+        player.lastCast = System.currentTimeMillis();
         player.getActionSender().sendSound("spellok");
         player.getActionSender().sendMessage("Cast spell successfully");
         player.incExp(6, spell.getExp(), true);
@@ -608,12 +608,12 @@ public class SpellHandler implements PacketHandler {
         }
         if (affectedMob instanceof Player) {
             Player other = (Player) affectedMob;
-            if (player.getLocation().inWilderness() && System.nanoTime() / 1000000 - other.getLastRun() < 1000) {
+            if (player.getLocation().inWilderness() && System.currentTimeMillis() - other.getLastRun() < 1000) {
                 player.resetPath();
                 return;
             }
         }
-        if (player.getLocation().inWilderness() && System.nanoTime() / 1000000 - player.getLastRun() < 3000) {
+        if (player.getLocation().inWilderness() && System.currentTimeMillis() - player.getLastRun() < 3000) {
             player.resetPath();
             return;
         }
