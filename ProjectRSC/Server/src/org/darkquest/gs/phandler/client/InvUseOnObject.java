@@ -280,7 +280,7 @@ public class InvUseOnObject implements PacketHandler {
 												break;
 											case 3:
 												owner.getActionSender().sendMessage("What sort of axe do you want to make?");
-												options = new String[]{"Hatchet", "Pickaxe", "Battle Axe (3 bars)"};
+												options = new String[]{"Hatchet", "Battle Axe (3 bars)"};
 												owner.setMenuHandler(new MenuHandler(options) {
 													public void handleReply(int option, String reply) {
 														if(owner.isBusy()) {
@@ -291,9 +291,6 @@ public class InvUseOnObject implements PacketHandler {
 																handleSmithing(item.getID(), 6);
 																break;
 															case 1:
-																handleSmithing(item.getID(), 7);
-																break;
-															case 2:
 																handleSmithing(item.getID(), 8);
 																break;
 															default:
