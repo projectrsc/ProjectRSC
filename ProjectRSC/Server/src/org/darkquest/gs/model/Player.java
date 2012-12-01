@@ -648,13 +648,15 @@ public final class Player extends Mob {
 	}
 
 	public boolean canLogout() {
-		if (location.inWilderness() && !isMod()) {
-			if (System.currentTimeMillis() - getLastMoved() < 10000) {
-				getActionSender().sendMessage("You must stand peacefully in one place for 10 seconds!");
-				return false;
-			}
-		} 
-		return !isBusy() && System.currentTimeMillis() - getCombatTimer() > 10000;
+		try {
+			if (location.inWilderness() && !isMod()) {
+				if (System.currentTimeMillis() - getLastMoved() < 10000) {
+					getActionSender().sendMessage("You must stand peacefully in one place for 10 seconds!");
+					return false;
+				}
+			} 
+			return !isBusy() && System.currentTimeMillis() - getCombatTimer() > 10000;
+		} catch (Exception e) { return false; }
 	}
 
 	public boolean canReport() {
