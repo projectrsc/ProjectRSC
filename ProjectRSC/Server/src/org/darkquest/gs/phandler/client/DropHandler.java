@@ -1,6 +1,7 @@
 package org.darkquest.gs.phandler.client;
 
 import org.darkquest.gs.connection.Packet;
+
 import org.darkquest.gs.event.DelayedEvent;
 import org.darkquest.gs.event.SingleEvent;
 import org.darkquest.gs.model.InvItem;
@@ -31,10 +32,10 @@ public final class DropHandler implements PacketHandler {
 			player.setSuspiciousPlayer(true);
 			return;
 		}
+		
 		if (PluginHandler.getPluginHandler().blockDefaultAction("Drop", new Object[]{player, item})) {
             return;
         }
-
 
 		// drop item after a path has finished
 		if(player.pathHandler != null && !player.pathHandler.finishedPath()) {
@@ -52,7 +53,6 @@ public final class DropHandler implements PacketHandler {
 
 			@Override
 			public void action() {
-
 				if(owner.dropTickCount > 20) { // 10 seconds they are allowed to walk for. anything longer won't drop.
 					owner.dropTickCount = 0;
 					stop();
@@ -85,7 +85,6 @@ public final class DropHandler implements PacketHandler {
 					return;
 				}
 	
-
 				owner.getActionSender().sendSound("dropobject");
 				owner.getInventory().remove(item);
 				owner.getActionSender().sendInventory();

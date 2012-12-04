@@ -30,6 +30,9 @@ public class MonkHealer implements TalkToNpcListener, TalkToNpcExecutiveListener
 						if (owner.isBusy()) {
 							return;
 						}
+						if(reply.equalsIgnoreCase("null")) {
+							return;
+						}
 						owner.informOfChatMessage(new ChatMessage(owner, reply, npc));
 						owner.setBusy(true);
 						world.getDelayedEventHandler().add(new ShortEvent(owner) {

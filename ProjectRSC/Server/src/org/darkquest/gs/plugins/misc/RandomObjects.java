@@ -239,7 +239,7 @@ public class RandomObjects implements ObjectActionExecutiveListener, ObjectActio
 					return;
 				}
 				doGate(owner, object);
-		if (owner.getX() <= 284) {
+				if (owner.getX() <= 284) {
 						owner.teleport(285, 185, false);
 					} else {
 						owner.teleport(284, 185, false);

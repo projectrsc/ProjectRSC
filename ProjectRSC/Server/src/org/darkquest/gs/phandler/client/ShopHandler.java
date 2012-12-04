@@ -18,14 +18,17 @@ public final class ShopHandler implements PacketHandler {
 			player.resetShop();
 			return;
 		}
+		
 		final Shop shop = player.getShop();
+		
 		if (shop == null) {
 			player.setSuspiciousPlayer(true);
 			player.resetShop();
 			return;
 		}
-		int value;
-		InvItem item;
+		
+		int value = 0;
+		InvItem item = null;
 
 		switch (pID) {
 		case 253: // Close shop
@@ -44,10 +47,12 @@ public final class ShopHandler implements PacketHandler {
 			}
 			if (shop.getItemCount(item.getID()) < 1)
 				return;
+			
 			if (player.getInventory().countId(10) < value) {
 				player.getActionSender().sendMessage("You don't have enough money!");
 				return;
-			}
+			} 
+			
 			if ((Inventory.MAX_SIZE - player.getInventory().size()) + player.getInventory().getFreedSlots(new InvItem(10, value)) < player.getInventory().getRequiredSlots(item)) {
 				player.getActionSender().sendMessage("You can't hold the objects you are trying to buy!");
 				return;

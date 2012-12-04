@@ -2,17 +2,17 @@ package org.darkquest.gs.plugins.npcs;
 
 import org.darkquest.gs.event.ShortEvent;
 
-
 import org.darkquest.gs.model.ChatMessage;
 import org.darkquest.gs.model.InvItem;
 import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;
+import org.darkquest.gs.plugins.ScriptablePlug;
 import org.darkquest.gs.plugins.listeners.action.TalkToNpcListener;
 import org.darkquest.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 import org.darkquest.gs.world.World;
 
-public class Apothecary implements TalkToNpcListener, TalkToNpcExecutiveListener {
+public class Apothecary extends ScriptablePlug implements TalkToNpcListener, TalkToNpcExecutiveListener {
 	
 	public World world = World.getWorld();
 
@@ -20,9 +20,6 @@ public class Apothecary implements TalkToNpcListener, TalkToNpcExecutiveListener
 
     @Override
 	public void onTalkToNpc(Player player, final Npc npc) {
-    	//if(npc.getID() != 33) {
-    	//	return;
-    	//}
     	player.setBusy(false);
     	player.informOfNpcMessage(new ChatMessage(npc, "Hello, can i help you?", player));
     	world.getDelayedEventHandler().add(new ShortEvent(player) {
@@ -32,7 +29,6 @@ public class Apothecary implements TalkToNpcListener, TalkToNpcExecutiveListener
     		    public void handleReply(final int option, final String reply) {
     			if (option < 0 && option > names.length)
     			    return;
-
     			if (option == 0) {
     			    owner.informOfChatMessage(new ChatMessage(owner, reply, npc));
     			    world.getDelayedEventHandler().add(new ShortEvent(owner) {
@@ -75,13 +71,14 @@ public class Apothecary implements TalkToNpcListener, TalkToNpcExecutiveListener
     								    return;
     								} else {
     								    if (owner.getInventory().remove(220, 1) > -1 && owner.getInventory().remove(219, 1) > -1) {
-    									owner.getInventory().add(new InvItem(221));
-    									owner.getActionSender().sendMessage("Apothecary hands you a Strength Potion (4 dose)");
-    									owner.getActionSender().sendInventory();
-    									owner.setBusy(false);
-    									npc.setBusy(false);
-    									npc.unblock();
-    									return;
+    								    	owner.getInventory().add(new InvItem(221));
+    								    	sleep(2000);
+    								    	owner.getActionSender().sendMessage("Apothecary hands you a Strength Potion (4 dose)");
+    								    	owner.getActionSender().sendInventory();
+    								    	owner.setBusy(false);
+    								    	npc.setBusy(false);
+    								    	npc.unblock();
+    								    	return;
     								    }
     								}
     							    }

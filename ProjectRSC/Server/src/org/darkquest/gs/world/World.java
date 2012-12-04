@@ -1,13 +1,12 @@
 package org.darkquest.gs.world;
 
-import java.io.File;
 import java.util.ArrayList;
+
+
+
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.darkquest.config.Constants;
 import org.darkquest.gs.Server;
@@ -32,33 +31,10 @@ import org.darkquest.gs.util.EntityList;
 import org.darkquest.gs.util.Logger;
 
 public final class World {
-
+	
 	private final List<QuestInterface> quests = new LinkedList<QuestInterface>();
 	
-	/**
-	 * NpcScripts are stored in here
-	 */
-	public HashMap<Integer, String> npcScripts = new HashMap<Integer, String>();
-	
 	public static boolean PK_DAY = false;
-
-	public void loadScripts() { // what the hell is this
-		int npccount = 0;
-		int error = 0; // 
-		for (File files : new File("../scripts/npcs").listFiles()) {
-			try {
-				if(files.isDirectory())
-					continue;
-				int id = Integer.parseInt(files.getName().substring(0, 3).trim());
-				npcScripts.put(id, files.getAbsolutePath());
-			} catch (Exception e) {
-				error++;
-				continue;
-			} finally {
-				npccount++;
-			}
-		}
-	}
 
 	public void registerQuest(QuestInterface quest) {
 		if (quest.getQuestName() == null) {
@@ -122,7 +98,6 @@ public final class World {
 				try {
 					Server.print("Loading World Data", false);
 					worldInstance.wl.loadWorld(worldInstance);
-					//worldInstance.loadScripts();
 				} catch (Exception e) {
 					Server.print("ERROR", true);
 					e.printStackTrace();
@@ -139,8 +114,6 @@ public final class World {
 				} finally {
 					Server.print("COMPLETE", true);
 				}
-
-
 			} catch (Exception e) {
 				Logger.error(e);
 			}
@@ -562,23 +535,18 @@ public final class World {
 	 */
 	public void unregisterPlayer(final Player p) {
 		try {
-	
-	
-		server.getLoginConnector().getActionSender().playerLogout(p.getUsernameHash());
-
-		
-		p.setLoggedIn(false);
-		p.resetAll();
-		p.save();
-		Mob opponent = p.getOpponent();
-		if (opponent != null) {
-			p.resetCombat(CombatState.ERROR);
-			opponent.resetCombat(CombatState.ERROR);
-		}
-		
-		delayedEventHandler.removePlayersEvents(p);
-		players.remove(p);
-		setLocation(p, p.getLocation(), null);
+			server.getLoginConnector().getActionSender().playerLogout(p.getUsernameHash());
+			p.setLoggedIn(false);
+			p.resetAll();
+			p.save();
+			Mob opponent = p.getOpponent();
+			if (opponent != null) {
+				p.resetCombat(CombatState.ERROR);
+				opponent.resetCombat(CombatState.ERROR);
+			}
+			delayedEventHandler.removePlayersEvents(p);
+			players.remove(p);
+			setLocation(p, p.getLocation(), null);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -607,6 +575,4 @@ public final class World {
 		}
 		throw new IllegalArgumentException("No quest found");
 	}
-
-
 }

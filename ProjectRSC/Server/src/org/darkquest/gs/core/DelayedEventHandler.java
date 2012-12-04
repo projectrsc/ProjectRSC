@@ -45,6 +45,7 @@ public final class DelayedEventHandler {
                 }
 
                 if (event.shouldRun()) {
+                	//System.out.println("Running event: " + event.toString());
                     event.run();
                     event.updateLastRun();
                 }

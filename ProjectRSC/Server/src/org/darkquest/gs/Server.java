@@ -125,7 +125,6 @@ public final class Server {
 		} finally {
 			Server.print("COMPLETE", true);
 		}
-		
 		//int cores = 1; // default to one
 
 		try {

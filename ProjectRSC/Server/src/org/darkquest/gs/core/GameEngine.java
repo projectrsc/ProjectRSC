@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import org.darkquest.gs.connection.RSCPacket;
 import org.darkquest.gs.event.impl.DatabaseReconnectionEvent;
@@ -132,7 +133,7 @@ public final class GameEngine extends Thread {
         
         for (Shop shop : world.getShops()) {
 			eventHandler.add(new ShopRestockEvent(shop));
-		}  
+		}
 
         while (running) {
             try {

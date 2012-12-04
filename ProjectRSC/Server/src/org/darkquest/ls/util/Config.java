@@ -67,6 +67,8 @@ public class Config {
         }
         CONF_DIR = home + ".." + File.separator + "conf" + File.separator + "ls";
         LOG_DIR = home + ".." + File.separator + "logs";
+        //CONF_DIR = "conf" + File.separator + "ls"; // gorf only
+        //LOG_DIR = "logs";
         RSCDLS_HOME = home;
     }
 }

@@ -42,7 +42,7 @@ public final class RSCConnectionHandler extends IdleStateAwareChannelHandler {
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
         Channel ch = ctx.getChannel();
         Player player = (Player) ch.getAttachment();
-   
+        
         if (ch.isConnected() && !player.destroyed()) {
             RSCPacket p = (RSCPacket) e.getMessage();
             player.addPacket(p); // Used to log packets for macro detection

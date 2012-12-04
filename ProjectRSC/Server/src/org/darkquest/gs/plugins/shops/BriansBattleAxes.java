@@ -1,6 +1,7 @@
 package org.darkquest.gs.plugins.shops;
 
 import org.darkquest.gs.model.InvItem;
+
 import org.darkquest.gs.model.MenuHandler;
 import org.darkquest.gs.model.Npc;
 import org.darkquest.gs.model.Player;

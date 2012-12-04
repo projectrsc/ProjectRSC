@@ -36,7 +36,7 @@ import org.darkquest.gs.world.World;
 /**
  * Initiates plug-ins that implements some listeners
  *
- * @author Peeter, design idea xEnt, revised by GORF
+ * @author Peeter, design idea xEnt, revised/fixed by GORF
  */
 public final class PluginHandler {
 
@@ -46,8 +46,9 @@ public final class PluginHandler {
     private final Map<String, Set<Object>> executivePlugins = new HashMap<String, Set<Object>>();
     private final Map<String, Class<?>> queue = new HashMap<String, Class<?>>();
     private final List<Class<?>> knownInterfaces = new ArrayList<Class<?>>();
-    private final ExecutorService executor = Executors.newCachedThreadPool();
     private final PythonScriptFactory psf = new PythonScriptFactory(this);
+    
+    private final ExecutorService executor = Executors.newCachedThreadPool();
 
     public static PluginHandler getPluginHandler() {
         if (pluginHandler == null)
@@ -172,6 +173,11 @@ public final class PluginHandler {
     public PythonScriptFactory getPythonScriptFactory() {
         return psf;
     }
+    
+    /**
+     * Configures and initializes all dynamic plugins
+     * @throws Exception
+     */
 
     public void loadPythonScripts() throws Exception {
         File pyQuestsDir = new File(Constants.GameServer.SCRIPTS_DIR +  "/python/quests/");

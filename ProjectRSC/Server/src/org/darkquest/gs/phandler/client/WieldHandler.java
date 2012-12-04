@@ -42,6 +42,7 @@ public final class WieldHandler implements PacketHandler {
         }
 
         InvItem item = player.getInventory().get(idx);
+        
         if (item == null || !item.isWieldable()) {
             player.setSuspiciousPlayer(true);
             return;

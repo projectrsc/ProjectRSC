@@ -40,7 +40,7 @@ public final class SaveProfilesRequestHandler implements PacketHandler {
         if(shutdownEvent) {
         	System.out.println("Blocking cached access");
         	world.setBlocking(true);
-        }
+        } 
 
         builder.setUID(uID);
         builder.setSuccess(true);
