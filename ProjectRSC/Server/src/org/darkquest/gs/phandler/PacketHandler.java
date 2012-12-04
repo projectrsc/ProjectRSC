@@ -5,5 +5,7 @@ import org.jboss.netty.channel.Channel;
 
 
 public interface PacketHandler {
+	
+	//public int[] bindedIds();
     public void handlePacket(Packet p, Channel session) throws Exception;
 }

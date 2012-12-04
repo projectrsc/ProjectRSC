@@ -56,7 +56,7 @@ public final class Moderator implements CommandListener {
 
 			affectedPlayer.setMuteTime(mute ? -1 : 0);
 			player.getActionSender().sendMessage(COMMAND_PREFIX + args[0] + " has been " + (mute ? "muted" : "unmuted"));
-			Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " " + (mute ? "muted" : "unmuted") + " " + affectedPlayer.getUsername()));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player + " " + (mute ? "muted" : "unmuted") + " " + affectedPlayer.getUsername()));
 		} else if (command.equals("goto") || command.equals("summon")) {
 			boolean summon = command.equals("summon");
 

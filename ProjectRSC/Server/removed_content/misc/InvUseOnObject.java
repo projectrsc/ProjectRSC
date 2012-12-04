@@ -23,13 +23,11 @@ public class InvUseOnObject implements InvUseOnObjectListener, InvUseOnObjectExe
 	}
 	@Override
 	public void onInvUseOnObject(GameObject obj, InvItem item, Player owner) {
-		/*if(Arrays.binarySearch(objectIDs, obj.getID()) >= 0) {
-			handleRefill(owner, item);
-			return;
-		} */
+		handleRefill(owner, item);
 	}
 	private void handleRefill(Player owner, final InvItem item) {
-		if (!itemId(new int[] { 21, 140, 465 }, item) && !itemId(Formulae.potionsUnfinished, item) && !itemId(Formulae.potions1Dose, item) && !itemId(Formulae.potions2Dose, item) && !itemId(Formulae.potions3Dose, item)) {
+		if (!itemId(new int[] { 21, 140, 341, 465 }, item) && !itemId(Formulae.potionsUnfinished, item) 
+				&& !itemId(Formulae.potions1Dose, item) && !itemId(Formulae.potions2Dose, item) && !itemId(Formulae.potions3Dose, item)) {
 			owner.getActionSender().sendMessage("Nothing interesting happens.");
 			return;
 		}
@@ -38,11 +36,14 @@ public class InvUseOnObject implements InvUseOnObjectListener, InvUseOnObjectExe
 			showBubble(owner, item);
 			owner.getActionSender().sendSound("filljug");
 			switch (item.getID()) {
-			case 21:
+			case 21: // bucket
 				owner.getInventory().add(new InvItem(50));
 				break;
 			case 140:
 				owner.getInventory().add(new InvItem(141));
+				break;
+			case 341: // bowl
+				owner.getInventory().add(new InvItem(342));
 				break;
 			default:
 				owner.getInventory().add(new InvItem(464));
@@ -76,7 +77,6 @@ public class InvUseOnObject implements InvUseOnObjectListener, InvUseOnObjectExe
 	public boolean blockInvUseOnObject(GameObject obj, InvItem item,
 			Player player) {
 		if(Arrays.binarySearch(objectIDs, obj.getID()) >= 0) {
-			handleRefill(player, item);
 			return true;
 		}
 		return false;

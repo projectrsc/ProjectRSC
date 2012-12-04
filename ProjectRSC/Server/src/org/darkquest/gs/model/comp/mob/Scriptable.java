@@ -389,6 +389,10 @@ public class Scriptable {
 		player.startSleepEvent(isBed);
 	}
 	
+	public void movePlayer(int x, int y, boolean showBubble) {
+		player.teleport(x, y, showBubble);
+	}
+	
 	public boolean objectExists(GameObject object) {
 		return World.getWorld().getTile(object.getX(), object.getY()).hasGameObject();
 	}

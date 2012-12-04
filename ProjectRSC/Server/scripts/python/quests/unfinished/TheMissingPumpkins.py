@@ -31,7 +31,7 @@ class TheMissingPumpkins(Quest, TalkToNpcListener, PlayerKilledNpcListener, Obje
     BETTY = 149#149
     
     def getQuestId(self):
-        return 0
+        return 55
     
     def getQuestName(self):
         return "The Missing Pumpkins"

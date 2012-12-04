@@ -12,6 +12,14 @@ public class InvUseOnItem implements InvUseOnItemListener, InvUseOnItemExecutive
 
 	@Override
 	public void onInvUseOnItem(Player player, InvItem item1, InvItem item2) {
+		if(item1.getID() == 143 && item2.getID() == 141) { // wine
+			if (player.getInventory().remove(new InvItem(143)) > -1 && player.getInventory().remove(new InvItem(141)) > -1) {
+				player.getActionSender().sendMessage("You combine the grapes and water to make wine");
+				player.getInventory().add(new InvItem(142));
+				player.getActionSender().sendInventory();
+				return;
+			}
+		}
 		if (item1.getID() == 1276 && item2.getID() == 1277) {
 			if (player.getInventory().remove(new InvItem(1276)) > -1 && player.getInventory().remove(new InvItem(1277)) > -1) {
 				player.getActionSender().sendMessage("You combine the two parts.");
@@ -123,6 +131,8 @@ public class InvUseOnItem implements InvUseOnItemListener, InvUseOnItemExecutive
 		if(item1.getID() == 273 && item2.getID() == 272 || item1.getID() == 272 && item2.getID() == 273)
 			return true;
 		if(item1.getID() == 526)
+			return true;
+		if(item1.getID() == 143 && item2.getID() == 141)
 			return true;
 	
 		for(int il : capes) {

@@ -61,14 +61,14 @@ public class RangeEvent extends DelayedEvent {
 			owner.resetRange();
 			return;
 		}
-		if (owner.withinRange(affectedMob, 5)) {
+		if (owner.withinRange(affectedMob, 5)) { // within 5 squares
 			if (owner.isFollowing()) {
 				owner.resetFollowing();
 			}
 			if (!owner.finishedPath()) {
 				owner.resetPath();
 			}
-		} else {
+		} else { // start
 			owner.setFollowing(affectedMob);
 			return;
 		}

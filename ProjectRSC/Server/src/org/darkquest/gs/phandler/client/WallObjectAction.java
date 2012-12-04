@@ -210,6 +210,11 @@ public class WallObjectAction implements PacketHandler {
                                         if (chef != null) {
                                             owner.informOfNpcMessage(new ChatMessage(chef, "Where is your chef's hat?", owner));
                                         }
+                                    } else if(!owner.getInventory().wielding(191)) {
+                                    	Npc chef = world.getNpc(133, 176, 181, 480, 487);
+                                        if (chef != null) {
+                                            owner.informOfNpcMessage(new ChatMessage(chef, "Where is your apron?", owner));
+                                        }
                                     } else {
                                         doDoor();
                                         owner.teleport(179, 487, false);
@@ -249,12 +254,16 @@ public class WallObjectAction implements PacketHandler {
                             	if (object.getX() != 150 && object.getY() != 554) {// champs guild door
                                 	return;
                         		}
-                            	if(owner.getSkillTotal() < 1000) { // temp
-                            		owner.getActionSender().sendMessage("You need a total of 1000 skill total to enter this guild.");
+                            	if(owner.getSkillTotal() < 800) { // temp
+                            		owner.getActionSender().sendMessage("You need a total of 800 skill total to enter this guild.");
                         			return;
                             	}
                             	doDoor();
-                            	owner.teleport(150, 554, false);
+                            	if(owner.getY() >= 554) {
+                            		owner.teleport(150, 553, false);
+                            	} else {
+                            		owner.teleport(150, 554, false); 
+                            	}
                             	break;
                             case 74: // Heroes guild door
                                 if (object.getX() != 372 || object.getY() != 441) {

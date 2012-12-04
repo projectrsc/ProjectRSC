@@ -62,7 +62,7 @@ public final class Admins implements CommandListener {
 				}
 				World.getWorld().getServer().getLoginConnector().getActionSender().saveProfiles(true);
 			}
-			Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " used UPDATE " + minutes + ":" + remainder + " " + reason));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " used UPDATE " + minutes + ":" + remainder + " " + reason));
 		} else if (command.equals("appearance")) {
 			player.setChangingAppearance(true);
 			player.getActionSender().sendAppearanceScreen();

@@ -22,8 +22,6 @@ public class LSProtocolDecoder extends FrameDecoder {
 	 */
 	@Override
 	protected Object decode(ChannelHandlerContext arg0, Channel arg1, ChannelBuffer msg) throws Exception {
-
-
 		if (msg.readableBytes() >= 13) {
 			msg.markReaderIndex();
 			int length = msg.readInt();
@@ -32,7 +30,6 @@ public class LSProtocolDecoder extends FrameDecoder {
 				int id = msg.readUnsignedByte();
 				long uid = msg.readLong();
 				msg.readBytes(payload);
-
 				return new LSPacket(null, id, uid, payload);
 			}  else {
 				msg.resetReaderIndex();

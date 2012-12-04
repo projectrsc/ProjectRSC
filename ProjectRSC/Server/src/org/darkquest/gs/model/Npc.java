@@ -281,7 +281,8 @@ public class Npc extends Mob {
         super.setID(loc.getId());
         super.setLocation(Point.location(loc.startX(), loc.startY()), true);
         super.setCombatLevel(Formulae.getCombatLevel(def.getAtt(), def.getDef(), def.getStr(), def.getHits(), 0, 0, 0));
-        if (this.loc.getId() == 189 || this.loc.getId() == 53 || this.loc.getId() == 19) {
+        
+        if (this.loc.getId() == 189 || this.loc.getId() == 53 || this.loc.getId() == 19) { // this should not be here
             this.def.aggressive = true;
         }
 
@@ -445,8 +446,8 @@ public class Npc extends Mob {
 		//Player owner = mob instanceof Player ? (Player) mob : null;
 	
 		 Player owner = null;
-	        if (mob instanceof Player) {
-	            owner = handleLootAndXpDistribution((Player) mob);
+	     if (mob instanceof Player) {
+	         owner = handleLootAndXpDistribution((Player) mob);
 	            if (PluginHandler.getPluginHandler().blockDefaultAction("PlayerKilledNpc", new Object[]{owner, this})) {
 	                return;
 	            }
@@ -473,24 +474,24 @@ public class Npc extends Mob {
 				if (drop == null) {
 					continue;
 				}
-			if (drop.getWeight() == 0) {
-				world.registerItem(new Item(drop.getID(), getX(), getY(), drop.getAmount(), owner));
-				continue;
-			}
-			if (hit >= total && hit < (total + drop.getWeight())) {
-				if (drop.getID() != -1) {
-					if (EntityHandler.getItemDef(drop.getID()).members && Constants.GameServer.MEMBER_WORLD) {
-						world.registerItem(new Item(drop.getID(), getX(), getY(), drop.getAmount(), owner));
-						break;
-					} 
-					if (!EntityHandler.getItemDef(drop.getID()).members) {
-						world.registerItem(new Item(drop.getID(), getX(), getY(), drop.getAmount(), owner));
-						break;
+				if (drop.getWeight() == 0) {
+					world.registerItem(new Item(drop.getID(), getX(), getY(), drop.getAmount(), owner));
+					continue;
+				}
+				if (hit >= total && hit < (total + drop.getWeight())) {
+					if (drop.getID() != -1) {
+						if (EntityHandler.getItemDef(drop.getID()).members && Constants.GameServer.MEMBER_WORLD) {
+							world.registerItem(new Item(drop.getID(), getX(), getY(), drop.getAmount(), owner));
+							break;
+						} 
+						if (!EntityHandler.getItemDef(drop.getID()).members) {
+							world.registerItem(new Item(drop.getID(), getX(), getY(), drop.getAmount(), owner));
+							break;
+						}
 					}
 				}
+				total += drop.getWeight();
 			}
-			total += drop.getWeight();
-		}
 		//World.getQuestManager().handleNpcKilled(this, owner);
     }
 

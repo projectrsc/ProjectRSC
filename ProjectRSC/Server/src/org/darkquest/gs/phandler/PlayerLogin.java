@@ -47,6 +47,7 @@ public final class PlayerLogin implements PacketHandler {
 					player.setLocation(Point.location(121, 647), true);
 					p.readShort();
 					p.readShort();
+					player.setChangingAppearance(true);
 				}
 				else {
 					player.setLocation(Point.location(p.readShort(), p.readShort()), true);
@@ -207,13 +208,11 @@ public final class PlayerLogin implements PacketHandler {
 				
 				// We have a new character being created...
 				if (player.getLastLogin() == 0L && player.getInventory().size() == 0) {
+					sender.sendAppearanceScreen();
 					for(InvItem item : Player.STARTER_ITEMS) {
 						player.getInventory().add(item);
 					}
 					sender.sendInventory();
-					
-					player.setChangingAppearance(true);
-					sender.sendAppearanceScreen();
 				}
 
 				sender.sendWakeUp(false, true);

@@ -475,27 +475,6 @@ public class InvUseOnObject implements PacketHandler {
                             });
                             break;
                         }
-
-                    //case 50:
-                   /* case 177: // Anvil
-                        int minSmithingLevel = Formulae.minSmithingLevel(item.getID());
-                        if (minSmithingLevel < 0) {
-                            owner.getActionSender().sendMessage("Nothing interesting happens.");
-                            return;
-                        }
-                        if (owner.getInventory().countId(168) < 1) {
-                            owner.getActionSender().sendMessage("You need a hammer to work the metal with.");
-                            return;
-                        }
-                        if (owner.getCurStat(13) < minSmithingLevel) {
-                            owner.getActionSender().sendMessage("You need a smithing level of " + minSmithingLevel + " to use this type of bar");
-                            return;
-                        }
-                        owner.setSmithing(true);
-                        owner.setSmithingBar(item.getID());
-                        owner.getActionSender().showSmithing(Formulae.getBarType(item.getID()));
-
-                        break;*/
                     case 121: // Spinning Wheel
                         switch (item.getID()) {
                             case 145: // Wool
