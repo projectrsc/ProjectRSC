@@ -3,5 +3,5 @@
 
 <properties>
     <comment>Stores aliases for the XStream engine</comment>
-    <entry key="PacketHandler">org.darkquest.ls.packethandler.PacketHandlerDef</entry>
+    <entry key="PacketHandler">com.prsc.ls.packethandler.PacketHandlerDef</entry>
 </properties>

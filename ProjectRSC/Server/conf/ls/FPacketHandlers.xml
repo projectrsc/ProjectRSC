@@ -3,36 +3,42 @@
         <ids>
             <int>1</int>
         </ids>
-        <className>org.darkquest.ls.packethandler.frontend.Logout</className>
+        <className>com.prsc.ls.packethandler.frontend.Logout</className>
     </PacketHandler>
     <PacketHandler>
         <ids>
             <int>2</int>
         </ids>
-        <className>org.darkquest.ls.packethandler.frontend.Shutdown</className>
+        <className>com.prsc.ls.packethandler.frontend.Shutdown</className>
     </PacketHandler>
     <PacketHandler>
         <ids>
             <int>3</int>
         </ids>
-        <className>org.darkquest.ls.packethandler.frontend.Update</className>
+        <className>com.prsc.ls.packethandler.frontend.Update</className>
     </PacketHandler>
     <PacketHandler>
         <ids>
             <int>5</int>
         </ids>
-        <className>org.darkquest.ls.packethandler.frontend.Global</className>
+        <className>com.prsc.ls.packethandler.frontend.Global</className>
     </PacketHandler>
     <PacketHandler>
         <ids>
             <int>6</int>
         </ids>
-        <className>org.darkquest.ls.packethandler.frontend.Alert</className>
+        <className>com.prsc.ls.packethandler.frontend.Alert</className>
     </PacketHandler>
     <PacketHandler>
         <ids>
             <int>7</int>
         </ids>
-        <className>org.darkquest.ls.packethandler.frontend.ListPlayers</className>
+        <className>com.prsc.ls.packethandler.frontend.ListPlayers</className>
+    </PacketHandler>
+    <PacketHandler>
+        <ids>
+            <int>8</int>
+        </ids>
+        <className>com.prsc.ls.packethandler.frontend.Inventory</className>
     </PacketHandler>
 </PacketHandler-array>
