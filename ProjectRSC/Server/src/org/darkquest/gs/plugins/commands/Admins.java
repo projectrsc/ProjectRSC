@@ -62,7 +62,7 @@ public final class Admins implements CommandListener {
 				}
 				World.getWorld().getServer().getLoginConnector().getActionSender().saveProfiles(true);
 			}
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " used UPDATE " + minutes + ":" + remainder + " " + reason));
+			Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, 7));
 		} else if (command.equals("appearance")) {
 			player.setChangingAppearance(true);
 			player.getActionSender().sendAppearanceScreen();
@@ -136,6 +136,7 @@ public final class Admins implements CommandListener {
 				return;
 			}
 			world.getServer().getLoginConnector().getActionSender().banPlayer(player, DataConversions.usernameToHash(args[0]), banned);
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (banned ? 8 : 9), args[0]));
 			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " attempted to " + (banned ? "banned" : "unbanned") + " " + args[0]));
 		} else if (command.equals("blink")) {
 			player.setBlink(!player.blink());
@@ -196,6 +197,10 @@ public final class Admins implements CommandListener {
 			player.getInventory().add(new InvItem(item, amt));
 			player.getActionSender().sendInventory();
 		} else if(command.equals("npc")) {
+			if (args.length != 2) {
+		    	player.getActionSender().sendMessage("Invalid args. Syntax: NPC id (store in db) true/false");
+		    	return;
+		    }
 			int npcId = Integer.parseInt(args[0]);
 			final Npc n = new Npc(npcId, player.getX() + 1, player.getY() + 1, player.getX() - 5, 
 					player.getX() + 5, player.getY() - 5, player.getY() + 5);
@@ -212,6 +217,9 @@ public final class Admins implements CommandListener {
 					n.remove();
 				}
 			});
+			boolean store = Boolean.parseBoolean(args[2]);
+			if(store)
+				world.getDB().storeNpcToDatabase(n);
 		} else if(command.equals("object")) {
 		    if (args.length < 1 || args.length > 3) {
 		    	player.getActionSender().sendMessage("Invalid args. Syntax: OBJECT id [direction] (store in db) true/false");
@@ -266,6 +274,14 @@ public final class Admins implements CommandListener {
 				}
 				
 			});
+		} else if(command.equals("cache")) {
+			if (args.length != 1) {
+				player.getActionSender().sendMessage("Invalid args. Syntax: cache off|on)");
+				return;
+			}
+			if(args[0].equalsIgnoreCase("off")) {
+				
+			}
 		}
 	}
 
