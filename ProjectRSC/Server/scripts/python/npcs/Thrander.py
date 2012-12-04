@@ -1,6 +1,6 @@
-from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener, InvUseOnNpcListener
-from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, InvUseOnNpcExecutiveListener
-from org.darkquest.gs.plugins import PlugInterface
+from com.prsc.gs.plugins.listeners.action import TalkToNpcListener, InvUseOnNpcListener
+from com.prsc.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, InvUseOnNpcExecutiveListener
+from com.prsc.gs.plugins import PlugInterface
 
 '''
 @author: GORF

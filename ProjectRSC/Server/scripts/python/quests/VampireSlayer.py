@@ -6,10 +6,10 @@ Quest: Vampire Slayer
 @author: GORF
 @difficulty: Medium
 '''
-from org.darkquest.gs.plugins import Quest
-from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, ObjectActionExecutiveListener, PlayerAttackNpcExecutiveListener, PlayerKilledNpcExecutiveListener
-from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener, ObjectActionListener, PlayerAttackNpcListener, PlayerKilledNpcListener
-from org.darkquest.gs.event.impl import FightEvent
+from com.prsc.gs.plugins import Quest
+from com.prsc.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, ObjectActionExecutiveListener, PlayerAttackNpcExecutiveListener, PlayerKilledNpcExecutiveListener
+from com.prsc.gs.plugins.listeners.action import TalkToNpcListener, ObjectActionListener, PlayerAttackNpcListener, PlayerKilledNpcListener
+from com.prsc.gs.event.impl import FightEvent
 
 class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttackNpcListener, PlayerKilledNpcListener, 
                     TalkToNpcExecutiveListener, ObjectActionExecutiveListener, PlayerAttackNpcExecutiveListener, PlayerKilledNpcExecutiveListener):

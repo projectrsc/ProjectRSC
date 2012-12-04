@@ -1,6 +1,6 @@
-from org.darkquest.gs.plugins.listeners.action import InvActionListener, ObjectActionListener
-from org.darkquest.gs.plugins.listeners.executive import InvActionExecutiveListener, ObjectActionExecutiveListener
-from org.darkquest.gs.plugins import PlugInterface
+from com.prsc.gs.plugins.listeners.action import InvActionListener, ObjectActionListener
+from com.prsc.gs.plugins.listeners.executive import InvActionExecutiveListener, ObjectActionExecutiveListener
+from com.prsc.gs.plugins import PlugInterface
 
 '''
 @author: GORF

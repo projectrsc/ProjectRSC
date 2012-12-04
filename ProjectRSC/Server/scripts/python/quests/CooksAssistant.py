@@ -1,6 +1,6 @@
-from org.darkquest.gs.plugins import Quest
-from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener
-from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, InvUseOnObjectExecutiveListener
+from com.prsc.gs.plugins import Quest
+from com.prsc.gs.plugins.listeners.action import TalkToNpcListener
+from com.prsc.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, InvUseOnObjectExecutiveListener
 
 class CooksAssistant(Quest, TalkToNpcListener, TalkToNpcExecutiveListener, InvUseOnObjectExecutiveListener):
 

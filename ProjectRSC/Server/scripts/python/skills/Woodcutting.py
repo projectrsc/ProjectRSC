@@ -1,9 +1,9 @@
-from org.darkquest.gs.plugins.listeners.action import ObjectActionListener
-from org.darkquest.gs.plugins.listeners.executive import ObjectActionExecutiveListener
-from org.darkquest.gs.plugins import PlugInterface
-from org.darkquest.gs.external import EntityHandler, GameObjectLoc, ObjectWoodcuttingDef, ItemDef
-from org.darkquest.gs.model import Entity, Point
-from org.darkquest.gs.tools import DataConversions
+from com.prsc.gs.plugins.listeners.action import ObjectActionListener
+from com.prsc.gs.plugins.listeners.executive import ObjectActionExecutiveListener
+from com.prsc.gs.plugins import PlugInterface
+from com.prsc.gs.external import EntityHandler, GameObjectLoc, ObjectWoodcuttingDef, ItemDef
+from com.prsc.gs.model import Entity, Point
+from com.prsc.gs.tools import DataConversions
 
 '''
 @author: GORF

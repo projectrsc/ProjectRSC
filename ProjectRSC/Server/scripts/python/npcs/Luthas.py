@@ -1,7 +1,7 @@
-from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener
-from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener
-from org.darkquest.gs.plugins import PlugInterface
-from org.darkquest.gs.model import Player, Npc
+from com.prsc.gs.plugins.listeners.action import TalkToNpcListener
+from com.prsc.gs.plugins.listeners.executive import TalkToNpcExecutiveListener
+from com.prsc.gs.plugins import PlugInterface
+from com.prsc.gs.model import Player, Npc
 
 '''
 @author: xEnt

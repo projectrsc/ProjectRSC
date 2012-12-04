@@ -5,9 +5,9 @@ Quest: Doric's Quest
 
 @author: GORF
 '''
-from org.darkquest.gs.plugins import Quest
-from org.darkquest.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, InvUseOnObjectExecutiveListener
-from org.darkquest.gs.plugins.listeners.action import TalkToNpcListener, InvUseOnObjectListener
+from com.prsc.gs.plugins import Quest
+from com.prsc.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, InvUseOnObjectExecutiveListener
+from com.prsc.gs.plugins.listeners.action import TalkToNpcListener, InvUseOnObjectListener
 
 class Dorics(Quest, TalkToNpcListener, InvUseOnObjectListener, TalkToNpcExecutiveListener, InvUseOnObjectExecutiveListener):
     
