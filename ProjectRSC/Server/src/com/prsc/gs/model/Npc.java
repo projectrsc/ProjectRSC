@@ -353,9 +353,6 @@ public class Npc extends Mob {
                         if (p.inCombat()) {
                             continue;
                         }
-                        if(p.isSleeping() && p.isPrayerActivated(12)) { // skip if they are sleeping and prayer is activated
-                        	continue;
-                        }
                         if (p.isBusy() || p.isNonaggro() || now - p.getCombatTimer() < (p.getCombatState() == CombatState.RUNNING || p.getCombatState() == CombatState.WAITING ? 3000 : 1500) || !p.nextTo(this) || !p.getLocation().inBounds(loc.minX - 4, loc.minY - 4, loc.maxX + 4, loc.maxY + 4)) {
                             continue;
                         }
@@ -431,7 +428,6 @@ public class Npc extends Mob {
     	if (mob instanceof Player) {
 			Player player = (Player) mob;
 			player.getActionSender().sendSound("victory");
-			
 		}
 
 		Mob opponent = super.getOpponent();
