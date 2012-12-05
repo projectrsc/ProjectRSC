@@ -79,7 +79,7 @@ public final class ShopHandler implements PacketHandler {
 			//Services.lookup(DatabaseManager.class).addQuery(new GenericLog(player.getUsername() + " tried to sell item " + s1 + " for " + value + " at " + player.getLocation()));
 			if (player.getInventory().countId(item.getID()) < 1) {
 				return;
-			}
+			} 
 			if (!shop.shouldStock(item.getID())) {
 				return;
 			}
@@ -89,12 +89,13 @@ public final class ShopHandler implements PacketHandler {
 			}
 
 			int itempricez;
-
+			
 			if (shop.getItemCount(item.getID()) == 0) {
-				itempricez = shop.getGenericPrice(item, false);
+				itempricez = value; //shop.getGenericPrice(item, false);
 			} else {
 				itempricez = shop.getItemSellPrice(item.getID());
 			}
+			
 			if (itempricez > 300000)
 				return;
 
