@@ -62,7 +62,7 @@ public final class Admins implements CommandListener {
 				}
 				World.getWorld().getServer().getLoginConnector().getActionSender().saveProfiles(true);
 			}
-			Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, 7));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, 7));
 		} else if (command.equals("appearance")) {
 			player.setChangingAppearance(true);
 			player.getActionSender().sendAppearanceScreen();
@@ -274,14 +274,6 @@ public final class Admins implements CommandListener {
 				}
 				
 			});
-		} else if(command.equals("cache")) {
-			if (args.length != 1) {
-				player.getActionSender().sendMessage("Invalid args. Syntax: cache off|on)");
-				return;
-			}
-			if(args[0].equalsIgnoreCase("off")) {
-				
-			}
 		}
 	}
 

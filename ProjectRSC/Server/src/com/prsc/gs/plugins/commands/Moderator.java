@@ -56,7 +56,7 @@ public final class Moderator implements CommandListener {
 
 			affectedPlayer.setMuteTime(mute ? -1 : 0);
 			player.getActionSender().sendMessage(COMMAND_PREFIX + args[0] + " has been " + (mute ? "muted" : "unmuted"));
-			Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (mute ? 0 : 1), affectedPlayer));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (mute ? 0 : 1), affectedPlayer));
 		} else if (command.equals("goto") || command.equals("summon")) {
 			boolean summon = command.equals("summon");
 
@@ -83,7 +83,7 @@ public final class Moderator implements CommandListener {
 				player.getActionSender().sendMessage(COMMAND_PREFIX + "Invalid player");
 				return;
 			}
-			Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (summon ? 2 : 3), affectedPlayer));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (summon ? 2 : 3), affectedPlayer));
 		} else if (command.equals("take") || command.equals("put")) {
 			boolean take = command.equals("take");
 			if (args.length != 1) {
@@ -102,7 +102,7 @@ public final class Moderator implements CommandListener {
 			if (take) {
 				player.teleport(76, 1642, true);
 			}
-			Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (take ? 4 : 5), affectedPlayer));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (take ? 4 : 5), affectedPlayer));
 		} else if (command.equals("info")) {
 			if (args.length != 1) {
 				sendInvalidArguments(player, "info", "name");
@@ -116,7 +116,7 @@ public final class Moderator implements CommandListener {
 				return;
 			}
 			p.destroy(false);
-			Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, 6, p));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, 6, p));
 			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " kicked " + p.getUsername()));
 		} else if (command.equalsIgnoreCase("town")) {
 			try {
