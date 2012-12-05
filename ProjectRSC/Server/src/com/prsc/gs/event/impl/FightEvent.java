@@ -66,10 +66,11 @@ public final class FightEvent extends DelayedEvent {
             affectedMob.resetCombat(CombatState.ERROR);
             return;
         }
+        /* Disabled due to overturned
         if (owner.isSleeping() && !owner.isPrayerActivated(12)) {
         	owner.getActionSender().sendWakeUp(false, false);
         	owner.getActionSender().sendFatigue(owner.getFatigue());
-        }
+        } */
 
         Mob attacker, opponent;
 
