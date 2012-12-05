@@ -191,10 +191,11 @@ public final class Server {
 	}
 
 	public PlayerSave findSave(long user, World world) {
+		/*
 		if(!world.isBlocking() && world.getPlayerCache().contains(user)) {
 			System.out.println("Found cached save for " + DataConversions.hashToUsername(user));
 			return world.getPlayerCache().get(user);
-		}
+		} */
 		return PlayerSave.loadPlayer(user);
 	}
 

@@ -54,7 +54,7 @@ public class LRUCache<K,V> {
 		this.map = new LinkedHashMap<K,V>(hashTableCapacity, hashTableLoadFactor, true) { // (an anonymous inner class)
 		private static final long serialVersionUID = 1;
 		@Override 
-		protected boolean removeEldestEntry(Map.Entry<K,V> eldest) { // basically hackish, we need to predict who is first
+		protected boolean removeEldestEntry(Map.Entry<K,V> eldest) { // hackish, we need to predict who is first
 			boolean shouldRemoveEldest = size() > LRUCache.this.cacheSize;
 			if(shouldRemoveEldest) {
 				if(!list.isEmpty() && list.getFirst() instanceof PlayerSave) {

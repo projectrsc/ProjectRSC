@@ -93,13 +93,17 @@ public final class PlayerSaveHandler implements PacketHandler {
         }
 
         save.setLastUpdate(System.currentTimeMillis());
-    
+        
+        if(!save.save()) { 
+        	System.out.println("Error saving: " + save.getUsername());
+        }
+        /*
         if(!world.isBlocking() && !world.getPlayerCache().contains(usernameHash)) { // push to internal cache
         	System.out.println("Saving " + save.getUsername() + "...to cache");
         	world.getPlayerCache().put(usernameHash, save);
         } else if(!save.save()) { // push to SQL instead 
         	System.out.println("Error saving: " + save.getUsername());
-        }
+        } */
     }
 
 }

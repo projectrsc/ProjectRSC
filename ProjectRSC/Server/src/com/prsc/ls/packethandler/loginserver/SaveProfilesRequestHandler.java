@@ -30,7 +30,7 @@ public final class SaveProfilesRequestHandler implements PacketHandler {
             profile.save();
         	iterator.remove(); 
         }
-        
+        /*
         for(Entry<Long, PlayerSave> saves : world.getPlayerCache().entrySet()) {
         	System.out.println("Found cached entry, saving and removing...");
             PlayerSave profile = saves.getValue();
@@ -41,7 +41,7 @@ public final class SaveProfilesRequestHandler implements PacketHandler {
         if(shutdownEvent) {
         	System.out.println("Blocking cached access");
         	world.setBlocking(true);
-        } 
+        } */
 
         builder.setUID(uID);
         builder.setSuccess(true);

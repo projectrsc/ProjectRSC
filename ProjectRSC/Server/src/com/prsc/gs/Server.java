@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
 import org.jboss.netty.bootstrap.ServerBootstrap;
+import org.jboss.netty.channel.AdaptiveReceiveBufferSizePredictorFactory;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
@@ -159,6 +160,11 @@ public final class Server {
 
 			bootstrap.setOption("sendBufferSize", 10000);
 			bootstrap.setOption("receiveBufferSize", 10000);
+			// the following are experimental 
+			bootstrap.setOption("receiveBufferSizePredictorFactory", new AdaptiveReceiveBufferSizePredictorFactory()); // predict buffer from previous packets processed
+			bootstrap.setOption("writeBufferLowWaterMark", 32 * 1024); 
+			bootstrap.setOption("writeBufferHighWaterMark", 64 * 1024);
+			// end 
 			bootstrap.setOption("child.tcpNoDelay", true);
 			bootstrap.setOption("child.keepAlive", false);
 
