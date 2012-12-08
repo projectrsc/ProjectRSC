@@ -17,8 +17,8 @@ import com.prsc.gs.service.Service;
 
 public final class Captcha extends Service {
 	
-	//"../" + File.separator + 
-	public String fontFolder = "conf" + File.separator + "server" + File.separator + "fonts" + File.separator;
+	//
+	public String fontFolder = "../" + File.separator + "conf" + File.separator + "server" + File.separator + "fonts" + File.separator;
 
 	private Font loadedFonts[];
 

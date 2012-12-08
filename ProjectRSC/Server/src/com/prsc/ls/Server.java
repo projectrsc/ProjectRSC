@@ -63,8 +63,8 @@ public final class Server {
 	}
 
 	public static void main(String[] args) throws IOException {
-		//String configFile = "ls.conf";
-		String configFile = "launch_gorf/ls.conf";
+		String configFile = "ls.conf";
+		//String configFile = "launch_gorf/ls.conf";
 		if (args.length > 0) {
 			File f = new File(args[0]);
 			if (f.exists()) {
