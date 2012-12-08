@@ -65,10 +65,10 @@ public class Config {
         if (home == null) { // the env var hasnt been set, fall back to .
             home = "";
         }
-        CONF_DIR = home + ".." + File.separator + "conf" + File.separator + "ls";
-        LOG_DIR = home + ".." + File.separator + "logs";
-        //CONF_DIR = "conf" + File.separator + "ls"; // gorf only
-        //LOG_DIR = "logs";
+        //CONF_DIR = home + ".." + File.separator + "conf" + File.separator + "ls";
+        //LOG_DIR = home + ".." + File.separator + "logs";
+        CONF_DIR = "conf" + File.separator + "ls"; // gorf only
+        LOG_DIR = "logs";
         RSCDLS_HOME = home;
     }
 }

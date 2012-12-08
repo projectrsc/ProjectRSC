@@ -277,12 +277,12 @@ public final class Shop {
 			price = basePrice;
 			if (amount < equilibrium) {
 				price += Math.round(price * (percent * (equilibrium - amount)));
-			}
+			} 
 		} else {
 			price = basePrice / 2;
 			if (amount > equilibrium) {
 				price -= Math.round(price * (percent * (amount - equilibrium)));
-			}
+			} 
 		}
 
 		if (price > maxItemValue) {

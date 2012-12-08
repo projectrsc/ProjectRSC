@@ -109,8 +109,8 @@ public final class Constants {
         /**
          * where the server will look for other configuration files
          */
-        public static String CONFIG_DIR = "../" + File.separator + "conf" + File.separator + "server";
-        //public static String CONFIG_DIR = "conf" + File.separator + "server"; // GORF ONLY
+        //public static String CONFIG_DIR = "../" + File.separator + "conf" + File.separator + "server";
+        public static String CONFIG_DIR = "conf" + File.separator + "server"; // GORF ONLY
         
         /**
          * Ban location

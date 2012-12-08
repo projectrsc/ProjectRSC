@@ -1564,7 +1564,7 @@ public final class Player extends Mob {
 				iterator.previous();
 			}
 		}
-
+		
 		for (int slot = 0; iterator.hasNext(); slot++) {
 			InvItem item = (InvItem) iterator.next();
 
@@ -1574,6 +1574,7 @@ public final class Player extends Mob {
 			}
 			iterator.remove();
 			world.registerItem(new Item(item.getID(), getX(), getY(), item.getAmount(), null));
+			
 		}
 		removeSkull();
 
@@ -1611,7 +1612,6 @@ public final class Player extends Mob {
 			Player player = (Player) mob;
 			player.getActionSender().sendMessage("You have defeated " + getUsername() + "!");
 			player.getActionSender().sendSound("victory");
-
 			//Services.lookup(DatabaseManager.class).addQuery(new GenericLog(player.getUsername() + " killed " + username + " at " + location));
 		}
 		Mob opponent = super.getOpponent();
@@ -1656,7 +1656,7 @@ public final class Player extends Mob {
 			inventory.sort();
 			ListIterator<InvItem> iterator = inventory.iterator();
 			if (!isSkulled()) {
-				for (int i = 0; i < 3 && iterator.hasNext(); i++) {
+				for(int i = 0; i < 3 && iterator.hasNext(); i++) {
 					if ((iterator.next()).getDef().isStackable()) {
 						iterator.previous();
 						break;

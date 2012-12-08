@@ -62,7 +62,7 @@ public final class mudclient extends GameWindowMiddleMan {
 	private static mudclient mc;
 
 	public static final void main(String[] args) throws Exception {
-		System.setProperty("localhost", "true");
+		System.setProperty("localhost", "false");
 		System.setProperty("members", "false");
 		System.setProperty("bigclient", "false");
 		System.setProperty("world", "1");

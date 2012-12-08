@@ -12,7 +12,7 @@ public final class Config {
 	
 	public static boolean BIG_CLIENT = false, MEMBERS_FEATURES = false;
 	
-	public static final int CLIENT_VERSION = 54; 
+	public static final int CLIENT_VERSION = 21; 
 	
 	public static void initConfig() {
 		START_TIME = System.currentTimeMillis();
@@ -21,7 +21,7 @@ public final class Config {
 			SERVER_IP = "localhost";
 			CONF_DIR = "../data";
 		} else {
-			SERVER_IP = "76.10.206.209";
+			SERVER_IP = "208.64.121.156";
 			CONF_DIR = System.getProperty("user.home") + File.separator + ".prsc";
 		}
 		SERVER_PORT = 43594;

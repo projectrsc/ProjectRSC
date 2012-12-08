@@ -146,6 +146,7 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 			System.out.println("Cleaned blacklist");
 			Runtime.getRuntime().exec(Constants.GameServer.BAN_LOCATION + " unbanall"); //ban.sh with args <ban/unban/unbanall> <ip>
 			currentBans.clear();
+			clientConnections.clear();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
