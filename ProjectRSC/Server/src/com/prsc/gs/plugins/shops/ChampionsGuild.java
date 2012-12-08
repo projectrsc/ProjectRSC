@@ -12,7 +12,7 @@ import com.prsc.gs.world.Shop;
 
 public final class ChampionsGuild extends ScriptablePlug implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
 
-	private final Shop scavvosShop = new Shop(false, 300000, 300, 50, new InvItem(406, 1), new InvItem(402, 1), new InvItem(98, 1), new InvItem(400, 1), new InvItem(75, 1), new InvItem(397, 1));
+	private final Shop scavvosShop = new Shop(false, 300000, 300, 50, new InvItem(406, 1), new InvItem(402, 1), new InvItem(93, 1), new InvItem(400, 1), new InvItem(75, 1), new InvItem(397, 1));
 	private final Shop valsShop = new Shop(false, 60000, 300, 50, new InvItem(229, 2), new InvItem(230, 1), new InvItem(248, 1), new InvItem(120, 1));
 	
 	@Override
