@@ -57,33 +57,6 @@ public final class Moderator implements CommandListener {
 			affectedPlayer.setMuteTime(mute ? -1 : 0);
 			player.getActionSender().sendMessage(COMMAND_PREFIX + args[0] + " has been " + (mute ? "muted" : "unmuted"));
 			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (mute ? 0 : 1), affectedPlayer));
-		} else if (command.equals("goto") || command.equals("summon")) {
-			boolean summon = command.equals("summon");
-
-			if (args.length != 1) {
-				sendInvalidArguments(player, summon ? "summon" : "goto", "name");
-				return;
-			}
-			long usernameHash = DataConversions.usernameToHash(args[0]);
-			Player affectedPlayer = world.getPlayer(usernameHash);
-
-			if (affectedPlayer != null) {
-				if (summon) {
-					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " summoned " + affectedPlayer.getUsername() + " from " + affectedPlayer.getLocation().toString() + " to " + player.getLocation().toString()));
-					affectedPlayer.teleport(player.getX(), player.getY(), true);
-				} else {
-					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went from " + player.getLocation() + " to " + affectedPlayer.getUsername() + " at " + affectedPlayer.getLocation().toString()));
-					if(!player.isAdmin() && Point.inWilderness(affectedPlayer.getX(), affectedPlayer.getY())) {
-						player.getActionSender().sendMessage("Mods cannot teleport in the wilderness");
-					} else {
-						player.teleport(affectedPlayer.getX(), affectedPlayer.getY(), true);
-					}
-				}
-			} else {
-				player.getActionSender().sendMessage(COMMAND_PREFIX + "Invalid player");
-				return;
-			}
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (summon ? 2 : 3), affectedPlayer));
 		} else if (command.equals("take") || command.equals("put")) {
 			boolean take = command.equals("take");
 			if (args.length != 1) {
@@ -110,14 +83,6 @@ public final class Moderator implements CommandListener {
 			}
 			World.getWorld().getServer().getLoginConnector().getActionSender().requestPlayerInfo(player, DataConversions.usernameToHash(args[0]));
 			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " requested info for " + args[0]));
-		} else if (command.equalsIgnoreCase("kick")) {
-			Player p = world.getPlayer(DataConversions.usernameToHash(args[0]));
-			if (p == null) {
-				return;
-			}
-			p.destroy(false);
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, 6, p));
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " kicked " + p.getUsername()));
 		} else if (command.equalsIgnoreCase("town")) {
 			try {
 				String town = args[0];
@@ -132,14 +97,6 @@ public final class Moderator implements CommandListener {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (command.equals("invis")) {
-			if (player.isInvis()) {
-				player.setinvis(false);
-			} else {
-				player.setinvis(true);
-			}
-			player.getActionSender().sendMessage(COMMAND_PREFIX + "You are now " + (player.isInvis() ? "invisible" : "visible"));
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went " + (player.isInvis() ? "in" : "") + "visible"));
 		} else if (command.equals("check")) {
 			if (args.length < 1) {
 				sendInvalidArguments(player, "check", "name");

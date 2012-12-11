@@ -40,15 +40,8 @@ public final class FriendHandler implements PacketHandler {
                 }
                 // The following block of code stops duplicate entries of friends in the database
                 // TODO: Implement non-existant player checks
-                else if(!playerExists(player, friend)) {
-                	if(!canAddNewPlayer(friend)) {
-                		player.getActionSender().sendMessage("Unable to add friend - unknown player");
-                		player.getActionSender().sendFriendList();
-                	} else {
-                		loginSender.addFriend(user, friend);
-                		player.addFriend(friend, 0);
-                	}
-                }
+				loginSender.addFriend(user, friend);
+                player.addFriend(friend, 0);
                 //Services.lookup(DatabaseManager.class).addQuery(new GenericLog(player.getUsername() + " added friend " + DataConversions.hashToUsername(friend) + " at " + player.getLocation()));
                 break;
             case 52: // Remove friend
@@ -61,6 +54,9 @@ public final class FriendHandler implements PacketHandler {
                     player.getActionSender().sendMessage("Your ignore list is full");
                     return;
                 }
+                loginSender.addIgnore(user, friend);
+                player.addIgnore(friend);
+                /*
                 else if(!playerExists(player, friend)) {
                 	if(canAddNewPlayer(friend)) {
                 		loginSender.addIgnore(user, friend);
@@ -68,7 +64,7 @@ public final class FriendHandler implements PacketHandler {
                 	} else {
                 		player.getActionSender().sendMessage("Unable to add ignore - unknown player");
                 	}
-                }
+                } */
                 //Services.lookup(DatabaseManager.class).addQuery(new GenericLog(player.getUsername() + " added ignore " + DataConversions.hashToUsername(friend) + " at " + player.getLocation()));
                 break;
             case 108: // Remove ignore
