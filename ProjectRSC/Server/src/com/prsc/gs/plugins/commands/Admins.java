@@ -304,13 +304,6 @@ public final class Admins implements CommandListener {
 				if (summon) {
 					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " summoned " + affectedPlayer.getUsername() + " from " + affectedPlayer.getLocation().toString() + " to " + player.getLocation().toString()));
 					affectedPlayer.teleport(player.getX(), player.getY(), true);
-				} else {
-					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went from " + player.getLocation() + " to " + affectedPlayer.getUsername() + " at " + affectedPlayer.getLocation().toString()));
-					if(!player.isAdmin() && Point.inWilderness(affectedPlayer.getX(), affectedPlayer.getY())) {
-						player.getActionSender().sendMessage("Mods cannot teleport in the wilderness");
-					} else {
-						player.teleport(affectedPlayer.getX(), affectedPlayer.getY(), true);
-					}
 				}
 			} else {
 				player.getActionSender().sendMessage(COMMAND_PREFIX + "Invalid player");
