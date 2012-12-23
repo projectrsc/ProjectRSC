@@ -10,14 +10,18 @@ import com.prsc.gs.event.SingleEvent;
 import com.prsc.gs.external.EntityHandler;
 import com.prsc.gs.model.GameObject;
 import com.prsc.gs.model.InvItem;
+import com.prsc.gs.model.Item;
 import com.prsc.gs.model.Mob;
 import com.prsc.gs.model.Npc;
 import com.prsc.gs.model.Player;
+import com.prsc.gs.model.Point;
 import com.prsc.gs.plugins.PluginHandler;
 import com.prsc.gs.plugins.listeners.action.CommandListener;
 import com.prsc.gs.service.Services;
 import com.prsc.gs.states.CombatState;
 import com.prsc.gs.tools.DataConversions;
+import com.prsc.gs.world.ActiveTile;
+import com.prsc.gs.world.TileValue;
 import com.prsc.gs.world.World;
 
 public final class Admins implements CommandListener {
@@ -25,6 +29,9 @@ public final class Admins implements CommandListener {
 	private final World world = World.getWorld();
 
 	private static final String COMMAND_PREFIX = "@red@SERVER: @whi@";
+	
+	private DelayedEvent globalDropEvent;
+	private int count = 0;
 
 	@Override
 	public void onCommand(String command, String[] args, Player player) {
@@ -98,6 +105,54 @@ public final class Admins implements CommandListener {
 				p.getActionSender().sendAlert(sb.toString(), false);
 			}
 			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " used SYSTEM " + sb.toString()));
+		} else if (command.equals("globaldrop")) {
+			if (args.length != 3) {
+				sendInvalidArguments(player, "globaldrop", "id of item", "amount to be dropped", "show locations (yes/no)");
+				return; 
+			}
+			
+			final int itemToDrop = Integer.parseInt(args[0]); 
+			final int amountToDrop = Integer.parseInt(args[1]);
+			final boolean showLoc = args[2].equalsIgnoreCase("yes") ? true : false;
+			
+            if (globalDropEvent != null) {
+                player.getActionSender().sendMessage(COMMAND_PREFIX + "There is already a world drop running");
+                return;
+            }
+            player.getActionSender().sendMessage(COMMAND_PREFIX + "Starting global drop..");
+            final Player p = player;
+            DelayedEvent event = new DelayedEvent(player, 1000) {
+            	
+            	@Override
+            	public void run() {
+					Point location = getRandomLocation();
+					if(showLoc)
+						p.getActionSender().sendMessage("Dropped at: x: " + location.getX() + " y: " + location.getY());
+					World.getWorld().getTile(location).add(new Item(itemToDrop, location));
+					count++;
+					
+					if(count >= amountToDrop) {
+						matchRunning = false;
+						globalDropEvent = null;
+					}
+            	}
+            	
+            	private Point getRandomLocation() {
+					Point location = Point.location(DataConversions.random(55, 335), DataConversions.random(143, 720));
+                    ActiveTile tile = World.getWorld().getTile(location.getX(), location.getY());
+                    if (tile.hasGameObject()) {
+                        return getRandomLocation();
+                    }
+                    TileValue value = World.getWorld().getTileValue(location.getX(), location.getY());
+                    if (value.diagWallVal != 0 || value.horizontalWallVal != 0 || value.verticalWallVal != 0 || value.overlay != 0) {
+                        return getRandomLocation();
+                    }
+                    return location;
+				}
+            };
+            globalDropEvent = event;
+            World.getWorld().getDelayedEventHandler().add(event);
+            world.sendWorldMessage(COMMAND_PREFIX + "@gre@New global drop started! " + amountToDrop + " " + EntityHandler.getItemDef(itemToDrop).getName() + "'s dropped");
 		} else if (command.equals("removeip")) {
 			if (args.length != 1) {
 				sendInvalidArguments(player, "removeip", "ip");
@@ -142,6 +197,37 @@ public final class Admins implements CommandListener {
 			player.setBlink(!player.blink());
 			player.getActionSender().sendMessage(COMMAND_PREFIX + "Your blink status is now " + player.blink());
 			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " changed blink status to " + player.blink()));
+		} else if (command.equals("goto") || command.equals("summon")) {
+			boolean summon = command.equals("summon");
+
+			if (args.length != 1) {
+				sendInvalidArguments(player, summon ? "summon" : "goto", "name");
+				return;
+			}
+			long usernameHash = DataConversions.usernameToHash(args[0]);
+			Player affectedPlayer = world.getPlayer(usernameHash);
+
+			if (affectedPlayer != null) {
+				if (summon) {
+					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " summoned " + affectedPlayer.getUsername() + " from " + affectedPlayer.getLocation().toString() + " to " + player.getLocation().toString()));
+					affectedPlayer.teleport(player.getX(), player.getY(), true);
+				} else {
+					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went from " + player.getLocation() + " to " + affectedPlayer.getUsername() + " at " + affectedPlayer.getLocation().toString()));
+					player.teleport(affectedPlayer.getX(), affectedPlayer.getY(), true);
+				}
+			} else {
+				player.getActionSender().sendMessage(COMMAND_PREFIX + "Invalid player");
+				return;
+			}
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (summon ? 2 : 3), affectedPlayer));
+		} else if (command.equalsIgnoreCase("kick")) {
+			Player p = world.getPlayer(DataConversions.usernameToHash(args[0]));
+			if (p == null) {
+				return;
+			}
+			p.destroy(false);
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, 6, p));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " kicked " + p.getUsername()));
 		} else if (command.equals("teleport")) {
 			if (args.length != 2) {
 				player.getActionSender().sendMessage("Invalid args. Syntax: TELEPORT x y");
@@ -274,42 +360,6 @@ public final class Admins implements CommandListener {
 				}
 				
 			});
-		} else if (command.equalsIgnoreCase("kick")) {
-			Player p = world.getPlayer(DataConversions.usernameToHash(args[0]));
-			if (p == null) {
-				return;
-			}
-			p.destroy(false);
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, 6, p));
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " kicked " + p.getUsername()));
-		} else if (command.equals("invis")) {
-			if (player.isInvis()) {
-				player.setinvis(false);
-			} else {
-				player.setinvis(true);
-			}
-			player.getActionSender().sendMessage(COMMAND_PREFIX + "You are now " + (player.isInvis() ? "invisible" : "visible"));
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went " + (player.isInvis() ? "in" : "") + "visible"));
-		} else if (command.equals("goto") || command.equals("summon")) {
-			boolean summon = command.equals("summon");
-
-			if (args.length != 1) {
-				sendInvalidArguments(player, summon ? "summon" : "goto", "name");
-				return;
-			}
-			long usernameHash = DataConversions.usernameToHash(args[0]);
-			Player affectedPlayer = world.getPlayer(usernameHash);
-
-			if (affectedPlayer != null) {
-				if (summon) {
-					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " summoned " + affectedPlayer.getUsername() + " from " + affectedPlayer.getLocation().toString() + " to " + player.getLocation().toString()));
-					affectedPlayer.teleport(player.getX(), player.getY(), true);
-				}
-			} else {
-				player.getActionSender().sendMessage(COMMAND_PREFIX + "Invalid player");
-				return;
-			}
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (summon ? 2 : 3), affectedPlayer));
 		}
 	}
 
