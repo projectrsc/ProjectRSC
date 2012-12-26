@@ -72,7 +72,7 @@ public final class DropHandler implements PacketHandler {
 
 	}
 
-	public void drop(Player player, final InvItem item) {
+	public void drop(final Player player, final InvItem item) {
 		player.setStatus(Action.DROPPING_GITEM);
 		World.getWorld().getDelayedEventHandler().add(new DelayedEvent(player, 500) {
 			public void run() {
@@ -89,8 +89,12 @@ public final class DropHandler implements PacketHandler {
 				owner.getActionSender().sendSound("dropobject");
 				owner.getInventory().remove(item);
 				owner.getActionSender().sendInventory();
-				world.registerItem(new Item(item.getID(), owner.getX(), owner
-						.getY(), item.getAmount(), owner));
+				
+				if(item.getID() >= 575 && item.getID() <= 581) {
+                	player.getActionSender().sendMessage("You suddenly see a wind blow away the " + item.getDef().getName());
+                } else {
+                	world.registerItem(new Item(item.getID(), owner.getX(), owner.getY(), item.getAmount(), owner));
+                }
 				matchRunning = false;
 			}
 		});

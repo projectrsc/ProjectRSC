@@ -53,7 +53,10 @@ public final class ShopHandler implements PacketHandler {
 				player.getActionSender().sendMessage("You don't have enough money!");
 				return;
 			} 
-			
+			if(item.getID() >= 575 && item.getID() <= 581) {
+				player.getActionSender().sendMessage("The shop will not sell this item");
+				return;
+			}
 			if ((Inventory.MAX_SIZE - player.getInventory().size()) + player.getInventory().getFreedSlots(new InvItem(10, value)) < player.getInventory().getRequiredSlots(item)) {
 				player.getActionSender().sendMessage("You can't hold the objects you are trying to buy!");
 				return;
@@ -80,6 +83,10 @@ public final class ShopHandler implements PacketHandler {
 			if (player.getInventory().countId(item.getID()) < 1) {
 				return;
 			} 
+			if(item.getID() >= 575 && item.getID() <= 581) {
+				player.getActionSender().sendMessage("The shop will not accept this item");
+				return;
+			}
 			if (!shop.shouldStock(item.getID())) {
 				return;
 			}

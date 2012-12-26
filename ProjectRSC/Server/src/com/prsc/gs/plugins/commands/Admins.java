@@ -121,37 +121,51 @@ public final class Admins implements CommandListener {
             }
             player.getActionSender().sendMessage(COMMAND_PREFIX + "Starting global drop..");
             final Player p = player;
+            PluginHandler.getPluginHandler().getExecutor().submit(new Runnable() {
+
+				@Override
+				public void run() {
+					while(count < amountToDrop) {
+						Point location = getRandomLocation();
+						if(showLoc)
+							p.getActionSender().sendMessage("Dropped at: x: " + location.getX() + " y: " + location.getY());
+						World.getWorld().getTile(location).add(new Item(itemToDrop, location));
+						count++;
+						globalDropEvent = null;
+					}
+					count = 0;
+				}
+            });
+            /*
             DelayedEvent event = new DelayedEvent(player, 1000) {
             	
             	@Override
             	public void run() {
-					Point location = getRandomLocation();
-					if(showLoc)
-						p.getActionSender().sendMessage("Dropped at: x: " + location.getX() + " y: " + location.getY());
-					World.getWorld().getTile(location).add(new Item(itemToDrop, location));
-					count++;
 					
-					if(count >= amountToDrop) {
-						matchRunning = false;
-						globalDropEvent = null;
-					}
             	}
             	
             	private Point getRandomLocation() {
 					Point location = Point.location(DataConversions.random(55, 335), DataConversions.random(143, 720));
-                    ActiveTile tile = World.getWorld().getTile(location.getX(), location.getY());
+                    
+					if(!Formulae.isF2PLocation(location)) {
+						return getRandomLocation();
+					}
+					
+					ActiveTile tile = World.getWorld().getTile(location.getX(), location.getY());
                     if (tile.hasGameObject()) {
                         return getRandomLocation();
                     }
+                    
                     TileValue value = World.getWorld().getTileValue(location.getX(), location.getY());
+                    
                     if (value.diagWallVal != 0 || value.horizontalWallVal != 0 || value.verticalWallVal != 0 || value.overlay != 0) {
                         return getRandomLocation();
                     }
                     return location;
 				}
-            };
-            globalDropEvent = event;
-            World.getWorld().getDelayedEventHandler().add(event);
+            }; */
+            //globalDropEvent = event;
+            //World.getWorld().getDelayedEventHandler().add(event);
             world.sendWorldMessage(COMMAND_PREFIX + "@gre@New global drop started! " + amountToDrop + " " + EntityHandler.getItemDef(itemToDrop).getName() + "'s dropped");
 		} else if (command.equals("removeip")) {
 			if (args.length != 1) {
@@ -362,7 +376,26 @@ public final class Admins implements CommandListener {
 			});
 		}
 	}
-
+	
+	private Point getRandomLocation() {
+		Point location = Point.location(DataConversions.random(55, 335), DataConversions.random(143, 720));
+        
+		if(!Formulae.isF2PLocation(location)) {
+			return getRandomLocation();
+		}
+		
+		ActiveTile tile = World.getWorld().getTile(location.getX(), location.getY());
+        if (tile.hasGameObject()) {
+            return getRandomLocation();
+        }
+        
+        TileValue value = World.getWorld().getTileValue(location.getX(), location.getY());
+        
+        if (value.diagWallVal != 0 || value.horizontalWallVal != 0 || value.verticalWallVal != 0 || value.overlay != 0) {
+            return getRandomLocation();
+        }
+        return location;
+	}
 
 	private void sendInvalidArguments(Player p, String... strings) {
 		StringBuilder sb = new StringBuilder(COMMAND_PREFIX + "Invalid arguments @red@Syntax: @whi@");
