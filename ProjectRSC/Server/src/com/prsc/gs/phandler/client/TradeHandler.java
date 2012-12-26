@@ -258,11 +258,6 @@ public class TradeHandler implements PacketHandler {
                             player.setRequiresOfferUpdate(true);
                             continue;
                         } 
-                        if(tItem.getID() >= 575 && tItem.getID() <= 581) {
-                        	player.getActionSender().sendMessage(def.getName() + " cannot be traded with other players");
-                            player.setRequiresOfferUpdate(true);
-                            continue;
-                        }
                         tradeOffer.add(tItem);
                     }
                     for (InvItem item : tradeOffer.getItems()) {

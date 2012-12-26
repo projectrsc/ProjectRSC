@@ -90,11 +90,7 @@ public final class DropHandler implements PacketHandler {
 				owner.getInventory().remove(item);
 				owner.getActionSender().sendInventory();
 				
-				if(item.getID() >= 575 && item.getID() <= 581) {
-                	player.getActionSender().sendMessage("You suddenly see a wind blow away the " + item.getDef().getName());
-                } else {
-                	world.registerItem(new Item(item.getID(), owner.getX(), owner.getY(), item.getAmount(), owner));
-                }
+                world.registerItem(new Item(item.getID(), owner.getX(), owner.getY(), item.getAmount(), owner));
 				matchRunning = false;
 			}
 		});
