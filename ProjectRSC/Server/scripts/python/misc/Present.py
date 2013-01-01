@@ -18,7 +18,7 @@ class Present(PlugInterface, InvActionListener, InvActionExecutiveListener):
 	
 	def onInvAction(self, item, player):
 		script = player.getScriptHelper()
-		#script.occupy()
+		script.occupy()
 		script.displayMessage("You open the box")
 		script.sleep(2500)
 		script.removeItem(item.getID(), 1)
@@ -39,7 +39,7 @@ class Present(PlugInterface, InvActionListener, InvActionExecutiveListener):
 			script.addItem(selected, 1)
 		script.displayMessage("You find " + n_item.getDef().getName())
 		count = count + 1
-		#script.release()
+		script.release()
 		
 	def blockInvAction(self, item, player):
 		return item.getID() == 980 and item.getDef().getCommand() == "Open"
