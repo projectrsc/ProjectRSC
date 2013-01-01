@@ -17,6 +17,7 @@ class Present(PlugInterface, InvActionListener, InvActionExecutiveListener):
 	MAX_ITEMS = 5
 	
 	def onInvAction(self, item, player):
+		script = player.getScriptHelper()
 		script.displayMessage("Nothing interesting happens")
 		
 	def blockInvAction(self, item, player):
