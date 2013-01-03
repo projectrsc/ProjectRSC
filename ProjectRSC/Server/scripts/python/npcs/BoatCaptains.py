@@ -39,6 +39,7 @@ class BoatCaptains(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener)
 					script.sleep(600)
 					script.movePlayer(324, 713, False)
 					script.sleep(600)
+					script.removeItem(10, 30)
 					script.displayMessage("The ship arrives at Karajma")
 				else:
 					script.sendPlayerChat("Oh dear I don't seem to have enough money")
@@ -62,6 +63,7 @@ class BoatCaptains(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener)
 						script.sleep(600)
 						script.movePlayer(268, 650, False)
 						script.sleep(600)
+						script.removeItem(10, 30)
 						script.displayMessage("The ship arrives at Port Sarim")
 					else:
 						script.sendPlayerChat("Oh dear I don't seem to have enough money")
@@ -86,6 +88,7 @@ class BoatCaptains(PlugInterface, TalkToNpcListener, TalkToNpcExecutiveListener)
 						if script.hasItem(10, 30):
 							script.displayMessage("You pay 30 gold", "You board the ship")
 							script.sleep(800)
+							script.removeItem(10, 30)
 							script.movePlayer(268, 650, False)
 							script.displayMessage("The ship arrives at Port Sarim")
 						else:
