@@ -78,6 +78,10 @@ public class RangeEvent extends DelayedEvent {
 			owner.resetFollowing();
 			return;
 		}
+		if (affectedMob.isPrayerActivated(13)) {
+			owner.getActionSender().sendMessage("Your missile got blocked");
+			return;
+		}
 		boolean xbow = DataConversions.inArray(Formulae.xbowIDs, bowID);
 		int arrowID = -1;
 		for (int aID : (xbow ? Formulae.boltIDs : Formulae.arrowIDs)) {
@@ -132,11 +136,6 @@ public class RangeEvent extends DelayedEvent {
 		if (arrowID < 0) {
 			owner.getActionSender().sendMessage("You have run out of " + (xbow ? "bolts" : "arrows"));
 			owner.resetRange();
-			return;
-		}
-		
-		if (affectedMob.isPrayerActivated(13)) {
-			owner.getActionSender().sendMessage("Your missile got blocked");
 			return;
 		}
 		// if(owner.getRangeEquip())

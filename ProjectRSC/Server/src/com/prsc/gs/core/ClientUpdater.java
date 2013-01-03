@@ -348,6 +348,10 @@ public final class ClientUpdater {
 				p.destroy(false);
 			}
 		} else if (curTime - p.getLastMoved() >= 300000 && !p.isAdmin()) { // 300000
+			if(p.isSleeping()) {
+				p.setSleeping(false);
+				p.getActionSender().sendWakeUp(false, false);
+			}
 			p.getActionSender().sendMessage("@cya@You have not moved for 5 mins, please move to a new area to avoid logout.");
 			p.warnToMove();
 		}

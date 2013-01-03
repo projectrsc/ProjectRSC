@@ -189,7 +189,7 @@ public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, In
                 player.getActionSender().sendMessage("You need level 35 cooking to do this");
                 return;
             }
-            if (player.getInventory().remove(new InvItem(141)) > -1 && player.getInventory().remove(new InvItem(143)) > -1) {
+            if (player.getInventory().contains(item1) && player.getInventory().contains(item2)) {
                 int rand = Formulae.Rand(0, 4);
                 if (rand == 2) {
                     player.incExp(7, 55, true);
@@ -200,6 +200,8 @@ public class Cooking implements InvUseOnObjectListener, InvUseOnItemListener, In
                     player.getInventory().add(new InvItem(142));
                     player.getActionSender().sendMessage("You mix the grapes with the water and create wine!");
                 }
+                player.getInventory().remove(141, 1);
+            	player.getInventory().remove(143, 1);
                 player.getActionSender().sendStat(7);
                 player.getActionSender().sendInventory();
                 return;

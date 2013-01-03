@@ -600,6 +600,48 @@ public final class Player extends Mob {
 		}
 		lastPackets.addLast(p);
 	}
+	
+	/**
+	 * Lazy implementation of rapid heal/restore
+	 * TODO: add no hits mode
+	 * @param quick
+	 */
+	
+	public void activateQuickHealUpdater(boolean quick) {	
+		if(World.getWorld().getDelayedEventHandler().contains(healUpdate)) {
+			World.getWorld().getDelayedEventHandler().remove(healUpdate);
+		}
+		
+		healUpdate = new DelayedEvent(this, quick ? 20000 : 60000) {
+
+			private void checkStat(int statIndex) {
+				if (statIndex != 3 && owner.getCurStat(statIndex) == owner.getMaxStat(statIndex)) {
+					owner.getActionSender().sendMessage("Your " + Formulae.statArray[statIndex] + " ability has returned to normal.");
+				}
+			}
+
+			public void run() {
+				for (int statIndex = 0; statIndex < 18; statIndex++) {
+					if (statIndex == 5) {
+						continue;
+					}
+					int curStat = getCurStat(statIndex);
+					int maxStat = getMaxStat(statIndex);
+
+					if (curStat > maxStat) {
+						setCurStat(statIndex, curStat - 1);
+						getActionSender().sendStat(statIndex);
+						checkStat(statIndex);
+					} else if (curStat < maxStat) {
+						setCurStat(statIndex, curStat + 1);
+						getActionSender().sendStat(statIndex);
+						checkStat(statIndex);
+					}
+				}
+			}
+		};
+		World.getWorld().getDelayedEventHandler().add(healUpdate);
+	}
 
 	public void addPlayersAppearanceIDs(int[] indicies, int[] appearanceIDs) {
 		for (int x = 0; x < indicies.length; x++) {
@@ -636,8 +678,7 @@ public final class Player extends Mob {
 			World.getWorld().getDelayedEventHandler().add(skullEvent);
 			super.setAppearnceChanged(true);
 		}
-		skullEvent
-		.setLastRun(System.currentTimeMillis() - (1200000 - timeLeft));
+		skullEvent.setLastRun(System.currentTimeMillis() - (1200000 - timeLeft));
 	}
 
 	public void addToDuelOffer(InvItem item) {
@@ -1711,6 +1752,8 @@ public final class Player extends Mob {
 		}
 		return 0;
 	}
+	
+	public DelayedEvent healUpdate = null;
 
 	public void load(String username, String password, int uid, boolean reconnecting) {
 		try {
@@ -1721,8 +1764,8 @@ public final class Player extends Mob {
 			this.username = DataConversions.hashToUsername(usernameHash);
 
 			World.getWorld().getServer().getLoginConnector().getActionSender().playerLogin(this);
-
-			World.getWorld().getDelayedEventHandler().add(new DelayedEvent(this, 60000) {
+			
+			healUpdate = new DelayedEvent(this, 60000) {
 
 				private void checkStat(int statIndex) {
 					if (statIndex != 3 && owner.getCurStat(statIndex) == owner.getMaxStat(statIndex)) {
@@ -1749,7 +1792,9 @@ public final class Player extends Mob {
 						}
 					}
 				}
-			});
+			};
+			
+			World.getWorld().getDelayedEventHandler().add(healUpdate);
 
 			drainer = new DelayedEvent(this, Integer.MAX_VALUE) {
 

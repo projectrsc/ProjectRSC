@@ -1,18 +1,20 @@
 package com.prsc.gs.core;
 
 import com.prsc.gs.event.DelayedEvent;
+
 import com.prsc.gs.model.Player;
 import com.prsc.gs.util.Logger;
 import com.prsc.gs.world.World;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public final class DelayedEventHandler {
     private static World world = World.getWorld();
-    private ArrayList<DelayedEvent> events = new ArrayList<DelayedEvent>();
-    private ArrayList<DelayedEvent> toAdd = new ArrayList<DelayedEvent>();
+    private Queue<DelayedEvent> events = new ConcurrentLinkedQueue<DelayedEvent>();
+    private Queue<DelayedEvent> toAdd = new ConcurrentLinkedQueue<DelayedEvent>();
 
     public DelayedEventHandler() {
         world.setDelayedEventHandler(this);
@@ -59,7 +61,7 @@ public final class DelayedEventHandler {
         }
     }
 
-    public ArrayList<DelayedEvent> getEvents() {
+    public Queue<DelayedEvent> getEvents() {
         return events;
     }
 

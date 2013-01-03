@@ -2,12 +2,15 @@ package com.prsc.gs.phandler.client;
 
 import org.jboss.netty.channel.Channel;
 
+import com.prsc.config.Formulae;
 import com.prsc.gs.connection.Packet;
 import com.prsc.gs.connection.RSCPacket;
+import com.prsc.gs.event.DelayedEvent;
 import com.prsc.gs.external.EntityHandler;
 import com.prsc.gs.external.PrayerDef;
 import com.prsc.gs.model.Player;
 import com.prsc.gs.phandler.PacketHandler;
+import com.prsc.gs.world.World;
 
 
 public class PrayerHandler implements PacketHandler {
@@ -41,6 +44,8 @@ public class PrayerHandler implements PacketHandler {
             } else if (prayerID == 0) {
                 deactivatePrayer(player, 9);
                 deactivatePrayer(player, 3);
+            } else if(prayerID == 6 || prayerID == 7) {
+				player.activateQuickHealUpdater(true);
             }
             player.setPrayer(prayerID, true);
             player.addPrayerDrain(prayerID);
@@ -53,6 +58,9 @@ public class PrayerHandler implements PacketHandler {
         if (player.isPrayerActivated(prayerID)) {
             player.setPrayer(prayerID, false);
             player.removePrayerDrain(prayerID);
+            if(prayerID == 6 || prayerID == 7) {
+            	player.activateQuickHealUpdater(false);
+            } 
             return true;
         }
         return false;

@@ -208,8 +208,10 @@ public final class PlayerLogin implements PacketHandler {
 					sender.startShutdown((int) (timeTillShutdown / 1000));
 				
 				// We have a new character being created...
-				if (player.getLastLogin() == 0L && player.getInventory().size() == 0) {
+				if(player.getLastLogin() == 0L) {
 					sender.sendAppearanceScreen();
+				}
+				if (player.getLastLogin() == 0L && player.getInventory().size() == 0) {
 					for(InvItem item : Player.STARTER_ITEMS) {
 						player.getInventory().add(item);
 					}
