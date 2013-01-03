@@ -51,7 +51,7 @@ public final class LoginConnector {
 
 	public LoginConnector() {
 		packetQueue = new PacketQueue<LSPacket>();
-		factory = new NioClientSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newCachedThreadPool());
+		factory = new NioClientSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() / 2));
 		loadPacketHandlers();
 	}
 
