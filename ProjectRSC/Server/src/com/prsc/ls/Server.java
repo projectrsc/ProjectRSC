@@ -146,7 +146,7 @@ public final class Server {
 	}
 
 	private Channel createListener(String ip, int port, final SimpleChannelHandler handler, final OneToOneEncoder encoder, final FrameDecoder decoder) throws IOException {
-		ServerBootstrap bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newCachedThreadPool()));
+		ServerBootstrap bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() / 2)));
 
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			public ChannelPipeline getPipeline() {
@@ -173,8 +173,7 @@ public final class Server {
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			public ChannelPipeline getPipeline() {
 				ChannelPipeline pipeline = Channels.pipeline();
-				pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
-				        8192, Delimiters.lineDelimiter()));
+				pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
 				pipeline.addLast("decoder", decoder);
 				pipeline.addLast("encoder", encoder);
 				pipeline.addLast("handler", handler);
