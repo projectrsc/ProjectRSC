@@ -133,7 +133,7 @@ public final class Server {
 			Server.print("Initializing NIO", false);
 			//cores = Runtime.getRuntime().availableProcessors() * 2; // TODO: split between udp/tcp
 			// According to Netty docs, we'll need at least cores * 2 for workers, and one thread per boss (listening port)
-			factory = new NioServerSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+			factory = new NioServerSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newCachedThreadPool());
 		} catch (Exception e) {
 			Server.print("ERROR", true);
 			e.printStackTrace();

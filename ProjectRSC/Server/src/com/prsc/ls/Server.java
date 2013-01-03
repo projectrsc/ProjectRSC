@@ -146,7 +146,7 @@ public final class Server {
 	}
 
 	private Channel createListener(String ip, int port, final SimpleChannelHandler handler, final OneToOneEncoder encoder, final FrameDecoder decoder) throws IOException {
-		ServerBootstrap bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() / 2)));
+		ServerBootstrap bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newCachedThreadPool()));
 
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			public ChannelPipeline getPipeline() {
