@@ -38,10 +38,14 @@ public class AttackHandler implements PacketHandler {
 		Mob affectedMob = null;
 		int serverIndex = p.readShort();
 		
-		if (pID == 57) {
-			affectedMob = world.getPlayer(serverIndex);
-		} else if (pID == 73) {
-			affectedMob = world.getNpc(serverIndex);
+		try {
+			if (pID == 57) {
+				affectedMob = world.getPlayer(serverIndex);
+			} else if (pID == 73) {
+				affectedMob = world.getNpc(serverIndex);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 		
 		if (affectedMob == null || affectedMob.equals(player)) {
