@@ -5,6 +5,8 @@ import java.net.InetSocketAddress;
 
 
 
+
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -18,6 +20,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.jboss.netty.channel.Channel;
 
@@ -27,28 +31,35 @@ import com.prsc.gs.builders.MiscPacketBuilder;
 import com.prsc.gs.builders.ls.SavePacketBuilder;
 import com.prsc.gs.connection.LSPacket;
 import com.prsc.gs.connection.RSCPacket;
+import com.prsc.gs.core.GameEngine;
 import com.prsc.gs.event.DelayedEvent;
 import com.prsc.gs.event.impl.RangeEvent;
 import com.prsc.gs.external.AgilityCourseDef;
 import com.prsc.gs.external.EntityHandler;
 import com.prsc.gs.external.PrayerDef;
-import com.prsc.gs.model.comp.mob.Scriptable;
-import com.prsc.gs.phandler.client.WieldHandler;
+import com.prsc.gs.model.component.mob.Scriptable;
+import com.prsc.gs.model.component.mob.player.Bank;
+import com.prsc.gs.model.component.mob.player.Inventory;
+import com.prsc.gs.model.component.mob.player.Appearance;
+import com.prsc.gs.model.component.world.Area;
 import com.prsc.gs.plugins.PluginHandler;
 import com.prsc.gs.plugins.Quest;
 import com.prsc.gs.plugins.QuestInterface;
+import com.prsc.gs.plugins.phandler.client.WieldHandler;
 import com.prsc.gs.states.Action;
 import com.prsc.gs.states.CombatState;
 import com.prsc.gs.tools.DataConversions;
 import com.prsc.gs.util.Logger;
 import com.prsc.gs.util.StatefulEntityCollection;
-import com.prsc.gs.world.Shop;
-import com.prsc.gs.world.World;
 
 /**
  * A single player.
  */
 public final class Player extends Mob {
+	
+	/**
+	 * TODO: Create scriptable components out of the mess
+	 */
 	
 	// Moved here for now to keep it simple
 	public final static InvItem[] STARTER_ITEMS = 
@@ -98,8 +109,6 @@ public final class Player extends Mob {
 		this.lastOptions = lastOptions;
 	}
 
-	public long lastCommandUsed = System.currentTimeMillis();
-
 	public static final String MEMBER_MESSAGE = "This feature is only available on a members server";
 
 	private boolean firstMajorUpdateSent = false;
@@ -142,14 +151,16 @@ public final class Player extends Mob {
 
 	public Npc lastNpcChasingYou = null;
 	
-	public long lastNPCChat = System.currentTimeMillis();
+	public long lastNPCChat = GameEngine.getAccurateTimestamp(); 
+	
+	private final AtomicReference<Area> area = new AtomicReference<Area>();
 	
 	private boolean muted = false;
 
 	private long muteTime = 0L;
 
 	public void setMuteTime(long muteTime) {
-		if (muteTime == -1 || muteTime > (System.currentTimeMillis() / 1000)) {
+		if (muteTime == -1 || muteTime > (GameEngine.getAccurateTimestamp() / 1000)) {
 			muted = true;
 		}
 		this.muteTime = muteTime;
@@ -176,7 +187,7 @@ public final class Player extends Mob {
 	/**
 	 * Methods to send packets related to actions
 	 */
-	private MiscPacketBuilder actionSender;
+	private final MiscPacketBuilder actionSender = new MiscPacketBuilder(this);;
 	/**
 	 * The current agility course the player's doing
 	 */
@@ -184,7 +195,7 @@ public final class Player extends Mob {
 	/**
 	 * The Players appearance
 	 */
-	private PlayerAppearance appearance;
+	private Appearance appearance;
 	/**
 	 * Players we have been attacked by signed login, used to check if we should
 	 * get a skull for attacking back
@@ -342,7 +353,7 @@ public final class Player extends Mob {
 	/**
 	 * The last menu reply this player gave in a quest
 	 */
-	public long lastCast = System.currentTimeMillis();
+	public long lastCast = GameEngine.getAccurateTimestamp();
 	/**
 	 * Time of last charge spell
 	 */
@@ -361,34 +372,34 @@ public final class Player extends Mob {
 	 */
 	private long lastLogin = 0;
 
-	public long lastPacketRecTime = System.currentTimeMillis() / 1000;
 	/**
 	 * Queue of last 100 packets, used for auto detection purposes
 	 */
 	private LinkedList<RSCPacket> lastPackets = new LinkedList<RSCPacket>();
+	
 	public long lastPacketTime = -1;
 	/**
 	 * Last time a 'ping' was received
 	 */
-	private long lastPing = System.currentTimeMillis();
+	private long lastPing = GameEngine.getAccurateTimestamp();
 
-	public long lastRange = System.currentTimeMillis();
+	public long lastRange = GameEngine.getAccurateTimestamp();
 	/**
 	 * Time last report was sent, used to throttle reports
 	 */
-	private long lastReport = 0;
+	private long lastReport = 0L;
 
-	private long lastRun = System.currentTimeMillis();
+	private long lastRun = GameEngine.getAccurateTimestamp();
 
-	private long lastSaveTime = System.currentTimeMillis() + DataConversions.random(600000, 1800000);
+	private long lastSaveTime = GameEngine.getAccurateTimestamp() + DataConversions.random(600000, 1800000);
 	/**
 	 * The time of the last spell cast, used as a throttle
 	 */
-	private long lastSpellCast = 0;
+	private long lastSpellCast = 0L;
 	/**
 	 * Time of last trade/duel request
 	 */
-	private long lastTradeDuelRequest = 0;
+	private long lastTradeDuelRequest = 0L;
 	/**
 	 * Whether the player is currently logged in
 	 */
@@ -541,9 +552,8 @@ public final class Player extends Mob {
 		currentIP = ((InetSocketAddress) ios.getRemoteAddress()).getAddress().getHostAddress();
 		//else
 		//	currentIP = hostname;
-		currentLogin = System.currentTimeMillis();
-		actionSender = new MiscPacketBuilder(this);
-		setBusy(true);
+		currentLogin = GameEngine.getAccurateTimestamp();
+		this.setBusy(true);
 	}
 
 	public boolean accessingBank() {
@@ -555,7 +565,7 @@ public final class Player extends Mob {
 	}
 
 	public void addAttackedBy(Player p) {
-		attackedBy.put(p.getUsernameHash(), System.currentTimeMillis());
+		attackedBy.put(p.getUsernameHash(), GameEngine.getAccurateTimestamp());
 	}
 
 	public void addFriend(long id, int world) {
@@ -580,11 +590,9 @@ public final class Player extends Mob {
 
 	public void addMessageToChatQueue(byte[] messageData) {
 		chatQueue.add(new ChatMessage(this, messageData));
-		if (chatQueue.size() > 2) {
-			destroy(false);
-		}
 	}
-
+	
+	/*
 	public void addPacket(RSCPacket p) {
 		long now = System.currentTimeMillis();
 		if (now - lastCount > 3000) {
@@ -599,51 +607,16 @@ public final class Player extends Mob {
 			lastPackets.remove();
 		}
 		lastPackets.addLast(p);
-	}
-	
-	/**
-	 * Lazy implementation of rapid heal/restore
-	 * TODO: add no hits mode
-	 * @param quick
-	 */
-	
-	public void activateQuickHealUpdater(boolean quick) {	
-		if(World.getWorld().getDelayedEventHandler().contains(healUpdate)) {
-			World.getWorld().getDelayedEventHandler().remove(healUpdate);
-		}
-		
-		healUpdate = new DelayedEvent(this, quick ? 20000 : 60000) {
-
-			private void checkStat(int statIndex) {
-				if (statIndex != 3 && owner.getCurStat(statIndex) == owner.getMaxStat(statIndex)) {
-					owner.getActionSender().sendMessage("Your " + Formulae.statArray[statIndex] + " ability has returned to normal.");
-				}
-			}
-
-			public void run() {
-				for (int statIndex = 0; statIndex < 18; statIndex++) {
-					if (statIndex == 5) {
-						continue;
-					}
-					int curStat = getCurStat(statIndex);
-					int maxStat = getMaxStat(statIndex);
-
-					if (curStat > maxStat) {
-						setCurStat(statIndex, curStat - 1);
-						getActionSender().sendStat(statIndex);
-						checkStat(statIndex);
-					} else if (curStat < maxStat) {
-						setCurStat(statIndex, curStat + 1);
-						getActionSender().sendStat(statIndex);
-						checkStat(statIndex);
-					}
-				}
-			}
-		};
-		World.getWorld().getDelayedEventHandler().add(healUpdate);
-	}
+	} */
 
 	public void addPlayersAppearanceIDs(int[] indicies, int[] appearanceIDs) {
+		for (int x = 0; x < indicies.length; x++) {
+			knownPlayersAppearanceIDs.put(indicies[x], appearanceIDs[x]);
+		}
+	}
+	
+	public void resetPlayerAppearanceIDs(int[] indicies, int[] appearanceIDs) {
+		knownPlayersAppearanceIDs.clear();
 		for (int x = 0; x < indicies.length; x++) {
 			knownPlayersAppearanceIDs.put(indicies[x], appearanceIDs[x]);
 		}
@@ -678,7 +651,7 @@ public final class Player extends Mob {
 			World.getWorld().getDelayedEventHandler().add(skullEvent);
 			super.setAppearnceChanged(true);
 		}
-		skullEvent.setLastRun(System.currentTimeMillis() - (1200000 - timeLeft));
+		skullEvent.setLastRun(GameEngine.getAccurateTimestamp() - (1200000 - timeLeft));
 	}
 
 	public void addToDuelOffer(InvItem item) {
@@ -697,15 +670,15 @@ public final class Player extends Mob {
 				return false;
 			}
 		} */
-		return !isBusy() && System.currentTimeMillis() - getCombatTimer() > 10000;
+		return !isBusy() && GameEngine.getAccurateTimestamp() - getCombatTimer() > 10000;
 	}
 
 	public boolean canReport() {
-		return System.currentTimeMillis() - lastReport > 60000;
+		return GameEngine.getAccurateTimestamp() - lastReport > 60000;
 	}
 
 	public boolean castTimer() {
-		return System.currentTimeMillis() - lastSpellCast > 1600;
+		return GameEngine.getAccurateTimestamp() - lastSpellCast > 1600;
 	}
 
 	public boolean checkAttack(Mob mob, boolean missile) {
@@ -721,7 +694,7 @@ public final class Player extends Mob {
 					return true;
 				}
 			}
-			if (System.currentTimeMillis() - mob.getCombatTimer() < (mob.getCombatState() == CombatState.RUNNING
+			if (GameEngine.getAccurateTimestamp() - mob.getCombatTimer() < (mob.getCombatState() == CombatState.RUNNING
 					|| mob.getCombatState() == CombatState.WAITING ? 3000 : 500)
 					&& !mob.inCombat()) {
 				return false;
@@ -838,7 +811,7 @@ public final class Player extends Mob {
 				
 				PluginHandler.getPluginHandler().handleAction("PlayerLogout", new Object[]{this});
 			} else {
-				final long startDestroy = System.currentTimeMillis();
+				final long startDestroy = GameEngine.getAccurateTimestamp();
 				World.getWorld().getDelayedEventHandler().add(new DelayedEvent(this, 3000) {
 
 					public void run() {
@@ -951,7 +924,7 @@ public final class Player extends Mob {
 	}
 
 	public int getDaysSubscriptionLeft() {
-		long now = (System.currentTimeMillis() / 1000);
+		long now = (GameEngine.getAccurateTimestamp() / 1000);
 		if (subscriptionExpires == 0 || now >= subscriptionExpires) {
 			return 0;
 		}
@@ -1095,7 +1068,7 @@ public final class Player extends Mob {
 		return password;
 	}
 
-	public PlayerAppearance getPlayerAppearance() {
+	public Appearance getPlayerAppearance() {
 		return appearance;
 	}
 
@@ -1184,8 +1157,7 @@ public final class Player extends Mob {
 	}
 
 	public int getSpellWait() {
-		return DataConversions.roundUp((double) (1200 - (System
-				.currentTimeMillis() - lastSpellCast)) / 1000D);
+		return DataConversions.roundUp((double) (1200 - (GameEngine.getAccurateTimestamp() - lastSpellCast)) / 1000D);
 	}
 
 	public Action getStatus() {
@@ -1474,7 +1446,7 @@ public final class Player extends Mob {
 	}
 
 	public boolean isCharged() {
-		return System.currentTimeMillis() - lastCharge < 600000;
+		return GameEngine.getAccurateTimestamp() - lastCharge < 600000;
 	}
 
 	public boolean isDuelConfirmAccepted() {
@@ -1730,7 +1702,7 @@ public final class Player extends Mob {
 		}
 		actionSender.sendPrayers();
 
-		setLocation(Point.location(122, 647), true);
+		this.setLocation(Point.location(122, 647), true);
 
 		Collection<Player> allWatched = watchedPlayers.getAllEntities();
 
@@ -1753,18 +1725,18 @@ public final class Player extends Mob {
 		return 0;
 	}
 	
-	public DelayedEvent healUpdate = null;
+	private DelayedEvent healUpdate = null;
 
 	public void load(String username, String password, int uid, boolean reconnecting) {
 		try {
-			setID(uid);
+			this.setID(uid);
 			this.password = password;
 			this.reconnecting = reconnecting;
-			usernameHash = DataConversions.usernameToHash(username);
+			this.usernameHash = DataConversions.usernameToHash(username);
 			this.username = DataConversions.hashToUsername(usernameHash);
 
 			World.getWorld().getServer().getLoginConnector().getActionSender().playerLogin(this);
-			
+
 			healUpdate = new DelayedEvent(this, 60000) {
 
 				private void checkStat(int statIndex) {
@@ -1823,6 +1795,48 @@ public final class Player extends Mob {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Lazy implementation of rapid heal/restore
+	 * TODO: add no hits mode
+	 * @param quick
+	 */
+	
+	public void activateQuickHealUpdater(boolean quick) {	
+		if(World.getWorld().getDelayedEventHandler().contains(healUpdate)) {
+			World.getWorld().getDelayedEventHandler().remove(healUpdate);
+		}
+		
+		healUpdate = new DelayedEvent(this, quick ? 20000 : 60000) {
+
+			private void checkStat(int statIndex) {
+				if (statIndex != 3 && owner.getCurStat(statIndex) == owner.getMaxStat(statIndex)) {
+					owner.getActionSender().sendMessage("Your " + Formulae.statArray[statIndex] + " ability has returned to normal.");
+				}
+			}
+
+			public void run() {
+				for (int statIndex = 0; statIndex < 18; statIndex++) {
+					if (statIndex == 5) {
+						continue;
+					}
+					int curStat = getCurStat(statIndex);
+					int maxStat = getMaxStat(statIndex);
+
+					if (curStat > maxStat) {
+						setCurStat(statIndex, curStat - 1);
+						getActionSender().sendStat(statIndex);
+						checkStat(statIndex);
+					} else if (curStat < maxStat) {
+						setCurStat(statIndex, curStat + 1);
+						getActionSender().sendStat(statIndex);
+						checkStat(statIndex);
+					}
+				}
+			}
+		};
+		World.getWorld().getDelayedEventHandler().add(healUpdate);
+	}
 
 	public boolean loggedIn() {
 		return loggedIn;
@@ -1843,7 +1857,7 @@ public final class Player extends Mob {
 	}
 
 	public void ping() {
-		lastPing = System.currentTimeMillis();
+		lastPing = GameEngine.getAccurateTimestamp();
 	}
 
 	public void remove() {
@@ -2083,12 +2097,12 @@ public final class Player extends Mob {
 		agilityCourseDef = def;
 	}
 
-	public void setAppearance(PlayerAppearance appearance) {
+	public void setAppearance(Appearance appearance) {
 		this.appearance = appearance;
 	}
 
 	public void setArrowFired() {
-		lastArrow = System.currentTimeMillis();
+		lastArrow = GameEngine.getAccurateTimestamp();
 	}
 
 	public void setBank(Bank b) {
@@ -2096,7 +2110,7 @@ public final class Player extends Mob {
 	}
 
 	public void setCastTimer() {
-		lastSpellCast = System.currentTimeMillis();
+		lastSpellCast = GameEngine.getAccurateTimestamp();
 	}
 
 	public void setChangingAppearance(boolean b) {
@@ -2104,7 +2118,7 @@ public final class Player extends Mob {
 	}
 
 	public void setCharged() {
-		lastCharge = System.currentTimeMillis();
+		lastCharge = GameEngine.getAccurateTimestamp();
 	}
 
 	public void setCombatStyle(int style) {
@@ -2227,7 +2241,7 @@ public final class Player extends Mob {
 	}
 
 	public void setLastReport() {
-		lastReport = System.currentTimeMillis();
+		lastReport = GameEngine.getAccurateTimestamp();
 	}
 
 	public void setLastSaveTime(long save) {
@@ -2236,7 +2250,7 @@ public final class Player extends Mob {
 
 	public void setLoggedIn(boolean loggedIn) {
 		if (loggedIn) {
-			currentLogin = System.currentTimeMillis();
+			currentLogin = GameEngine.getAccurateTimestamp();
 		}
 		this.loggedIn = loggedIn;
 	}
@@ -2317,7 +2331,7 @@ public final class Player extends Mob {
 
 	public void setSkulledOn(Player player) {
 		player.addAttackedBy(this);
-		if (System.currentTimeMillis() - lastAttackedBy(player) > 1200000) {
+		if (GameEngine.getAccurateTimestamp() - lastAttackedBy(player) > 1200000) {
 			addSkull(1200000);
 		}
 	}
@@ -2338,7 +2352,7 @@ public final class Player extends Mob {
 	}
 
 	public void setSpellFail() {
-		lastSpellCast = System.currentTimeMillis() + 20000;
+		lastSpellCast = GameEngine.getAccurateTimestamp() + 20000;
 	}
 
 	public void setStatus(Action a) {
@@ -2427,25 +2441,27 @@ public final class Player extends Mob {
 	}
 
 	public boolean tradeDuelThrottling() {
-		long now = System.currentTimeMillis();
+		long now = GameEngine.getAccurateTimestamp();
 		if (now - lastTradeDuelRequest > 1000) {
 			lastTradeDuelRequest = now;
 			return false;
 		}
 		return true;
 	}
-
+	
 	public void updateViewedItems() {
-		List<Item> itemsInView = viewArea.getItemsInView();
+		Iterable<Item> itemsInView = viewArea.getItemsInView();
+		
 		for (Item i : itemsInView) {
 			if (!watchedItems.contains(i) && !i.isRemoved() && withinRange(i) && i.visibleTo(this)) {
 				watchedItems.add(i);
 			}
-		}
+		} 
 	}
 
 	public void updateViewedNpcs() {
-		List<Npc> npcsInView = viewArea.getNpcsInView();
+		Iterable<Npc> npcsInView = viewArea.getNpcsInView();
+		
 		for (Npc n : npcsInView) {
 			if ((!watchedNpcs.contains(n) || watchedNpcs.isRemoving(n)) && withinRange(n)) {
 				watchedNpcs.add(n);
@@ -2455,7 +2471,8 @@ public final class Player extends Mob {
 
 	// killed
 	public void updateViewedObjects() {
-		List<GameObject> objectsInView = viewArea.getGameObjectsInView();
+		Iterable<GameObject> objectsInView = viewArea.getGameObjectsInView();
+		
 		for (GameObject o : objectsInView) {
 			if (!watchedObjects.contains(o) && !o.isRemoved() && withinRange(o)) {
 				watchedObjects.add(o);
@@ -2464,7 +2481,7 @@ public final class Player extends Mob {
 	}
 
 	public void updateViewedPlayers() {
-		List<Player> playersInView = viewArea.getPlayersInView();
+		Iterable<Player> playersInView = viewArea.getPlayersInView();
 		for (Player p : playersInView) {
 			if(p != null) {
 				if (p.getIndex() != getIndex() && p.loggedIn()) {
@@ -2668,18 +2685,9 @@ public final class Player extends Mob {
 		cache.update("lastDeath", System.currentTimeMillis());
 	}
 
-	public long getLastPacketRecTime() {
-		return lastPacketRecTime;
-	}
-
-	public void setLastPacketRecTime(long lastPacketRecTime) {
-		this.lastPacketRecTime = lastPacketRecTime;
-	}
-
 	public LinkedList<RSCPacket> getLastPackets() {
 		return lastPackets;
 	}
-
 
 	public long getLastPacketTime() {
 		return lastPacketTime;
@@ -2810,7 +2818,7 @@ public final class Player extends Mob {
 		this.skullEvent = skullEvent;
 	}
 
-	public PlayerAppearance getAppearance() {
+	public Appearance getAppearance() {
 		return appearance;
 	}// destroy
 
@@ -2844,10 +2852,6 @@ public final class Player extends Mob {
 
 	public long getSubscriptionExpires() {
 		return subscriptionExpires;
-	}
-
-	public void setActionSender(MiscPacketBuilder actionSender) {
-		this.actionSender = actionSender;
 	}
 
 	public void setBubblesNeedingDisplayed(
@@ -2943,13 +2947,11 @@ public final class Player extends Mob {
 		this.watchedNpcs = watchedNpcs;
 	}
 
-	public void setWatchedObjects(
-			StatefulEntityCollection<GameObject> watchedObjects) {
+	public void setWatchedObjects(StatefulEntityCollection<GameObject> watchedObjects) {
 		this.watchedObjects = watchedObjects;
 	}
 
-	public void setWatchedPlayers(
-			StatefulEntityCollection<Player> watchedPlayers) {
+	public void setWatchedPlayers(StatefulEntityCollection<Player> watchedPlayers) {
 		this.watchedPlayers = watchedPlayers;
 	}
 
@@ -3069,5 +3071,31 @@ public final class Player extends Mob {
 	
 	public Scriptable getScriptHelper() {
 		return script;
+	}
+	
+	public Area getCurrentArea() {
+		return area.get();
+	}
+	
+	@Override
+	public void setLocation(Point p) {
+		this.setLocation(p, false);
+	}
+	
+	@Override
+	public void setLocation(Point p, boolean teleported) {
+		Area r = Area.getArea(p);
+        Area cur = area.get();
+
+        if (cur != r) {
+            if (cur != null) {
+                cur.removePlayer(this);
+            }
+
+            r.addPlayer(this);
+            area.getAndSet(r);
+        }
+        //System.out.println(r.toString());
+        super.setLocation(p, teleported);
 	}
 }

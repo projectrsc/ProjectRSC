@@ -1,11 +1,12 @@
 package com.prsc.gs.plugins.npcs;
 
 import com.prsc.gs.model.Npc;
+import com.prsc.gs.model.World;
+
 import com.prsc.gs.model.Player;
 import com.prsc.gs.plugins.listeners.action.TalkToNpcListener;
 import com.prsc.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
 import com.prsc.gs.tools.DataConversions;
-import com.prsc.gs.world.World;
 
 public class EntranaMonks implements TalkToNpcListener, TalkToNpcExecutiveListener {
 

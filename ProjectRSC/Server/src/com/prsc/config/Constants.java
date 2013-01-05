@@ -1,6 +1,6 @@
 package com.prsc.config;
 
-import com.prsc.gs.model.Bank;
+import com.prsc.gs.model.component.mob.player.Bank;
 
 import java.io.File;
 import java.io.FileInputStream;

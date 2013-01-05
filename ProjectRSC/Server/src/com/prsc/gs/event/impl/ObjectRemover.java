@@ -1,12 +1,13 @@
 package com.prsc.gs.event.impl;
 
 import com.prsc.gs.event.DelayedEvent;
+
 import com.prsc.gs.model.GameObject;
-import com.prsc.gs.world.ActiveTile;
-import com.prsc.gs.world.World;
+import com.prsc.gs.model.World;
 
 
 public class ObjectRemover extends DelayedEvent {
+	
     public static final World world = World.getWorld();
     private GameObject object;
 
@@ -27,6 +28,7 @@ public class ObjectRemover extends DelayedEvent {
     }
 
     public void run() {
+    	/*
         ActiveTile tile = world.getTile(object.getLocation());
         if (!tile.hasGameObject() || !tile.getGameObject().equals(object)) {
             super.matchRunning = false;
@@ -34,7 +36,7 @@ public class ObjectRemover extends DelayedEvent {
         }
         tile.remove(object);
         world.unregisterGameObject(object);
-        super.matchRunning = false;
+        super.matchRunning = false; */
     }
 
 }

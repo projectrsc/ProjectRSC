@@ -1,9 +1,11 @@
 package com.prsc.gs.event.impl;
 
+import com.prsc.gs.core.GameEngine;
 import com.prsc.gs.event.DelayedEvent;
+
 import com.prsc.gs.model.Player;
+import com.prsc.gs.model.World;
 import com.prsc.gs.util.Logger;
-import com.prsc.gs.world.World;
 
 public final class SaveProfileEvent extends DelayedEvent {
 	
@@ -15,7 +17,7 @@ public final class SaveProfileEvent extends DelayedEvent {
 
     @Override
     public void run() {
-        long now = System.currentTimeMillis();
+        long now = GameEngine.getAccurateTimestamp();
         Logger.print("***********************************************");
         Logger.print("******** SAVING ALL PLAYERS (AutoSave) **********");
         Logger.print("***********************************************");

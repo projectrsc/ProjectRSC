@@ -1,12 +1,13 @@
 package com.prsc.gs.event.impl;
 
 import com.prsc.gs.event.DelayedEvent;
-import com.prsc.gs.world.World;
+import com.prsc.gs.model.World;
+
 
 public final class DatabaseReconnectionEvent extends DelayedEvent {
 
     public DatabaseReconnectionEvent() {
-        super(null, 1800000);
+        super(null, 3600000);
     }
 
     @Override

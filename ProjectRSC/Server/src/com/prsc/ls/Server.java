@@ -2,6 +2,7 @@ package com.prsc.ls;
 
 import java.io.File;
 
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
@@ -27,13 +28,14 @@ import com.prsc.ls.codec.FProtocolDecoder;
 import com.prsc.ls.codec.FProtocolEncoder;
 import com.prsc.ls.codec.LSProtocolDecoder;
 import com.prsc.ls.codec.LSProtocolEncoder;
+import com.prsc.ls.core.LoginEngine;
+import com.prsc.ls.core.TaskManager;
 import com.prsc.ls.model.PlayerSave;
 import com.prsc.ls.model.World;
 import com.prsc.ls.net.DatabaseConnection;
 import com.prsc.ls.net.FConnectionHandler;
 import com.prsc.ls.net.LSConnectionHandler;
 import com.prsc.ls.util.Config;
-import com.prsc.ls.util.DataConversions;
 
 public final class Server {
 
@@ -74,14 +76,24 @@ public final class Server {
 		System.out.printf("\t*** ProjectRSC Login Server ***\n\n");
 		
 		// TODO: Organize this rofl
-
-		print("Loading Config...", false);
-		Config.initConfig(configFile);
-		print("COMPLETE", true);
-		print("Connecting SQL...", false);
-		db = new DatabaseConnection();
-		print("COMPLETE", true);
-
+		try {
+			print("Loading Config...", false);
+			Config.initConfig(configFile);
+		} catch(Exception e) {
+			print("ERROR", true);
+		} finally {
+			print("COMPLETE", true);
+		}
+		
+		try {
+			print("Connecting SQL...", false);
+			db = new DatabaseConnection();
+		} catch(Exception e) {
+			print("ERROR", true);
+		} finally {
+			print("COMPLETE", true);
+		}
+		
 		try {
 			print("Clearing Online Characters", false);
 			db.updateQuery("UPDATE `" + Config.MYSQL_TABLE_PREFIX + "players` SET online=0");
@@ -101,6 +113,8 @@ public final class Server {
 	}
 
 	private LoginEngine engine;
+	
+	private TaskManager manager;
 
 	private Channel frontendAcceptor;
 
@@ -112,8 +126,18 @@ public final class Server {
 
 	private Server() {
 		try {
+			print("Starting TaskManager", false);
+			manager = new TaskManager();
+		} catch(Exception e) {
+			print("ERROR", true);
+			e.printStackTrace();
+		} finally {
+			print("COMPLETE", true);
+		}
+		
+		try {
 			print("Initializing LoginEngine", false);
-			engine = new LoginEngine(this);
+			engine = new LoginEngine();
 			engine.start();
 		} catch(Exception e) {
 			print("ERROR", true);
@@ -124,7 +148,7 @@ public final class Server {
 
 		try {
 			print("Initializing Server Listener", false);
-			serverAcceptor = createListener(Config.LS_IP, Config.LS_PORT, new LSConnectionHandler(engine), new LSProtocolEncoder(), new LSProtocolDecoder());
+			serverAcceptor = createListener(Config.LS_IP, Config.LS_PORT, new LSConnectionHandler(), new LSProtocolEncoder(), new LSProtocolDecoder());
 		} catch(Exception e) {
 			print("ERROR", true);
 			e.printStackTrace();
@@ -134,7 +158,7 @@ public final class Server {
 		
 		try {
 			print("Initializing Frontend Listener", false);
-			frontendAcceptor = createListener(Config.QUERY_IP, Config.QUERY_PORT, new FConnectionHandler(engine), new FProtocolEncoder(), new FProtocolDecoder());
+			frontendAcceptor = createListener(Config.QUERY_IP, Config.QUERY_PORT, new FConnectionHandler(), new FProtocolEncoder(), new FProtocolDecoder());
 		} catch(Exception e) {
 			print("ERROR", true);
 			e.printStackTrace();
@@ -146,7 +170,7 @@ public final class Server {
 	}
 
 	private Channel createListener(String ip, int port, final SimpleChannelHandler handler, final OneToOneEncoder encoder, final FrameDecoder decoder) throws IOException {
-		ServerBootstrap bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newCachedThreadPool()));
+		ServerBootstrap bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())));
 
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			public ChannelPipeline getPipeline() {
@@ -173,7 +197,8 @@ public final class Server {
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			public ChannelPipeline getPipeline() {
 				ChannelPipeline pipeline = Channels.pipeline();
-				pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
+				pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
+				        8192, Delimiters.lineDelimiter()));
 				pipeline.addLast("decoder", decoder);
 				pipeline.addLast("encoder", encoder);
 				pipeline.addLast("handler", handler);
@@ -209,6 +234,10 @@ public final class Server {
 
 	public LoginEngine getEngine() {
 		return engine;
+	}
+	
+	public TaskManager getTaskManager() {
+		return manager;
 	}
 
 	public World getIdleWorld(int id) {

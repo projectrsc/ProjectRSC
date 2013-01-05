@@ -33,7 +33,7 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 	private ArrayList<Long> currentBans = null;
 	private volatile int maxAllowed = 0;
 	
-	private final Timer timer = new Timer();
+	//private final Timer timer = new Timer();
 	
 	public static ConnectionFilter getInstance(int maxAllowed) {
 		if(filter == null) {
@@ -63,6 +63,7 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 		Integer count = getCurrentClients().get(encoded) == null ? 0 : getCurrentClients().get(encoded);
 		
 		if(count > maxAllowed && currentBans.contains(encoded)) { // should not happen
+			System.out.println("Disconnecting");
 			ctx.getChannel().disconnect();
 			return;
 		} /*else if(count > maxAllowed && invalidAttempts.containsKey(encoded)) { // timeout and wait 5 minutes
@@ -92,6 +93,7 @@ public final class ConnectionFilter extends SimpleChannelUpstreamHandler {
 			}
 			toBlacklist(ip, true);// add to blacklist
 	        ctx.getChannel().disconnect();
+	        System.out.println("Disconnecting and blacklist");
 			return;
 		}
 		else {

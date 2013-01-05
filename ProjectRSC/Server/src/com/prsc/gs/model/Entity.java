@@ -1,7 +1,6 @@
 package com.prsc.gs.model;
 
 import com.prsc.config.Formulae;
-import com.prsc.gs.world.World;
 
 public class Entity {
 
@@ -37,6 +36,7 @@ public class Entity {
 
     private boolean isMapBlocking(Entity e, int x, int y, byte bit) {
         byte val = world.getTileValue(x, y).mapValue;
+
         if ((val & bit) != 0) { // There is a wall in the way
             return true;
         }
@@ -46,7 +46,7 @@ public class Entity {
         if ((val & 32) != 0) { // There is a diagonal wall here: /
             return true;
         }
-        if ((val & 64) != 0 && (e instanceof Npc || e instanceof Player || (e instanceof Item && !((Item) e).isOn(x, y)) || (e instanceof GameObject && !((GameObject) e).isOn(x, y)))) { // There
+        if ((val & 64) != 0 && (e instanceof Npc || e instanceof Player)) {// || (e instanceof Item && !((Item) e).isOn(x, y)) || (e instanceof GameObject && !((GameObject) e).isOn(x, y)))) { // There
             // is
             // an
             // object
@@ -61,6 +61,10 @@ public class Entity {
 
     private boolean isObjectBlocking(Entity e, int x, int y, byte bit) {
         byte val = world.getTileValue(x, y).objectValue;
+        
+        if((val & bit) != 0) {
+        	return true;
+        }
         if ((val & bit) != 0 && !Formulae.doorAtFacing(e, x, y, Formulae.bitToDoorDir(bit)) && !Formulae.objectAtFacing(e, x, y, Formulae.bitToObjectDir(bit))) { // There
             // is
             // a
@@ -70,6 +74,9 @@ public class Entity {
             // way
             return true;
         }
+        if((val & 16) != 0) {
+        	return true;
+        }
         if ((val & 16) != 0 && !Formulae.doorAtFacing(e, x, y, 2) && !Formulae.objectAtFacing(e, x, y, 3)) { // There
             // is
             // a
@@ -77,12 +84,18 @@ public class Entity {
             // here: \
             return true;
         }
+        if((val & 32) != 0) {
+        	return true;
+        }
         if ((val & 32) != 0 && !Formulae.doorAtFacing(e, x, y, 3) && !Formulae.objectAtFacing(e, x, y, 1)) { // There
             // is
             // a
             // diagonal wall
             // here: /
             return true;
+        }
+        if((val & 64) != 0) {
+        	return true;
         }
         if ((val & 64) != 0 && (e instanceof Npc || e instanceof Player || (e instanceof Item && !((Item) e).isOn(x, y)) || (e instanceof GameObject && !((GameObject) e).isOn(x, y)))) { // There
             // is
@@ -94,6 +107,7 @@ public class Entity {
             // object itself though
             return true;
         }
+        //System.out.println("object not blocking..continuing to attack");
         return false;
     }
 
@@ -159,15 +173,43 @@ public class Entity {
 
         return new int[]{newX, newY};
     }
-
-    public final boolean nextTo(Entity e) {
+    
+    public boolean nextTo(Entity e) {  // broken?
         int[] currentCoords = {getX(), getY()};
         while (currentCoords[0] != e.getX() || currentCoords[1] != e.getY()) {
             currentCoords = nextStep(currentCoords[0], currentCoords[1], e);
             if (currentCoords == null) {
+            	System.out.println("null coords");
                 return false;
             } 
-        }
+        } 
+        return true;
+    }
+
+    public boolean nextTo(Mob mob, Entity e) {  // broken?
+    	Player p = null;
+    	Npc n = null;
+    	int x = 0;
+    	int y = 0;
+    	
+    	if(mob instanceof Player) {
+    		p = (Player) mob;
+    		x = p.getX();
+        	y = p.getY();
+    	} else if(mob instanceof Npc) {
+    		n = (Npc) mob;
+    		x = n.getX();
+        	y = n.getY();
+    	}
+    	
+        int[] currentCoords = new int[]{x, y};
+        while (currentCoords[0] != e.getX() || currentCoords[1] != e.getY()) {
+            currentCoords = nextStep(currentCoords[0], currentCoords[1], e);
+            if (currentCoords == null) {
+            	System.out.println("null coords");
+                return false;
+            } 
+        } 
         return true;
     }
 
@@ -180,7 +222,6 @@ public class Entity {
     }
 
     public void setLocation(Point p) {
-        world.setLocation(this, location, p);
         location = p;
     }
 
@@ -189,6 +230,8 @@ public class Entity {
     }
 
     public final boolean withinRange(Point p, int radius) {
+    	//System.out.println("My loc: " + location.getX() + "/" + location.getY());
+    	//System.out.println("p loc: " + p.getX() + "/" + p.getY());
         int xDiff = Math.abs(location.getX() - p.getX());
         int yDiff = Math.abs(location.getY() - p.getY());
         return xDiff <= radius && yDiff <= radius;

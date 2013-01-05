@@ -1,6 +1,6 @@
 package com.prsc.ls.packetbuilder;
 
-import com.prsc.ls.LoginEngine;
+import com.prsc.ls.core.LoginEngine;
 import com.prsc.ls.net.LSPacket;
 import com.prsc.ls.packethandler.PacketHandler;
 

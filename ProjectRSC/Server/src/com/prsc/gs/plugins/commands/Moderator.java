@@ -1,6 +1,8 @@
 package com.prsc.gs.plugins.commands;
 
 import java.sql.ResultSet;
+
+
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -11,10 +13,9 @@ import com.prsc.gs.db.DatabaseManager;
 import com.prsc.gs.db.query.StaffLog;
 import com.prsc.gs.model.Player;
 import com.prsc.gs.model.Point;
+import com.prsc.gs.model.World;
 import com.prsc.gs.plugins.listeners.action.CommandListener;
-import com.prsc.gs.service.Services;
 import com.prsc.gs.tools.DataConversions;
-import com.prsc.gs.world.World;
 
 public final class Moderator implements CommandListener {
 
@@ -66,6 +67,10 @@ public final class Moderator implements CommandListener {
 			Player affectedPlayer = world.getPlayer(DataConversions.usernameToHash(args[0]));
 			if (affectedPlayer == null) {
 				player.getActionSender().sendMessage("Invalid player, maybe they aren't currently online?");
+				return;
+			}
+			if(affectedPlayer.getLocation().inWilderness()) {
+				player.getActionSender().sendMessage("Mods cannot teleport people out of the wilderness");
 				return;
 			}
 			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " took " + affectedPlayer.getUsername() + " from " + affectedPlayer.getLocation().toString() + " to admin room"));

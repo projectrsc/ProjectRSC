@@ -8,10 +8,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.prsc.config.Constants;
 import com.prsc.gs.db.query.GameLog;
-import com.prsc.gs.service.Service;
+import com.prsc.gs.registrar.Port;
 import com.prsc.gs.util.Logger;
 
-public final class DatabaseManager extends Service implements Runnable {
+public final class DatabaseManager extends Port implements Runnable {
 
 	private final DBConnection connection = new DBConnection();
 
@@ -30,7 +30,8 @@ public final class DatabaseManager extends Service implements Runnable {
 		}
 	}
 
-	public synchronized void start() {
+	@Override
+	public synchronized void register() throws Exception {
 		running.set(true);
 		thread.start();
 	}
@@ -91,5 +92,4 @@ public final class DatabaseManager extends Service implements Runnable {
 			lock.notifyAll();
 		}
 	}
-
 }

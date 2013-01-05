@@ -2,11 +2,15 @@ package com.prsc.gs.model;
 
 import java.util.ArrayList;
 
+
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.prsc.config.Constants;
 import com.prsc.config.Formulae;
+import com.prsc.gs.core.GameEngine;
 import com.prsc.gs.event.DelayedEvent;
 import com.prsc.gs.event.impl.FightEvent;
 import com.prsc.gs.event.impl.WalkMobToMobEvent;
@@ -14,15 +18,21 @@ import com.prsc.gs.external.EntityHandler;
 import com.prsc.gs.external.ItemDropDef;
 import com.prsc.gs.external.NPCDef;
 import com.prsc.gs.external.NPCLoc;
+import com.prsc.gs.model.component.world.Area;
 import com.prsc.gs.plugins.PluginHandler;
 import com.prsc.gs.states.Action;
 import com.prsc.gs.states.CombatState;
 import com.prsc.gs.tools.DataConversions;
-import com.prsc.gs.world.ActiveTile;
-import com.prsc.gs.world.World;
 
+/**
+ * Cleanup and revise AI algorithm
+ * @author openfrog
+ *
+ */
 
 public class Npc extends Mob {
+	
+	private final AtomicReference<Area> area = new AtomicReference<Area>();
 	
 	public void attack(final Player owner) {
 		resetPath();
@@ -56,6 +66,7 @@ public class Npc extends Mob {
 		            }
 
 					setLocation(player.getLocation(), true);
+					
 					for (Player p : getViewArea().getPlayersInView()) {
 					    p.removeWatchedNpc(npc);
 					}
@@ -279,7 +290,7 @@ public class Npc extends Mob {
 
         this.loc = loc;
         super.setID(loc.getId());
-        super.setLocation(Point.location(loc.startX(), loc.startY()), true);
+        this.setLocation(Point.location(loc.startX(), loc.startY()), true);
         super.setCombatLevel(Formulae.getCombatLevel(def.getAtt(), def.getDef(), def.getStr(), def.getHits(), 0, 0, 0));
         
         if (this.loc.getId() == 189 || this.loc.getId() == 53 || this.loc.getId() == 19) { // this should not be here
@@ -340,10 +351,40 @@ public class Npc extends Mob {
         if (hasRan()) {
             return null;
         }
-        long now = System.currentTimeMillis();
+        
+        long now = GameEngine.getAccurateTimestamp();
+        
         if (getChasing() != null) {
             return null;
         }
+        /*
+        if(getViewArea().getPlayersInView() == null) {
+        	return null;
+        } */
+        
+        try {
+        	Iterable<Player> viewablePlayers = Area.getViewablePlayers(this.getLocation(), 2);
+        	if(viewablePlayers == null)
+        		return null;
+		
+        	for (Player p : viewablePlayers) {
+        		if (p.inCombat()) {
+        			continue;
+        		} //|| !p.nextTo(this)
+        		if (p.isBusy() || p.isNonaggro()  || now - p.getCombatTimer() < (p.getCombatState() == CombatState.RUNNING || p.getCombatState() == CombatState.WAITING ? 3000 : 1500) || !p.withinRange(this, 1) || !p.getLocation().inBounds(loc.minX - 4, loc.minY - 4, loc.maxX + 4, loc.maxY + 4)) {
+        			continue;
+        		} //|| !p.nextTo(this)
+        		if (!(p.isBusy() || p.isNonaggro() || now - p.getCombatTimer() < (p.getCombatState() == CombatState.RUNNING 
+        				|| p.getCombatState() == CombatState.WAITING ? 3000 : 1500)) || !p.withinRange(this, 1)) {
+        			if (p.getCombatLevel() <= ((this.getCombatLevel() * 2) + 1) || location.inWilderness()) {
+        				return p;
+        			}
+        		}
+        	} 
+        } catch(Exception e) {
+        	//e.printStackTrace();
+        } 
+        /*
         ActiveTile[][] tiles = getViewArea().getViewedArea(2, 2, 2, 2);
         for (int x = 0; x < tiles.length; x++) {
             for (int y = 0; y < tiles[x].length; y++) {
@@ -364,7 +405,7 @@ public class Npc extends Mob {
                     }
                 }
             }
-        }
+        } */
         return null;
     }
 
@@ -442,6 +483,7 @@ public class Npc extends Mob {
 		//Player owner = mob instanceof Player ? (Player) mob : null;
 	
 		 Player owner = null;
+		 
 	     if (mob instanceof Player) {
 	         owner = handleLootAndXpDistribution((Player) mob);
 	            if (PluginHandler.getPluginHandler().blockDefaultAction("PlayerKilledNpc", new Object[]{owner, this})) {
@@ -493,6 +535,9 @@ public class Npc extends Mob {
 
 
     public void remove() {
+    	Area cur = area.get();
+    	cur.removeNpc(this);
+    	
         if (!removed && shouldRespawn && def.respawnTime() > 0) {
             World.getWorld().getDelayedEventHandler().add(new DelayedEvent(null, def.respawnTime() * 1000) {
 
@@ -560,7 +605,7 @@ public class Npc extends Mob {
     }
 
     public void updatePosition() {
-        long now = System.currentTimeMillis();
+        long now = GameEngine.getAccurateTimestamp();
         Player victim = findVictim();
         
         if (!isBusy() && def.isAggressive() && now - getCombatTimer() > 3000 && victim != null) {
@@ -577,7 +622,8 @@ public class Npc extends Mob {
             	victim.getActionSender().sendFatigue(victim.getFatigue());
             }
             
-            setLocation(victim.getLocation(), true);
+            this.setLocation(victim.getLocation(), true);
+            
             for (Player p : getViewArea().getPlayersInView()) {
                 p.removeWatchedNpc(this);
             }
@@ -599,10 +645,10 @@ public class Npc extends Mob {
         if (now - lastMovement > 2200) {
             lastMovement = now;
             int rand = DataConversions.random(0, 1);
-            if (!isBusy() && finishedPath() && rand == 1 && !this.isRemoved()) {
+            if (!isBusy() && finishedPath() && rand == 1 && !isRemoved()) {
                 int newX = DataConversions.random(loc.minX(), loc.maxX());
                 int newY = DataConversions.random(loc.minY(), loc.maxY());
-                super.setPath(new Path(getX(), getY(), newX, newY));
+                setPath(new Path(getX(), getY(), newX, newY));
             }
         }
 
@@ -829,6 +875,25 @@ public class Npc extends Mob {
         }
         return toLoot;
     }
+    
+    @Override
+    public void setLocation(Point p) {
+    	this.setLocation(p, false);
+    }
+    
+    @Override
+    public void setLocation(Point p, boolean teleported) {
+    	Area r = Area.getArea(p);
+        Area cur = area.get();
 
+        if (cur != r) {
+            if (cur != null) {
+                cur.removeNpc(this);
+            }
+            r.addNpc(this);
+            area.getAndSet(r);
+        }
+    	super.setLocation(p, teleported);
+    }
 
 }

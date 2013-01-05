@@ -18,7 +18,7 @@ public class Global implements PacketHandler {
         try {
             String message = params[0];
             for (World w : Server.getServer().getWorlds()) {
-                w.getActionSender().alert(message);
+                w.getActionSender().alert(session, message);
             }
             builder.setID(1);
         } catch (Exception e) {

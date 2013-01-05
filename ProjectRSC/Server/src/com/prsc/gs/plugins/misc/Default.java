@@ -1,7 +1,5 @@
 package com.prsc.gs.plugins.misc;
 
-
-import com.prsc.config.Formulae;
 import com.prsc.gs.model.GameObject;
 import com.prsc.gs.model.InvItem;
 import com.prsc.gs.model.Npc;
@@ -23,10 +21,6 @@ public class Default implements TalkToNpcListener, ObjectActionListener, InvUseO
 	@Override
 	public void onTalkToNpc(Player p, Npc n) {
 		p.getActionSender().sendMessage("The " + n.getDef().getName() + " does not appear interested in talking");
-		int dir = Formulae.getDirection(p, n);
-		if (dir != -1) {
-			n.setSprite(0);	// change?
-		}
 	}
 	
 	@Override

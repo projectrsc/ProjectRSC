@@ -5,6 +5,7 @@ import com.prsc.gs.model.GameObject;
 import com.prsc.gs.model.Player;
 
 public abstract class WalkToObjectEvent extends DelayedEvent {
+	
     protected GameObject object;
     private boolean stop;
 

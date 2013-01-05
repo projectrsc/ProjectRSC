@@ -21,7 +21,7 @@ public class Logout implements PacketHandler {
             if (world == null) {
                 throw new Exception("World not found");
             }
-            world.getActionSender().logoutUser(usernameHash);
+            world.getActionSender().logoutUser(session, usernameHash);
             builder.setID(1);
         } catch (Exception e) {
             builder.setID(0);
