@@ -370,12 +370,13 @@ public class Npc extends Mob {
         	for (Player p : viewablePlayers) {
         		if (p.inCombat()) {
         			continue;
-        		} //|| !p.nextTo(this)
-        		if (p.isBusy() || p.isNonaggro()  || now - p.getCombatTimer() < (p.getCombatState() == CombatState.RUNNING || p.getCombatState() == CombatState.WAITING ? 3000 : 1500) || !p.withinRange(this, 1) || !p.getLocation().inBounds(loc.minX - 4, loc.minY - 4, loc.maxX + 4, loc.maxY + 4)) {
+        		} //|| !p.nextTo(this) || p.isNonaggro()
+        		if (p.isBusy() || p.isNonaggro() || now - p.getCombatTimer() < (p.getCombatState() == CombatState.RUNNING 
+        				|| p.getCombatState() == CombatState.WAITING ? 3000 : 1500) || !p.nextTo(this) || !p.getLocation().inBounds(loc.minX - 4, loc.minY - 4, loc.maxX + 4, loc.maxY + 4)) {
         			continue;
-        		} //|| !p.nextTo(this)
+        		} //|| !p.nextTo(this)  || p.isNonaggro()
         		if (!(p.isBusy() || p.isNonaggro() || now - p.getCombatTimer() < (p.getCombatState() == CombatState.RUNNING 
-        				|| p.getCombatState() == CombatState.WAITING ? 3000 : 1500)) || !p.withinRange(this, 1)) {
+        				|| p.getCombatState() == CombatState.WAITING ? 3000 : 1500)) || !p.nextTo(this)) {
         			if (p.getCombatLevel() <= ((this.getCombatLevel() * 2) + 1) || location.inWilderness()) {
         				return p;
         			}
@@ -478,7 +479,7 @@ public class Npc extends Mob {
 
 		resetCombat(CombatState.LOST);
 		world.unregisterNpc(this);
-		remove();
+		this.remove();
 
 		//Player owner = mob instanceof Player ? (Player) mob : null;
 	
@@ -538,7 +539,7 @@ public class Npc extends Mob {
     	Area cur = area.get();
     	cur.removeNpc(this);
     	
-        if (!removed && shouldRespawn && def.respawnTime() > 0) {
+        if (!isRemoved() && shouldRespawn && def.respawnTime() > 0) {
             World.getWorld().getDelayedEventHandler().add(new DelayedEvent(null, def.respawnTime() * 1000) {
 
                 public void run() {
@@ -548,7 +549,7 @@ public class Npc extends Mob {
             });
         }
 
-        removed = true;
+        removed.set(true);
 
     }
 

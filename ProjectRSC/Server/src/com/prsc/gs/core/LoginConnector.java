@@ -19,12 +19,15 @@ import org.jboss.netty.channel.SimpleChannelHandler;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
 import com.prsc.config.Constants;
+import com.prsc.gs.Server;
 import com.prsc.gs.builders.ls.MiscPacketBuilder;
 import com.prsc.gs.connection.LSConnectionHandler;
 import com.prsc.gs.connection.LSPacket;
 import com.prsc.gs.connection.LSProtocolDecoder;
 import com.prsc.gs.connection.LSProtocolEncoder;
 import com.prsc.gs.plugins.phandler.PacketHandler;
+import com.prsc.gs.registrar.PortRegistrar;
+import com.prsc.gs.registrar.impl.PacketHandlers;
 import com.prsc.gs.util.Logger;
 
 public final class LoginConnector {
@@ -87,6 +90,23 @@ public final class LoginConnector {
 		running = false;
 		Logger.print("Unregistering world with Login Server");
 		actionSender.unregisterWorld();
+	}
+	
+	public void processIncomingPackets() {
+		for(LSPacket p : packetQueue) {
+			PacketHandler handler = null;
+			if (((handler = Server.getInstance().getLoginConnector().getUniqueHandlers().get(p.getUID())) != null) 
+					|| ((handler = PortRegistrar.lookup(PacketHandlers.class).getLoginHandlers().get(p.getID())) != null)) {
+				try {
+					handler.handlePacket(p, Server.getInstance().getLoginConnector().getSession());
+					Server.getInstance().getLoginConnector().getUniqueHandlers().remove(p.getUID());
+				} catch (Exception e) {
+					Logger.error("Exception with p[" + p.getID() + "] from LOGIN_SERVER: " + e.getMessage());
+				}
+			} else {
+				Logger.error("Unhandled packet from LS: " + p.getID());
+			}
+		}
 	}
 
 	public boolean reconnect() {

@@ -1,5 +1,7 @@
 package com.prsc.gs.builders.ls;
 
+import java.util.List;
+
 import com.prsc.gs.builders.LSPacketBuilder;
 
 import com.prsc.gs.connection.LSPacket;

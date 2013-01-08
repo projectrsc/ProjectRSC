@@ -2,23 +2,15 @@ package com.prsc.gs.core;
 
 import java.util.List;
 
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.python.google.common.collect.Lists;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.prsc.gs.Server;
 import com.prsc.gs.connection.Client;
-import com.prsc.gs.core.routine.Routine;
-import com.prsc.gs.core.routine.impl.ClientProcessingRoutine;
-import com.prsc.gs.core.routine.impl.LoginProcessRoutine;
-import com.prsc.gs.core.routine.impl.NpcUpdateRoutine;
-import com.prsc.gs.core.routine.impl.PlayerUpdateRoutine;
 import com.prsc.gs.event.impl.DatabaseReconnectionEvent;
 import com.prsc.gs.event.impl.ReloadFilterEvent;
-import com.prsc.gs.event.impl.ResourceUsageUpdate;
 import com.prsc.gs.event.impl.SaveProfileEvent;
 import com.prsc.gs.event.impl.ShopRestockEvent;
-import com.prsc.gs.model.Npc;
 import com.prsc.gs.model.Player;
 import com.prsc.gs.model.Shop;
 import com.prsc.gs.model.World;
@@ -33,11 +25,29 @@ public final class GameEngine extends Thread {
 
     private final DelayedEventHandler eventHandler = new DelayedEventHandler();
     
+    private final ClientUpdater clientUpdater = new ClientUpdater();
+    
     private long lastSentClientUpdate = getAccurateTimestamp();
     
     private long lastSentClientUpdateFast = getAccurateTimestamp();
     
     private boolean running = true; 
+    
+    public List<Client> getClients() {
+    	return clients;
+    }
+    
+    public void addClient(Client client) {
+    	if(!clients.contains(client)) {
+    		clients.add(client);
+    	}
+    }
+    
+    public void removeClient(Client client) {
+    	if(clients.contains(client)) {
+    		clients.remove(client);
+    	}
+    }
     
     public void emptyWorld() {
         for (Player p : world.getPlayers()) {
@@ -60,57 +70,30 @@ public final class GameEngine extends Thread {
     private void processLoginServer() {
         LoginConnector connector = World.getWorld().getServer().getLoginConnector();
         if (connector != null) {
-            submitRoutine(new LoginProcessRoutine(Lists.newArrayList(connector.getPacketQueue())));
+            connector.processIncomingPackets();
         }
     }
     
-    public List<Client> getClients() {
-    	return clients;
-    }
-    
-    public void addClient(Client client) {
-    	clients.add(client);
-    }
-    
-    public void removeClient(Client client) {
-    	clients.remove(client);
-    }
-    
-    private void submitRoutine(Routine...routines) {
-    	for(Routine routine : routines) {
-    		Server.getInstance().getTaskManager().submitInternalRoutine(routine);
+    private void processIncomingPackets() {
+    	for(Client client : clients) {
+    		client.process();
     	}
-    }
-    
-    private void processIncomingSessions() {
-    	submitRoutine(new ClientProcessingRoutine(clients));
     }
     
     private void processUpdate() {		
     	long now = getAccurateTimestamp();
-		List<Player> players = Lists.newArrayList(World.getWorld().getPlayers());
-		List<Npc> npcs = Lists.newArrayList(World.getWorld().getNpcs());
-		
 		long timeSinceMajor = now - lastSentClientUpdate;
 		long timeSinceMinor = now - lastSentClientUpdateFast;
 		
 		if (timeSinceMajor >= 600) {
             lastSentClientUpdate = now;
-            
-            submitRoutine(new NpcUpdateRoutine(npcs, NpcUpdateRoutine.Task.POSITIONS));
-            submitRoutine(new PlayerUpdateRoutine(players, PlayerUpdateRoutine.Task.POSITIONS));
-            submitRoutine(new PlayerUpdateRoutine(players, PlayerUpdateRoutine.Task.MESSAGES));
-            submitRoutine(new PlayerUpdateRoutine(players, PlayerUpdateRoutine.Task.OFFERS));
-            submitRoutine(new PlayerUpdateRoutine(players, PlayerUpdateRoutine.Task.VIEWS));
-            submitRoutine(new PlayerUpdateRoutine(players, PlayerUpdateRoutine.Task.COLLECTIONS));
-            submitRoutine(new NpcUpdateRoutine(npcs, NpcUpdateRoutine.Task.COLLECTIONS));
+            clientUpdater.doMajor();
 		}
 		
 		if (timeSinceMinor >= 104) { // send queued packets?
             lastSentClientUpdateFast = now;
-            
-            submitRoutine(new PlayerUpdateRoutine(players, PlayerUpdateRoutine.Task.APPEARANCES));
-            submitRoutine(new NpcUpdateRoutine(npcs, NpcUpdateRoutine.Task.APPEARANCES));
+            clientUpdater.sendQueuedPackets();
+            clientUpdater.doMinor();
         } 
     }
     
@@ -125,7 +108,6 @@ public final class GameEngine extends Thread {
         eventHandler.add(new DatabaseReconnectionEvent());
         eventHandler.add(new SaveProfileEvent());
         eventHandler.add(new ReloadFilterEvent());
-        eventHandler.add(new ResourceUsageUpdate());
         
         for (Shop shop : world.getShops()) {
 			eventHandler.add(new ShopRestockEvent(shop));
@@ -133,10 +115,10 @@ public final class GameEngine extends Thread {
         
         while (running) {
             try {
-                Thread.sleep(20);
+                Thread.sleep(10);
             } catch (InterruptedException ie) {
             }
-	        processIncomingSessions(); // threaded
+	        processIncomingPackets(); // threaded
 	        processLoginServer(); // threaded
 	        processEvents(); // TODO thread out
 	        processUpdate(); // threaded

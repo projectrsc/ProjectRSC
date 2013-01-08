@@ -1861,7 +1861,7 @@ public final class Player extends Mob {
 	}
 
 	public void remove() {
-		removed = true;
+		removed.set(true);
 	}
 
 	public void removeFriend(long id) {

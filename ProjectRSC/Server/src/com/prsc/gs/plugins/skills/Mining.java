@@ -156,7 +156,6 @@ public final class Mining implements ObjectActionListener, ObjectActionExecutive
 						owner.lastMineTries = -1;
 						GameObject tempRock = new GameObject(object.getLocation(), 98, object.getDirection(), object.getType());
 						//world.unregisterGameObject(object);
-						world.registerGameObject(tempRock);
 
 						int respawn = def.getRespawnTime() * 1000;
 						
@@ -174,7 +173,10 @@ public final class Mining implements ObjectActionListener, ObjectActionExecutive
 						} else if (def.getReqLevel() == 85) { //rune
 							respawn = (25 - (world.countPlayers() / 160)) * 60000;
 						} */
-						world.delayedSpawnObject(newobject.getLoc(), respawn);
+						world.registerGameObject(tempRock);
+						//world.unregisterObject(object);
+						world.delayedSpawnObject(newobject.getLoc(), tempRock, respawn);
+						object.remove();
 						//world.unregisterGameObject(tempRock);
 					}
 					owner.getActionSender().sendInventory();

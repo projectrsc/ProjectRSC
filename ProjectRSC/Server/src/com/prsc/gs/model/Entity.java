@@ -179,7 +179,6 @@ public class Entity {
         while (currentCoords[0] != e.getX() || currentCoords[1] != e.getY()) {
             currentCoords = nextStep(currentCoords[0], currentCoords[1], e);
             if (currentCoords == null) {
-            	System.out.println("null coords");
                 return false;
             } 
         } 

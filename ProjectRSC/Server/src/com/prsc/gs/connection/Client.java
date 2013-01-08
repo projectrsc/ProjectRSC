@@ -59,7 +59,7 @@ public final class Client {
 		//&& !DataConversions.inArray(Formulae.safePacketIDs, currentPacket.getID())
 		while((currentPacket = packets.poll()) != null && packetCount++ < 60) {
 			PacketHandler ph = PortRegistrar.lookup(PacketHandlers.class).getGameHandlers().get(currentPacket.getID());
-            System.out.println("Packet id: " + currentPacket.getID());
+            //System.out.println("Packet id: " + currentPacket.getID());
             if(getPlayer() != null) {
             	getPlayer().ping();
             }

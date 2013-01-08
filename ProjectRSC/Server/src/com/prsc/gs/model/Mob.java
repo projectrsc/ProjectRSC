@@ -72,7 +72,7 @@ public abstract class Mob extends Entity {
     /**
      * Set when the mob has been destroyed to alert players
      */
-    protected boolean removed = false;
+    protected AtomicBoolean removed = new AtomicBoolean(false);
     /**
      * Has the sprite changed?
      */
@@ -197,7 +197,7 @@ public abstract class Mob extends Entity {
     }
 
     public boolean isRemoved() {
-        return removed;
+        return removed.get();
     }
 
     public abstract void killedBy(Mob mob, boolean stake);

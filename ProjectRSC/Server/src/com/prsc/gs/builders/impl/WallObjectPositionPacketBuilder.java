@@ -13,10 +13,6 @@ import java.util.Collection;
 public class WallObjectPositionPacketBuilder {
 	
     private Player player;
-    
-    public WallObjectPositionPacketBuilder(Player player) {
-    	this.player = player;
-    }
 
     public RSCPacket getPacket() {
         StatefulEntityCollection<GameObject> watchedObjects = player.getWatchedObjects();
@@ -51,5 +47,9 @@ public class WallObjectPositionPacketBuilder {
             return packet.toPacket();
         }
         return null;
+    }
+    
+    public void setPlayer(Player player) {
+    	this.player = player;
     }
 }

@@ -4,15 +4,16 @@ import java.util.ArrayList;
 
 
 
+
 import java.util.ConcurrentModificationException;
 
-import com.prsc.gs.builders.GameObjectPositionPacketBuilder;
-import com.prsc.gs.builders.ItemPositionPacketBuilder;
-import com.prsc.gs.builders.NpcPositionPacketBuilder;
-import com.prsc.gs.builders.NpcUpdatePacketBuilder;
-import com.prsc.gs.builders.PlayerPositionPacketBuilder;
-import com.prsc.gs.builders.PlayerUpdatePacketBuilder;
-import com.prsc.gs.builders.WallObjectPositionPacketBuilder;
+import com.prsc.gs.builders.impl.GameObjectPositionPacketBuilder;
+import com.prsc.gs.builders.impl.ItemPositionPacketBuilder;
+import com.prsc.gs.builders.impl.NpcPositionPacketBuilder;
+import com.prsc.gs.builders.impl.NpcUpdatePacketBuilder;
+import com.prsc.gs.builders.impl.PlayerPositionPacketBuilder;
+import com.prsc.gs.builders.impl.PlayerUpdatePacketBuilder;
+import com.prsc.gs.builders.impl.WallObjectPositionPacketBuilder;
 import com.prsc.gs.connection.RSCPacket;
 import com.prsc.gs.model.ChatMessage;
 import com.prsc.gs.model.Npc;
@@ -30,10 +31,10 @@ import com.prsc.gs.util.EntityList;
 
 public final class ClientUpdater {
 
-	//private final EntityList<Player> players = World.getWorld().getPlayers();
+	private final EntityList<Player> players = World.getWorld().getPlayers();
 
-	//private final EntityList<Npc> npcs = World.getWorld().getNpcs();
-	/*
+	private final EntityList<Npc> npcs = World.getWorld().getNpcs();
+	
 	private final GameObjectPositionPacketBuilder gameObjectPositionBuilder = new GameObjectPositionPacketBuilder();
 
 	private final ItemPositionPacketBuilder itemPositionBuilder = new ItemPositionPacketBuilder();
@@ -47,11 +48,11 @@ public final class ClientUpdater {
 	private final PlayerPositionPacketBuilder playerPositionBuilder = new PlayerPositionPacketBuilder();
 
 	private final WallObjectPositionPacketBuilder wallObjectPositionPacketBuilder = new WallObjectPositionPacketBuilder();
-	*/
+	
 	/**
 	 * Sends queued packets to each player
 	 */
-	/*
+	
 	public void sendQueuedPackets() {
 		try {
 			for (Player p : players) {
@@ -63,13 +64,12 @@ public final class ClientUpdater {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	} */
+	} 
 
 	/**
 	 * Update player/npc appearances, game objects, items, wall objects, ping
 	 */
 	public void doMinor() {
-		/*
 		for (Player p : players) {
 			p.updateAppearanceID();
 		}
@@ -95,18 +95,18 @@ public final class ClientUpdater {
 			for (Npc n : npcs) {
 				n.setAppearnceChanged(false);
 			}
-		} */
+		} 
 	}
 
-	//public volatile boolean updatingCollections;
+	public volatile boolean updatingCollections;
 
 	public void doMajor() {
-		//updateNpcPositions();
-		//updatePlayersPositions();
-		//updateMessageQueues();
-		//updateOffers();
+		updateNpcPositions();
+		updatePlayersPositions();
+		updateMessageQueues();
+		updateOffers();
 		
-		/*
+		
 		for (Player p : players) { // sending update packets
 			updateTimeouts(p);
 
@@ -117,12 +117,12 @@ public final class ClientUpdater {
 			updateItems(p);
 
 			p.setFirstMajorUpdateSent(true);
-		} */
+		} 
 
-		//updateCollections();
+		updateCollections();
 	} 
 	
-	/*
+	
 	public void process(Player p) {
 		updateTimeouts(p);
 
@@ -133,12 +133,12 @@ public final class ClientUpdater {
 		updateItems(p);
 
 		p.setFirstMajorUpdateSent(true);
-	} */
+	} 
 
 	/**
 	 * Updates collections, new becomes known, removing is removed etc.
 	 */
-	/*
+	
 	public void updateCollections() {
 		updatingCollections = true;
 		
@@ -163,36 +163,36 @@ public final class ClientUpdater {
 		}
 
 		updatingCollections = false;
-	} */
+	} 
 
 	/**
 	 * Sends updates for game objects to the given player
 	 */
-	/*
+	
 	private void updateGameObjects(Player p) {
 		gameObjectPositionBuilder.setPlayer(p);
 		RSCPacket temp = gameObjectPositionBuilder.getPacket();
 		if (temp != null) {
 			p.getSession().write(temp);
 		}
-	} */
+	} 
 
 	/**
 	 * Sends updates for game items to the given player
 	 */
-	/*
+	
 	private void updateItems(Player p) {
 		itemPositionBuilder.setPlayer(p);
 		RSCPacket temp = itemPositionBuilder.getPacket();
 		if (temp != null) {
 			p.getSession().write(temp);
 		}
-	} */
+	} 
 
 	/**
 	 * Updates the messages queues for each player
 	 */
-	/*
+	
 	private void updateMessageQueues() {
 		for (Player sender : players) {
 			ChatMessage message = sender.getNextChatMessage();
@@ -230,38 +230,38 @@ public final class ClientUpdater {
 			}
 			recievers = null;
 		}
-	} */
+	} 
 
 	/**
 	 * Update appearance of any npcs the given player should be aware of
 	 */
-	/*
+	
 	private void updateNpcApperances(Player p) {
 		npcApperanceBuilder.setPlayer(p);
 		RSCPacket temp = npcApperanceBuilder.getPacket();
 		if (temp != null) {
 			p.getSession().write(temp);
 		}
-	} */
+	} 
 
 	/**
 	 * Update the position of npcs, and check if who (and what) they are aware
 	 * of needs updated
 	 */
-	/*
+	
 	private void updateNpcPositions() {
 		for(Npc n : npcs) {
 			n.resetMoved();
 			n.updatePosition();
 			n.updateAppearanceID();
 		}
-	} */
+	} 
 	
 	/**
 	 * Update the position of players, and check if who (and what) they are
 	 * aware of needs updated
 	 */
-	/*
+	
 	private void updatePlayersPositions() {
 		for (Player p : players) {
 			p.resetMoved();
@@ -278,21 +278,21 @@ public final class ClientUpdater {
 			p.updateViewedItems();
 			p.updateViewedNpcs();
 		}
-	} */
+	} 
 
 	/**
 	 * Sends updates for npcs to the given player
 	 */
-	/*
+	
 	private void updateNpcPositions(Player p) {
 		npcPositionPacketBuilder.setPlayer(p);
 		RSCPacket temp = npcPositionPacketBuilder.getPacket();
 		if (temp != null) {
 			p.getSession().write(temp);
 		}
-	} */
+	} 
 	
-	/*
+	
 	public void updateOffers() {
 		for (Player player : players) {
 			if (!player.requiresOfferUpdate()) {
@@ -315,13 +315,13 @@ public final class ClientUpdater {
 				affectedPlayer.getActionSender().sendDuelItems();
 			}
 		}
-	} */
+	} 
 
 	/**
 	 * Update appearance of the given player, and any players they should be
 	 * aware of
 	 */
-	/*
+	
 	private void updatePlayerApperances(Player p) {
 		try {
 			playerApperanceBuilder.setPlayer(p);
@@ -333,30 +333,30 @@ public final class ClientUpdater {
 			if(!(e instanceof ConcurrentModificationException))
 				e.printStackTrace();
 		}
-	} */
+	} 
 
 	/**
 	 * Update positions of the given player, and any players they should be
 	 * aware of
 	 */
-	/*
+	
 	private void updatePlayerPositions(Player p) {
 		playerPositionBuilder.setPlayer(p);
 		RSCPacket temp = playerPositionBuilder.getPacket();
 		if (temp != null) {
 			p.getSession().write(temp);
 		}
-	} */
+	} 
 
 	/**
 	 * Checks the player has moved within the last 5mins
 	 */
-	/*
+	
 	private void updateTimeouts(Player p) {
 		if (p.destroyed()) {
 			return;
 		}
-		long curTime = System.currentTimeMillis();
+		long curTime = GameEngine.getAccurateTimestamp();
 
 		if (curTime - p.getLastPing() >= 30000) {
 			p.destroy(false); // was false - xent
@@ -370,17 +370,17 @@ public final class ClientUpdater {
 			p.getActionSender().sendMessage("@cya@You have not moved for 5 mins, please move to a new area to avoid logout.");
 			p.warnToMove();
 		}
-	} */
+	} 
 
 	/**
 	 * Sends updates for wall objects to the given player
 	 */
-	/*
+	
 	private void updateWallObjects(Player p) {
 		wallObjectPositionPacketBuilder.setPlayer(p);
 		RSCPacket temp = wallObjectPositionPacketBuilder.getPacket();
 		if (temp != null) {
 			p.getSession().write(temp);
 		}
-	} */
+	} 
 }

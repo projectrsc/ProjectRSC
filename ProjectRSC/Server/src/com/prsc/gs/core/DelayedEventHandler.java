@@ -31,10 +31,6 @@ public final class DelayedEventHandler {
     
     public void doEvents() {
     	try {
-    		/*
-    		if(!events.isEmpty()) {
-    			System.out.println("Size of events: " + events.size());
-    		} */
     		Iterator<DelayedEvent> iterator = events.iterator();
             while (iterator.hasNext()) {
             	if(toAdd.size() < 0) {
@@ -61,7 +57,7 @@ public final class DelayedEventHandler {
             e.printStackTrace();
             Logger.println("Error @ doEvents(): " + e);
         }
-    }
+    } 
 
     public boolean contains(DelayedEvent event) {
     	return events.contains(event);

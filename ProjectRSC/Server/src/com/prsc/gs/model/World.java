@@ -3,10 +3,6 @@ package com.prsc.gs.model;
 import java.util.ArrayList;
 
 
-
-
-
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,7 +84,7 @@ public final class World {
 
 	private DelayedEventHandler delayedEventHandler;
 
-	private final EntityList<Npc> npcs = new EntityList<Npc>(6000);
+	private final EntityList<Npc> npcs = new EntityList<Npc>(4000); 
 
 	private final EntityList<Player> players = new EntityList<Player>(3000);
 
@@ -98,11 +94,11 @@ public final class World {
 
 	private final TileValue[][] tileType = new TileValue[MAX_WIDTH][MAX_HEIGHT];
 
-	public int countNpcs() {
+	public synchronized int countNpcs() {
 		return npcs.size();
 	}
 
-	public int countPlayers() {
+	public synchronized int countPlayers() {
 		return players.size();
 	}
 	
@@ -164,6 +160,16 @@ public final class World {
 
 			public void action() {
 				registerGameObject(new GameObject(loc));
+			}
+		}); 
+	}
+	
+	public void delayedSpawnObject(final GameObjectLoc loc, final GameObject objToRemove, final int respawnTime) {
+		delayedEventHandler.add(new SingleEvent(null, respawnTime) {
+
+			public void action() {
+				registerGameObject(new GameObject(loc));
+				objToRemove.remove();
 			}
 		}); 
 	}

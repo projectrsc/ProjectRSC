@@ -423,7 +423,7 @@ public class Scriptable {
 		World.getWorld().registerGameObject(new GameObject(location, id, direction, type));
 		if(delayRespawn) {
 			World.getWorld().delayedSpawnObject(loc, respawnTime);
-		}
+		} 
 	}
 	
 	public int getRandom(int start, int n) {

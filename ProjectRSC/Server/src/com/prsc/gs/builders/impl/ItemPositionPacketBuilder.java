@@ -13,10 +13,6 @@ import java.util.Collection;
 public class ItemPositionPacketBuilder {
     private Player playerToUpdate;
     
-    public ItemPositionPacketBuilder(Player playerToUpdate) {
-    	this.playerToUpdate = playerToUpdate;
-    }
-    
     public RSCPacket getPacket() {
         StatefulEntityCollection<Item> watchedItems = playerToUpdate.getWatchedItems();
         if (watchedItems.changed()) {
