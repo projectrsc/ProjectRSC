@@ -127,7 +127,7 @@ public final class GameEngine extends Thread {
         PluginHandler.getPluginHandler().handleAction("Startup", new Object[]{});
 
         eventHandler.add(new GarbageCollectionEvent());
-        eventHandler.add(new DatabaseReconnectionEvent());
+        //eventHandler.add(new DatabaseReconnectionEvent());
         eventHandler.add(new SaveProfileEvent());
         eventHandler.add(new ReloadFilterEvent());
         
