@@ -1,10 +1,10 @@
 package com.prsc.gs.connection;
 
 import org.jboss.netty.buffer.ChannelBuffer;
-
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
+import org.jboss.netty.handler.codec.oneone.OneToOneDecoder;
 
 /**
  * A decoder for the LS protocol. Parses the incoming data from an IoSession and

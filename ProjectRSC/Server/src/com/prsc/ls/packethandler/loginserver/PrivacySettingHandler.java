@@ -38,9 +38,9 @@ public class PrivacySettingHandler implements PacketHandler {
                         World w = server.findWorld(friend);
                         if (w != null) {
                             if (on) {
-                                w.getActionSender().friendLogout(session, friend, user);
+                                w.getActionSender().friendLogout(friend, user);
                             } else {
-                                w.getActionSender().friendLogin(session, friend, user, world.getID());
+                                w.getActionSender().friendLogin(friend, user, world.getID());
                             }
                         }
                     }

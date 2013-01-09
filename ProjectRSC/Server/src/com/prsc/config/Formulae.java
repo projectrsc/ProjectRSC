@@ -216,6 +216,8 @@ public final class Formulae {
 	  * Calulates what one mob should hit on another with meelee
 	  */
 	 public static int calcFightHit(Mob attacker, Mob defender) {
+		 
+		 
 		 int max = maxHit(attacker.getStrength(), attacker.getWeaponPowerPoints(), attacker.isPrayerActivated(1), attacker.isPrayerActivated(4), attacker.isPrayerActivated(10), styleBonus(attacker, 2));
 		 int newAtt = (int)
 				 (

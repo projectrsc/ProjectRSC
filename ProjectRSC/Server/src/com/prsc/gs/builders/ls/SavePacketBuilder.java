@@ -1,14 +1,11 @@
 package com.prsc.gs.builders.ls;
 
 import com.prsc.gs.builders.LSPacketBuilder;
-
 import com.prsc.gs.connection.LSPacket;
 import com.prsc.gs.model.*;
-import com.prsc.gs.model.component.mob.player.Bank;
-import com.prsc.gs.model.component.mob.player.Inventory;
-import com.prsc.gs.model.component.mob.player.Appearance;
 import com.prsc.gs.plugins.QuestInterface;
 import com.prsc.gs.tools.DataConversions;
+import com.prsc.gs.world.World;
 
 import java.util.Map;
 
@@ -37,7 +34,7 @@ public class SavePacketBuilder {
         packet.addLong(player.getMuteTime());
         packet.addByte((byte) (player.botDetected() ? 1 : 0));
 
-        Appearance a = player.getPlayerAppearance();
+        PlayerAppearance a = player.getPlayerAppearance();
         packet.addByte((byte) a.getHairColour());
         packet.addByte((byte) a.getTopColour());
         packet.addByte((byte) a.getTrouserColour());

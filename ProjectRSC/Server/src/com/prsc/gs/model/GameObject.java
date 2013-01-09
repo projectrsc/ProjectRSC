@@ -1,19 +1,11 @@
 package com.prsc.gs.model;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.prsc.gs.external.DoorDef;
 import com.prsc.gs.external.EntityHandler;
 import com.prsc.gs.external.GameObjectDef;
 import com.prsc.gs.external.GameObjectLoc;
-import com.prsc.gs.model.component.world.Area;
 
 public class GameObject extends Entity {
-	
-	/**
-	 * Holds a reference to this entity from the given area
-	 */
-	private final AtomicReference<Area> area = new AtomicReference<Area>();
     /**
      * Returns the ID of an item contained in the object.
      *
@@ -43,7 +35,7 @@ public class GameObject extends Entity {
         type = loc.type;
         this.loc = loc;
         super.setID(loc.id);
-        setLocation(Point.location(loc.x, loc.y));
+        super.setLocation(Point.location(loc.x, loc.y));
     }
 
     public GameObject(Point location, int id, int direction, int type) {
@@ -113,8 +105,6 @@ public class GameObject extends Entity {
     }
 
     public void remove() {
-    	Area curRegion = area.get();
-    	curRegion.removeObject(this);
         removed = true;
     }
 
@@ -128,22 +118,6 @@ public class GameObject extends Entity {
 
     public String toString() {
         return (type == 0 ? "GameObject" : "WallObject") + ":id = " + id + "; dir = " + direction + "; location = " + location.toString() + ";";
-    }
-    
-    @Override
-    public void setLocation(Point p) {
-    	Area r = Area.getArea(p);
-        Area cur = area.get();
-
-        if (cur != r) {
-            if (cur != null) {
-                cur.removeObject(this);
-            }
-
-            r.addObject(this);
-            area.getAndSet(r);
-        }
-    	super.setLocation(Point.location(loc.x, loc.y));
     }
 
 }

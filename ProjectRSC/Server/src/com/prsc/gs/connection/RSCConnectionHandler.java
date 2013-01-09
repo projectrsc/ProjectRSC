@@ -1,12 +1,9 @@
 package com.prsc.gs.connection;
 
 import org.jboss.netty.channel.*;
-
-
 import org.jboss.netty.handler.timeout.IdleStateAwareChannelHandler;
 import org.jboss.netty.handler.timeout.IdleStateEvent;
 
-import com.prsc.gs.Server;
 import com.prsc.gs.core.GameEngine;
 import com.prsc.gs.model.Player;
 import com.prsc.gs.util.Logger;
@@ -14,8 +11,27 @@ import com.prsc.gs.util.Logger;
 import java.net.InetSocketAddress;
 
 public final class RSCConnectionHandler extends IdleStateAwareChannelHandler {
-	
-	private final GameEngine engine = Server.getInstance().getEngine();
+
+    private final GameEngine engine;
+
+    public RSCConnectionHandler(GameEngine engine) {
+        this.engine = engine;
+    }
+
+    /**
+     * Invoked whenever an exception is caught
+     *
+     * @param ctx The channel chandler context
+     * @param e   The message event
+     */
+//    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
+////        Player p = (Player) ctx.getAttachment();
+////        if (p != null)
+////            p.getActionSender().sendLogout();
+////        ctx.getChannel().close();
+//        e.getCause().getStackTrace();
+//    }
+
 
     /**
      * Invoked whenever a packet is ready to be added to the queue.
@@ -26,28 +42,18 @@ public final class RSCConnectionHandler extends IdleStateAwareChannelHandler {
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
         Channel ch = ctx.getChannel();
-        //Player player = (Player) ch.getAttachment();
-        Client client = (Client) ch.getAttachment();
+        Player player = (Player) ch.getAttachment();
         
-        if (ch.isConnected()) { // && !client.getPlayer().destroyed() 
-            RSCPacket packet = (RSCPacket) e.getMessage();
-            //player.addPacket(p); // Used to log packets for macro detection
-            //engine.addPacket(p); // This one actually results in the packet being processed!
-            client.pushToMessageQueue(packet);
+        if (ch.isConnected() && !player.destroyed()) {
+            RSCPacket p = (RSCPacket) e.getMessage();
+            player.addPacket(p); // Used to log packets for macro detection
+            engine.addPacket(p); // This one actually results in the packet being processed!
         }
     }
     
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
     	//e.getCause().printStackTrace();
-    }
-    
-    @Override
-    public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
-    	Client client = (Client) ctx.getChannel().getAttachment();
-    	if(engine.getClients().contains(client)) {
-    		engine.removeClient(client);
-    	}
     }
 
     /**
@@ -59,13 +65,9 @@ public final class RSCConnectionHandler extends IdleStateAwareChannelHandler {
      */
     @Override
     public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) {
-        Client client = (Client) ctx.getChannel().getAttachment();
-        Player player = client.getPlayer();
+        Player player = (Player) ctx.getAttachment();
         if (player != null && !player.destroyed()) {
             player.destroy(false);
-        }
-        if(engine.getClients().contains(client)) {
-        	engine.removeClient(client);
         }
     }
 
@@ -77,11 +79,10 @@ public final class RSCConnectionHandler extends IdleStateAwareChannelHandler {
      */
     @Override
     public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
-        Channel channel = ctx.getChannel();
-        //session.setAttachment(new Player(session));
-        Client client = new Client(channel);
-        channel.setAttachment(client);
-        engine.addClient(client);
+        Channel session = ctx.getChannel();
+        session.setAttachment(new Player(session));
+        //session.setIdleTime(IdleStatus.BOTH_IDLE, 30);
+        //session.getConfig().getConnectTimeoutMillis(30);
     }
 
     /**
@@ -92,6 +93,7 @@ public final class RSCConnectionHandler extends IdleStateAwareChannelHandler {
      */
     @Override
     public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) {
+        //session.getFilterChain().addFirst("protocolFilter", new ProtocolCodecFilter(new RSCCodecFactory()));
         Logger.println("Connection from: " + ((InetSocketAddress) ctx.getChannel().getRemoteAddress()).getAddress().getHostAddress()
         		+ " - Hostname: " + ((InetSocketAddress) ctx.getChannel().getRemoteAddress()).getHostName());
     }
@@ -120,25 +122,10 @@ public final class RSCConnectionHandler extends IdleStateAwareChannelHandler {
     @Override
     public void unbindRequested(ChannelHandlerContext ctx, ChannelStateEvent e) {
     	System.out.println("unBind Requested");
-    	/*
-    	Player player = (Player) ctx.getAttachment();
-        if (player != null && !player.destroyed()) {
-        	player.destroy(false);
-        }
-        ctx.getChannel().disconnect(); */
+    	 Player player = (Player) ctx.getAttachment();
+         if (player != null && !player.destroyed()) {
+             player.destroy(false);
+         }
+        ctx.getChannel().disconnect();
     }
-    
-    /**
-     * Invoked whenever an exception is caught
-     *
-     * @param ctx The channel chandler context
-     * @param e   The message event
-     */
-//    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-////        Player p = (Player) ctx.getAttachment();
-////        if (p != null)
-////            p.getActionSender().sendLogout();
-////        ctx.getChannel().close();
-//        e.getCause().getStackTrace();
-//    }
 }

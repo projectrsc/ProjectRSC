@@ -3,7 +3,6 @@ package com.prsc.gs.plugins.lang.python;
 import java.io.File;
 
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,24 +15,25 @@ import org.python.core.PyException;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
-import com.prsc.gs.model.World;
+import com.prsc.gs.phandler.PacketHandler;
 import com.prsc.gs.plugins.PlugInterface;
 import com.prsc.gs.plugins.PluginHandler;
 import com.prsc.gs.plugins.Quest;
 import com.prsc.gs.plugins.QuestInterface;
 import com.prsc.gs.plugins.ShopInterface;
 import com.prsc.gs.plugins.lang.GenericFactory;
-import com.prsc.gs.plugins.phandler.PacketHandler;
-import com.prsc.gs.registrar.PortRegistrar;
-import com.prsc.gs.registrar.impl.PacketHandlers;
+import com.prsc.gs.world.World;
 
 public class PythonScriptFactory implements GenericFactory {
 	
-	private final PythonInterpreter interpreter = new PythonInterpreter();
+	private PluginHandler handler;
+	private PythonInterpreter interpreter;
 	private List<Object> backedScripts; 
 	private List<String[]> errors;
 	
-	public PythonScriptFactory() {
+	public PythonScriptFactory(PluginHandler handler) {
+		this.handler = handler;
+		this.interpreter = new PythonInterpreter();
 		this.backedScripts = new ArrayList<Object>();
 		this.errors = new ArrayList<String[]>();
 	}
@@ -47,17 +47,10 @@ public class PythonScriptFactory implements GenericFactory {
 			return false;
 		}
 		
-		for(Object o : backedScripts) {
-			if(o instanceof PacketHandler) {
-				PacketHandler handler = (PacketHandler) o;
-				PortRegistrar.lookup(PacketHandlers.class).unregisterGameHandler(handler);
-			}
-		}
+		Map<String, Set<Object>> exePlugs =  handler.getExecutivePlugins();
+		Map<String, Set<Object>> actionPlugs =  handler.getActionPlugins();
 		
-		Map<String, Set<Object>> exePlugs =  PluginHandler.getPluginHandler().getExecutivePlugins();
-		Map<String, Set<Object>> actionPlugs =  PluginHandler.getPluginHandler().getActionPlugins();
-		
-		for(Class<?> interfce : PluginHandler.getPluginHandler().getKnownInterfaces()) {
+		for(Class<?> interfce : handler.getKnownInterfaces()) {
 			String interfceName = interfce.getName().substring(interfce.getName().lastIndexOf(".") + 1);
 
 			if(exePlugs.containsKey(interfceName)) {
@@ -112,16 +105,16 @@ public class PythonScriptFactory implements GenericFactory {
 				List<Class<?>> interfces = Arrays.asList(q.getClass().getInterfaces());
 				if(interfces != null && interfces.contains(interfce)) {
 					String interfceName = interfce.getName().substring(interfce.getName().lastIndexOf(".") + 1);
-					if(PluginHandler.getPluginHandler().getExecutivePlugins().containsKey(interfceName)) {
+					if(handler.getExecutivePlugins().containsKey(interfceName)) {
 						//System.out.println("Adding to executive plugs " + interfce.getSimpleName());
-						Set<Object> data = PluginHandler.getPluginHandler().getExecutivePlugins().get(interfceName);
+						Set<Object> data = handler.getExecutivePlugins().get(interfceName);
 						data.add(q);
-						PluginHandler.getPluginHandler().getExecutivePlugins().put(interfceName, data);
+						handler.getExecutivePlugins().put(interfceName, data);
 					} else if(interfceName.endsWith("ExecutiveListener")) {
 						//System.out.println("(EXEC) We should add " + interfceName);
 						Set<Object> data = new HashSet<Object>();
 						data.add(q);
-						PluginHandler.getPluginHandler().getExecutivePlugins().put(interfceName, data);
+						handler.getExecutivePlugins().put(interfceName, data);
 					}
 				}
 			}
@@ -129,16 +122,16 @@ public class PythonScriptFactory implements GenericFactory {
 				List<Class<?>> interfces = Arrays.asList(q.getClass().getInterfaces());
 				if(interfces != null && interfces.contains(interfce)) {
 					String interfceName = interfce.getName().substring(interfce.getName().lastIndexOf(".") + 1);
-					if(PluginHandler.getPluginHandler().getActionPlugins().containsKey(interfceName)) {
+					if(handler.getActionPlugins().containsKey(interfceName)) {
 						//System.out.println("Adding to action plugs " + interfce.getSimpleName());
-						Set<Object> data = PluginHandler.getPluginHandler().getActionPlugins().get(interfceName);
+						Set<Object> data = handler.getActionPlugins().get(interfceName);
 		        		data.add(q);
-		        		PluginHandler.getPluginHandler().getActionPlugins().put(interfceName, data);
+		        		handler.getActionPlugins().put(interfceName, data);
 					} else if(!interfceName.endsWith("ExecutiveListener")) {
 						//System.out.println("(ACTION) We should add " + interfceName);
 						Set<Object> data = new HashSet<Object>();
                     	data.add(q);
-                    	PluginHandler.getPluginHandler().getActionPlugins().put(interfceName, data);
+                    	handler.getActionPlugins().put(interfceName, data);
 					}
 				}
 			}
@@ -153,16 +146,16 @@ public class PythonScriptFactory implements GenericFactory {
 				List<Class<?>> interfces = Arrays.asList(p.getClass().getInterfaces());
 				if(interfces != null && interfces.contains(interfce)) {
 					String interfceName = interfce.getName().substring(interfce.getName().lastIndexOf(".") + 1);
-					if(PluginHandler.getPluginHandler().getExecutivePlugins().containsKey(interfceName)) {
+					if(handler.getExecutivePlugins().containsKey(interfceName)) {
 						//System.out.println("Adding to executive plugs " + interfce.getSimpleName());
-						Set<Object> data = PluginHandler.getPluginHandler().getExecutivePlugins().get(interfceName);
+						Set<Object> data = handler.getExecutivePlugins().get(interfceName);
 						data.add(p);
-						PluginHandler.getPluginHandler().getExecutivePlugins().put(interfceName, data);
+						handler.getExecutivePlugins().put(interfceName, data);
 					} else if(interfceName.endsWith("ExecutiveListener")) {
 						//System.out.println("(EXEC) We should add " + interfceName);
 						Set<Object> data = new HashSet<Object>();
 						data.add(p);
-						PluginHandler.getPluginHandler().getExecutivePlugins().put(interfceName, data);
+						handler.getExecutivePlugins().put(interfceName, data);
 					}
 				}
 			}
@@ -170,16 +163,16 @@ public class PythonScriptFactory implements GenericFactory {
 				List<Class<?>> interfces = Arrays.asList(p.getClass().getInterfaces());
 				if(interfces != null && interfces.contains(interfce)) {
 					String interfceName = interfce.getName().substring(interfce.getName().lastIndexOf(".") + 1);
-					if(PluginHandler.getPluginHandler().getActionPlugins().containsKey(interfceName)) {
+					if(handler.getActionPlugins().containsKey(interfceName)) {
 						//System.out.println("Adding to action plugs " + interfce.getSimpleName());
-						Set<Object> data = PluginHandler.getPluginHandler().getActionPlugins().get(interfceName);
+						Set<Object> data = handler.getActionPlugins().get(interfceName);
 		        		data.add(p);
-		        		PluginHandler.getPluginHandler().getActionPlugins().put(interfceName, data);
+		        		handler.getActionPlugins().put(interfceName, data);
 					} else if(!interfceName.endsWith("ExecutiveListener")) {
 						//System.out.println("(ACTION) We should add " + interfceName);
 						Set<Object> data = new HashSet<Object>();
                     	data.add(p);
-                    	PluginHandler.getPluginHandler().getActionPlugins().put(interfceName, data);
+                    	handler.getActionPlugins().put(interfceName, data);
 					}
 				}
 			}
@@ -258,32 +251,7 @@ public class PythonScriptFactory implements GenericFactory {
 
 	@Override
 	public List<PacketHandler> buildHandler(File handlerDir) throws Exception {
-		List<PacketHandler> loadedPythonHandlers = new ArrayList<PacketHandler>();
-		PyObject pythonClass = null; 
-		for(File file : handlerDir.listFiles()) {
-			if(file.getAbsoluteFile().isFile() && file.getName().endsWith(".py")) {
-				String pyFile = handlerDir.getAbsolutePath() + File.separatorChar + file.getName();
-				if(pythonClass == null) {
-					PyObject pObj = null;
-					PacketHandler handler = null;
-					try {
-						interpreter.execfile(pyFile);
-						pythonClass = interpreter.get(file.getName().replace(".py", "").trim());
-						pObj = pythonClass.__call__();
-						handler = (PacketHandler) pObj.__tojava__(PacketHandler.class);
-						pythonClass = null;
-					} catch(PyException py) {
-						errors.add(ReadableError.toReadable(py.toString()));
-						py.printStackTrace();
-					} finally {
-						loadedPythonHandlers.add(handler);
-						backedScripts.add(handler);
-					}
-				} else {
-					throw new Exception("Syntax error found, unable to convert " + file.getName().replace(".py", "").trim());
-				}
-			}
-		}
-		return loadedPythonHandlers;
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -1,13 +1,10 @@
 package com.prsc.gs.builders.ls;
 
-import java.util.List;
-
 import com.prsc.gs.builders.LSPacketBuilder;
-
 import com.prsc.gs.connection.LSPacket;
 import com.prsc.gs.model.Player;
-import com.prsc.gs.model.World;
 import com.prsc.gs.util.EntityList;
+import com.prsc.gs.world.World;
 
 
 public class PlayerListRequestPacketBuilder {

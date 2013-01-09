@@ -1,24 +1,16 @@
 package com.prsc.gs.model;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.prsc.config.Constants;
-
-import com.prsc.gs.core.GameEngine;
 import com.prsc.gs.event.DelayedEvent;
 import com.prsc.gs.external.EntityHandler;
 import com.prsc.gs.external.ItemDef;
 import com.prsc.gs.external.ItemLoc;
-import com.prsc.gs.model.component.world.Area;
+import com.prsc.gs.world.World;
 
 
 public class Item extends Entity {
 
-	/**
-	 * Reference to the area this entity exists on
-	 */
-	private final AtomicReference<Area> area = new AtomicReference<Area>();
-	
+
 	/**
 	 * Amount (for stackables)
 	 */
@@ -62,7 +54,7 @@ public class Item extends Entity {
 		this.owner = owner;
 		if (owner != null)
 			droppedby = owner.getUsernameHash();
-		spawnedTime = GameEngine.getAccurateTimestamp();
+		spawnedTime = System.currentTimeMillis();
 		setLocation(Point.location(x, y));
 	}
 
@@ -81,7 +73,7 @@ public class Item extends Entity {
 		this.loc = loc;
 		setID(loc.id);
 		setAmount(loc.amount);
-		spawnedTime = GameEngine.getAccurateTimestamp();
+		spawnedTime = System.currentTimeMillis();
 		setLocation(Point.location(loc.x, loc.y));
 	}
 
@@ -126,9 +118,6 @@ public class Item extends Entity {
 	}
 
 	public void remove() {
-		Area curRegion = area.get();
-		curRegion.removeItem(this);
-		
 		if (!removed && loc != null && loc.getRespawnTime() > 0) {
 			World.getWorld().getDelayedEventHandler().add(new DelayedEvent(null, loc.getRespawnTime() * 1000) {
 				public void run() {
@@ -168,22 +157,7 @@ public class Item extends Entity {
 	} catch (Exception e) {
 		System.out.println("Player " + p.getUsername() + " caused exception \n" + e);
         }
-		return GameEngine.getAccurateTimestamp() - spawnedTime > 60000;
-	}
-	
-	@Override
-	public void setLocation(Point p) {
-		Area r = Area.getArea(p);
-        Area cur = area.get();
-
-        if (cur != r) {
-            if (cur != null) {
-                cur.removeItem(this);
-            }
-            r.addItem(this);
-            area.getAndSet(r);
-        }
-		super.setLocation(p);
+		return System.currentTimeMillis() - spawnedTime > 60000;
 	}
 	
 	@Override

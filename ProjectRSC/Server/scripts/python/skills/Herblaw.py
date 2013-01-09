@@ -15,7 +15,7 @@ class Herblaw(PlugInterface, InvActionListener, InvActionExecutiveListener):
 		script = player.getScriptHelper()
 		herb_def = item.getUnIdentHerbDef()
 		
-		if herb_def == None:
+		if herb_def == None or player.isBusy():
 			return
 		
 		if script.getCurrentLevel(player.SkillType.HERBLAW) < herb_def.getLevelRequired():
@@ -39,4 +39,4 @@ class Herblaw(PlugInterface, InvActionListener, InvActionExecutiveListener):
 		script.advanceStat(player.SkillType.HERBLAW, herb_def.getExp(), True)
          	
 	def blockInvAction(self, item, player):
-		return Constants.GameServer.MEMBER_WORLD and item.getDef().getCommand() == "Identify"
+		return player.canAccessMembers() and item.getDef().getCommand() == "Identify"

@@ -1,6 +1,5 @@
 package com.prsc.gs.event.impl;
 
-import com.prsc.gs.core.GameEngine;
 import com.prsc.gs.event.DelayedEvent;
 import com.prsc.gs.external.NPCLoc;
 import com.prsc.gs.model.Mob;
@@ -26,12 +25,11 @@ public abstract class WalkMobToMobEvent extends DelayedEvent {
         if (owner instanceof Npc) {
             Npc npc = (Npc) owner;
             loc = npc.getLoc();
-            
-            
+
             if (affectedMob.getX() < (loc.minX() - 4) || affectedMob.getX() > (loc.maxX() + 4) || affectedMob.getY() < (loc.minY() - 4) || affectedMob.getY() > (loc.maxY() + 4)) {
                 super.matchRunning = false;
                 return;
-            } 
+            }
         }
 
         this.owner = owner;
@@ -46,7 +44,7 @@ public abstract class WalkMobToMobEvent extends DelayedEvent {
             return;
         }
 
-        startTime = GameEngine.getAccurateTimestamp();
+        startTime = System.currentTimeMillis();
     }
 
     public abstract void arrived();
@@ -69,7 +67,7 @@ public abstract class WalkMobToMobEvent extends DelayedEvent {
         else if (owner.hasMoved())
             return; // We're still moving
         else {
-            if (GameEngine.getAccurateTimestamp() - startTime <= 10000) // Make NPCs
+            if (System.currentTimeMillis() - startTime <= 10000) // Make NPCs
             // give a 10
             // second
             // chase

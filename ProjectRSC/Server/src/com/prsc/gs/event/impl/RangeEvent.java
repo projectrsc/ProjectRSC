@@ -1,17 +1,14 @@
 package com.prsc.gs.event.impl;
 
 import com.prsc.config.Constants;
-
 import com.prsc.config.Formulae;
-import com.prsc.gs.core.GameEngine;
 import com.prsc.gs.event.DelayedEvent;
 import com.prsc.gs.model.*;
 import com.prsc.gs.states.Action;
 import com.prsc.gs.tools.DataConversions;
+import com.prsc.gs.world.World;
 
 import java.util.ArrayList;
-
-import org.python.google.common.collect.Lists;
 
 
 public class RangeEvent extends DelayedEvent {
@@ -50,17 +47,11 @@ public class RangeEvent extends DelayedEvent {
 	}
 
 	private Item getArrows(int id) {
-		/* FIX
 		for (Item i : world.getTile(affectedMob.getLocation()).getItems()) {
 			if (i.getID() == id && i.visibleTo(owner) && !i.isRemoved()) {
 				return i;
 			}
-		} */
-		for(Item i : owner.getViewArea().getItemsInView()) {
-    		if (i.getID() == id && i.visibleTo(owner)) {
-                return i;
-            }
-    	} 
+		}
 		return null;
 	}
 
@@ -147,6 +138,7 @@ public class RangeEvent extends DelayedEvent {
 			owner.resetRange();
 			return;
 		}
+		// if(owner.getRangeEquip())
 
 		int damage = Formulae.calcRangeHit(owner.getCurStat(4), owner.getRangePoints(), affectedMob.getArmourPoints(), arrowID);
 
@@ -176,14 +168,14 @@ public class RangeEvent extends DelayedEvent {
 		Projectile projectile = new Projectile(owner, affectedMob, 2);
 
 		ArrayList<Player> playersToInform = new ArrayList<Player>();
-		playersToInform.addAll(Lists.newArrayList(owner.getViewArea().getPlayersInView()));
-        playersToInform.addAll(Lists.newArrayList(affectedMob.getViewArea().getPlayersInView()));
+		playersToInform.addAll(owner.getViewArea().getPlayersInView());
+		playersToInform.addAll(affectedMob.getViewArea().getPlayersInView());
 		for (Player p : playersToInform) {
 			p.informOfProjectile(projectile);
 		}
 
-		if (GameEngine.getAccurateTimestamp() - affectedMob.lastTimeShot > 500) {
-			affectedMob.lastTimeShot = GameEngine.getAccurateTimestamp();
+		if (System.currentTimeMillis() - affectedMob.lastTimeShot > 500) {
+			affectedMob.lastTimeShot = System.currentTimeMillis();
 			affectedMob.setLastDamage(damage);
 			int newHp = affectedMob.getHits() - damage;
 			affectedMob.setHits(newHp);

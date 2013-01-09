@@ -1,12 +1,11 @@
 package com.prsc.gs.io;
 
 import com.prsc.config.Constants;
-
 import com.prsc.gs.external.EntityHandler;
-import com.prsc.gs.model.World;
-import com.prsc.gs.model.component.world.Sector;
+import com.prsc.gs.model.Sector;
 import com.prsc.gs.tools.DataConversions;
 import com.prsc.gs.util.Logger;
+import com.prsc.gs.world.World;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -16,7 +15,6 @@ import java.util.zip.ZipFile;
 
 
 public class WorldLoader {
-	
 	private ZipFile tileArchive;
 
 	private void loadSection(int sectionX, int sectionY, int height, World world, int bigX, int bigY) {
@@ -48,11 +46,11 @@ public class WorldLoader {
 				world.getTileValue(bx, by).horizontalWallVal = s.getTile(x, y).horizontalWall;
 				world.getTileValue(bx, by).verticalWallVal = s.getTile(x, y).verticalWall;
 				world.getTileValue(bx, by).elevation = s.getTile(x, y).groundElevation;
-				
+				/** start of shit **/
 				if ((s.getTile(x, y).groundOverlay & 0xff) == 250) {
 					s.getTile(x, y).groundOverlay = (byte) 2;
 				}
-				
+				/** break in shit **/
 				int groundOverlay = s.getTile(x, y).groundOverlay & 0xFF;
 				if (groundOverlay > 0 && EntityHandler.getTileDef(groundOverlay - 1).getObjectType() != 0) {
 					world.getTileValue(bx, by).mapValue |= 0x40; // 64
@@ -78,8 +76,10 @@ public class WorldLoader {
 					world.getTileValue(bx, by).mapValue |= 0x10; // 16
 				}
 			}
-		} 
-	} 
+		}
+		/** end of shit **/
+
+	}
 
 
 	public void loadWorld(World world) {

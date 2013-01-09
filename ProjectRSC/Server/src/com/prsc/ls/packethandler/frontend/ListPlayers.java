@@ -24,7 +24,7 @@ public class ListPlayers implements PacketHandler {
             if (world == null) {
                 throw new Exception("Unknown world");
             }
-            world.getActionSender().playerListRequest(session, new PacketHandler() {
+            world.getActionSender().playerListRequest(new PacketHandler() {
                 public void handlePacket(Packet p, Channel s) throws Exception {
                     builder.setID(1);
 

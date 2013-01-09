@@ -2,17 +2,15 @@ package com.prsc.gs.plugins.npcs;
 
 
 import com.prsc.gs.event.ShortEvent;
-
-
 import com.prsc.gs.model.ChatMessage;
 import com.prsc.gs.model.InvItem;
 import com.prsc.gs.model.MenuHandler;
 import com.prsc.gs.model.Npc;
 import com.prsc.gs.model.Player;
-import com.prsc.gs.model.World;
 import com.prsc.gs.plugins.ScriptablePlug;
 import com.prsc.gs.plugins.listeners.action.TalkToNpcListener;
 import com.prsc.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
+import com.prsc.gs.world.World;
 
 public class Apothecary extends ScriptablePlug implements TalkToNpcListener, TalkToNpcExecutiveListener {
 	
@@ -26,6 +24,7 @@ public class Apothecary extends ScriptablePlug implements TalkToNpcListener, Tal
     	player.informOfNpcMessage(new ChatMessage(npc, "Hello, can i help you?", player));
     	world.getDelayedEventHandler().add(new ShortEvent(player) {
     	    public void action() {
+
     		owner.setMenuHandler(new MenuHandler(names) {
     		    public void handleReply(final int option, final String reply) {
     			if (option < 0 && option > names.length)

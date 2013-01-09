@@ -2,7 +2,7 @@ package com.prsc.gs.builders;
 
 import com.prsc.gs.connection.LSPacket;
 import com.prsc.gs.core.LoginConnector;
-import com.prsc.gs.plugins.phandler.PacketHandler;
+import com.prsc.gs.phandler.PacketHandler;
 import com.prsc.gs.tools.DataConversions;
 
 public final class LSPacketBuilder extends StaticPacketBuilder {

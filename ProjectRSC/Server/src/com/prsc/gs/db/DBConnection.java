@@ -1,7 +1,6 @@
 package com.prsc.gs.db;
 
 import java.sql.Connection;
-
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,8 +21,8 @@ import com.prsc.gs.model.GameObject;
 import com.prsc.gs.model.Item;
 import com.prsc.gs.model.Npc;
 import com.prsc.gs.model.Point;
-import com.prsc.gs.model.World;
 import com.prsc.gs.util.Logger;
+import com.prsc.gs.world.World;
 
 public final class DBConnection {
 

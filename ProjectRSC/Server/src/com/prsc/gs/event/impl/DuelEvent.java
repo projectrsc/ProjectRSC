@@ -8,8 +8,6 @@ import com.prsc.gs.tools.DataConversions;
 
 import java.util.ArrayList;
 
-import org.python.google.common.collect.Lists;
-
 public class DuelEvent extends DelayedEvent {
 
     private Player affectedPlayer;
@@ -60,8 +58,8 @@ public class DuelEvent extends DelayedEvent {
         int newHp = opponent.getHits() - damage;
         opponent.setHits(newHp);
         ArrayList<Player> playersToInform = new ArrayList<Player>();
-        playersToInform.addAll(Lists.newArrayList(opponent.getViewArea().getPlayersInView()));
-        playersToInform.addAll(Lists.newArrayList(attacker.getViewArea().getPlayersInView()));
+        playersToInform.addAll(opponent.getViewArea().getPlayersInView());
+        playersToInform.addAll(attacker.getViewArea().getPlayersInView());
         for (Player p : playersToInform) {
             p.informOfModifiedHits(opponent);
         }

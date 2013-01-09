@@ -65,7 +65,7 @@ class Thieving(PlugInterface, NpcCommandListener, ObjectActionListener, NpcComma
 		npc_name = npc.getDef().getName().lower()
 		npc_id = npc.getID()
 		
-		if not player.withinRange(npc, 2):
+		if not player.withinRange(npc, 2) or player.isBusy():
 			return
 		
 		if player.getFatigue() >= 7500:
@@ -178,7 +178,7 @@ class Thieving(PlugInterface, NpcCommandListener, ObjectActionListener, NpcComma
 		return percent <= level_diff
          	
 	def blockNpcCommand(self, npc, player):
-		return Constants.GameServer.MEMBER_WORLD and npc.getDef().getCommand() == "pickpocket"
+		return player.canAccessMembers() and npc.getDef().getCommand() == "pickpocket"
 	
 	def blockObjectAction(self, gameObj, command, player):
-		return Constants.GameServer.MEMBER_WORLD and command == "steal from"
+		return player.canAccessMembers() and command == "steal from"

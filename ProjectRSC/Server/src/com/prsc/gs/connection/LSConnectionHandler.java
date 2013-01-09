@@ -2,11 +2,10 @@ package com.prsc.gs.connection;
 
 import org.jboss.netty.channel.*;
 
-
 import com.prsc.gs.Server;
 import com.prsc.gs.core.LoginConnector;
-import com.prsc.gs.model.World;
 import com.prsc.gs.util.Logger;
+import com.prsc.gs.world.World;
 
 
 /**
@@ -37,9 +36,8 @@ public class LSConnectionHandler extends SimpleChannelHandler {
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
 		Channel ch = ctx.getChannel();
 		if(e.getMessage() instanceof LSPacket) {
-			LSPacket packet = (LSPacket) e.getMessage();
 			if (ch.isConnected()) {
-				connector.pushToMessageQueue(packet);
+				connector.getPacketQueue().add((LSPacket) e.getMessage());
 			}
 		}
 	}

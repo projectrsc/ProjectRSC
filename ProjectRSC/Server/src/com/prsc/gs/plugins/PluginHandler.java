@@ -3,9 +3,6 @@ package com.prsc.gs.plugins;
 import java.io.File;
 
 
-
-
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -23,16 +20,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import com.prsc.config.Constants;
-import com.prsc.gs.Server;
-import com.prsc.gs.model.Shop;
-import com.prsc.gs.model.World;
 import com.prsc.gs.plugins.lang.python.PythonScriptFactory;
 import com.prsc.gs.plugins.misc.Default;
-import com.prsc.gs.plugins.task.impl.PluginExecutionTask;
+import com.prsc.gs.world.Shop;
+import com.prsc.gs.world.World;
 
 /**
  * Initiates plug-ins that implements some listeners
@@ -47,7 +46,9 @@ public final class PluginHandler {
     private final Map<String, Set<Object>> executivePlugins = new HashMap<String, Set<Object>>();
     private final Map<String, Class<?>> queue = new HashMap<String, Class<?>>();
     private final List<Class<?>> knownInterfaces = new ArrayList<Class<?>>();
-    private final PythonScriptFactory psf = new PythonScriptFactory();
+    private final PythonScriptFactory psf = new PythonScriptFactory(this);
+    
+    private final ExecutorService executor = Executors.newCachedThreadPool();
 
     public static PluginHandler getPluginHandler() {
         if (pluginHandler == null)
@@ -55,7 +56,7 @@ public final class PluginHandler {
         return pluginHandler;
     }
 
-    public void initPluginRegisters() throws Exception {   	
+    public void initPlugins() throws Exception {
         Map<String, Object> loadedPlugins = new HashMap<String, Object>();
         ArrayList<String> pluginLocations = new ArrayList<String>();
 
@@ -149,7 +150,8 @@ public final class PluginHandler {
                 }
             }
         }
-        initPythonRegisters();
+        // Python - Region Start
+        loadPythonScripts();
     }
 
     public List<Class<?>> getKnownInterfaces() {
@@ -164,10 +166,96 @@ public final class PluginHandler {
         return actionPlugins;
     }
 
+    public ExecutorService getExecutor() {
+        return executor;
+    }
+
     public PythonScriptFactory getPythonScriptFactory() {
         return psf;
     }
     
+    /**
+     * Configures and initializes all dynamic plugins
+     * @throws Exception
+     */
+
+    public void loadPythonScripts() throws Exception {
+        File pyQuestsDir = new File(Constants.GameServer.SCRIPTS_DIR +  "/python/quests/");
+        if(!pyQuestsDir.exists()) {
+            try {
+                throw new FileNotFoundException("Python quests directory not found");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        List<QuestInterface> pyQuests = new ArrayList<QuestInterface>();
+        if(pyQuestsDir.listFiles().length > 0) {
+        	pyQuests = psf.buildQuests(pyQuestsDir);
+        }
+
+        File pyNpcsDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/npcs/");
+        if(!pyNpcsDir.exists()) {
+            try {
+                throw new FileNotFoundException("Python npcs directory not found");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        File pyMiscDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/misc/");
+        if(!pyMiscDir.exists()) {
+            try {
+                throw new FileNotFoundException("Python misc directory not found");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        /*
+        File pyMinigamesDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/minigames/");
+        if(!pyMinigamesDir.exists()) {
+            try {
+                throw new FileNotFoundException("Python minigames directory not found");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } */
+        
+        File pySkillsDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/skills/");
+        if(!pySkillsDir.exists()) {
+            try {
+                throw new FileNotFoundException("Python skills directory not found");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        List<PlugInterface> plugs = new ArrayList<PlugInterface>();
+        if(pyQuestsDir.listFiles().length > 0) {
+        	plugs.addAll(psf.buildPlugs(pyNpcsDir));
+        	plugs.addAll(psf.buildPlugs(pyMiscDir));
+        	//plugs.addAll(psf.buildPlugs(pyMinigamesDir));
+        	plugs.addAll(psf.buildPlugs(pySkillsDir));
+        }
+
+        for(Class<?> interfce : knownInterfaces) {
+            if(!pyQuests.isEmpty())
+                psf.crossCheckQuests(pyQuests, interfce); // will check, register plugin
+            if(!plugs.isEmpty())
+                psf.crossCheckPlugs(plugs, interfce); // another others
+        }
+
+        for(QuestInterface q : pyQuests) { // since we need to register them to the world...
+            try {
+               // System.out.println("[PYTHON]: Registering quest " + q.getQuestName());
+                World.getWorld().registerQuest(q);
+            } catch (Exception e) {
+                System.out.println("Error registering quest " + q.getQuestName());
+                e.printStackTrace();
+            }
+        }
+    }
+
     public boolean blockDefaultAction(String interfce, final Object[] data) {
         return blockDefaultAction(interfce, data, true);
     }
@@ -242,7 +330,19 @@ public final class PluginHandler {
                     
                     if(go) {
                         //System.out.println("INVOKING " + c.getClass().getName());
-                        Server.getInstance().getTaskManager().submitTask(new PluginExecutionTask(m, c, data));
+                        FutureTask<Integer> task = new FutureTask<Integer>(new Callable<Integer>() {
+
+                            @Override
+                            public Integer call() throws Exception {
+                                try {
+                                    m.invoke(c, data);
+                                } catch (java.util.ConcurrentModificationException cme) {
+                                    cme.printStackTrace();
+                                }
+                                return 1;
+                            }
+                        });
+                        getExecutor().execute(task);
                     }
                 } catch (Exception e) {
                     System.err.println("Exception at plugin handling: ");
@@ -252,7 +352,7 @@ public final class PluginHandler {
         }
     }
 
-    public static List<Class<?>> loadClasses(String pckgname) throws ClassNotFoundException {
+    private static List<Class<?>> loadClasses(String pckgname) throws ClassNotFoundException {
         List<Class<?>> classes = new ArrayList<Class<?>>();
         ArrayList<File> directories = new ArrayList<File>();
         try {
@@ -297,84 +397,7 @@ public final class PluginHandler {
         }
         return classes;
     }
-    
-    public void initPythonRegisters() throws Exception {
-    	File pyQuestsDir = new File(Constants.GameServer.SCRIPTS_DIR +  "/python/quests/");
-        if(!pyQuestsDir.exists()) {
-            try {
-                throw new FileNotFoundException("Python quests directory not found");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        
-        List<QuestInterface> pyQuests = new ArrayList<QuestInterface>();
-        if(pyQuestsDir.listFiles().length > 0) {
-        	pyQuests = PluginHandler.getPluginHandler().getPythonScriptFactory().buildQuests(pyQuestsDir);
-        }
 
-        File pyNpcsDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/npcs/");
-        if(!pyNpcsDir.exists()) {
-            try {
-                throw new FileNotFoundException("Python npcs directory not found");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        
-        File pyMiscDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/misc/");
-        if(!pyMiscDir.exists()) {
-            try {
-                throw new FileNotFoundException("Python misc directory not found");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        /*
-        File pyMinigamesDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/minigames/");
-        if(!pyMinigamesDir.exists()) {
-            try {
-                throw new FileNotFoundException("Python minigames directory not found");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } */
-        
-        File pySkillsDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/skills/");
-        if(!pySkillsDir.exists()) {
-            try {
-                throw new FileNotFoundException("Python skills directory not found");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        
-        List<PlugInterface> plugs = new ArrayList<PlugInterface>();
-        if(pyQuestsDir.listFiles().length > 0) {
-        	plugs.addAll(PluginHandler.getPluginHandler().getPythonScriptFactory().buildPlugs(pyNpcsDir));
-        	plugs.addAll(PluginHandler.getPluginHandler().getPythonScriptFactory().buildPlugs(pyMiscDir));
-        	//plugs.addAll(psf.buildPlugs(pyMinigamesDir));
-        	plugs.addAll(PluginHandler.getPluginHandler().getPythonScriptFactory().buildPlugs(pySkillsDir));
-        }
-
-        for(Class<?> interfce : PluginHandler.getPluginHandler().getKnownInterfaces()) {
-            if(!pyQuests.isEmpty())
-            	PluginHandler.getPluginHandler().getPythonScriptFactory().crossCheckQuests(pyQuests, interfce); // will check, register plugin
-            if(!plugs.isEmpty())
-            	PluginHandler.getPluginHandler().getPythonScriptFactory().crossCheckPlugs(plugs, interfce); // another others
-        }
-
-        for(QuestInterface q : pyQuests) { // since we need to register them to the world...
-            try {
-               // System.out.println("[PYTHON]: Registering quest " + q.getQuestName());
-                World.getWorld().registerQuest(q);
-            } catch (Exception e) {
-                System.out.println("Error registering quest " + q.getQuestName());
-                e.printStackTrace();
-            }
-        }
-    }
-    
     private List<Class<?>> loadClasses(String thePackage, Class<?> theInterface) throws ClassNotFoundException {
         List<Class<?>> classList = new ArrayList<Class<?>>();
         for (Class<?> discovered : loadClasses(thePackage)) {

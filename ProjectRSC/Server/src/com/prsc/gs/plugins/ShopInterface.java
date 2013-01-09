@@ -1,7 +1,6 @@
 package com.prsc.gs.plugins;
 
-import com.prsc.gs.model.Shop;
-
+import com.prsc.gs.world.Shop;
 
 public interface ShopInterface {
 	

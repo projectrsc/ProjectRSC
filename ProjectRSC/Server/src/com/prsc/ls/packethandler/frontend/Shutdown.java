@@ -19,14 +19,14 @@ public class Shutdown implements PacketHandler {
             int worldID = Integer.parseInt(params[0]);
             if (worldID == 0) {
                 for (World w : Server.getServer().getWorlds()) {
-                    w.getActionSender().shutdown(session);
+                    w.getActionSender().shutdown();
                 }
             } else {
                 World w = Server.getServer().getWorld(worldID);
                 if (w == null) {
                     throw new Exception("Unknown world");
                 }
-                w.getActionSender().shutdown(session);
+                w.getActionSender().shutdown();
             }
             builder.setID(1);
         } catch (Exception e) {

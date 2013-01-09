@@ -1,7 +1,6 @@
 package com.prsc.gs.plugins.skills;
 
 import com.prsc.config.Constants;
-
 import com.prsc.gs.event.ShortEvent;
 import com.prsc.gs.external.EntityHandler;
 import com.prsc.gs.external.ItemSmeltingDef;
@@ -10,6 +9,7 @@ import com.prsc.gs.model.*;
 import com.prsc.gs.plugins.listeners.action.InvUseOnObjectListener;
 import com.prsc.gs.plugins.listeners.executive.InvUseOnObjectExecutiveListener;
 import com.prsc.gs.tools.DataConversions;
+import com.prsc.gs.world.World;
 
 public class Smelting implements InvUseOnObjectListener, InvUseOnObjectExecutiveListener {
 

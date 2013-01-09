@@ -45,12 +45,6 @@ public final class PlayerLoginHandler implements PacketHandler {
 			
 			builder.setUID(uID);
 			if (loginCode == 0 || loginCode == 1 || loginCode == 99) {//
-				
-				/*
-				if(Monitor.getInstance() != null) {
-					Monitor.getInstance().onLogin(session);
-				} */
-				
 				try {
 					Server.db.updateQuery("UPDATE `" + Config.MYSQL_TABLE_PREFIX + "players` SET online=1 WHERE user='" + user + "'");
 				} catch (Exception e) {

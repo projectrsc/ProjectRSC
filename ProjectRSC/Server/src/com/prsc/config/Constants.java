@@ -1,6 +1,6 @@
 package com.prsc.config;
 
-import com.prsc.gs.model.component.mob.player.Bank;
+import com.prsc.gs.model.Bank;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,8 +90,13 @@ public final class Constants {
         /**
          * the normal experience rate
          */
-        public static double EXP_RATE = 15.0;
-
+        public static double NORMAL_EXP_RATE = 15.0;
+        
+        /**
+         * Combat only exp rate (Attack, Defense, Strength, Hits)
+         */
+        public static double COMBAT_ONLY_EXP_RATE = 15.0;
+        
         /**
          * experience rate for members
          */
@@ -184,7 +189,8 @@ public final class Constants {
             CLIENT_VERSION = Integer.parseInt(props.getProperty("client_version"));
             MAX_PLAYERS = Integer.parseInt(props.getProperty("maxplayers"));
 
-            EXP_RATE = Double.parseDouble(props.getProperty("exp_rate"));
+            NORMAL_EXP_RATE = Double.parseDouble(props.getProperty("exp_rate"));
+            COMBAT_ONLY_EXP_RATE = Double.parseDouble(props.getProperty("combat_only_exp_rate"));
             MEMBERS_EXP_RATE = Double.parseDouble(props.getProperty("members_exp_rate"));
 
             Bank.MAX_SIZE = Integer.parseInt(props.getProperty("max_" + (MEMBER_WORLD ? "members_" : "") + "bank_size"));

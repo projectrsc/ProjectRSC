@@ -5,7 +5,6 @@ import com.prsc.gs.model.Player;
 import com.prsc.gs.model.Point;
 
 public abstract class WalkToPointEvent extends DelayedEvent {
-	
     protected Point location;
     private int radius;
     private boolean stop;

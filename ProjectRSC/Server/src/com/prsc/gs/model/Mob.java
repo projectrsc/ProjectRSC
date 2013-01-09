@@ -1,13 +1,12 @@
 package com.prsc.gs.model;
 
-import com.prsc.gs.core.GameEngine;
 import com.prsc.gs.event.DelayedEvent;
-
 import com.prsc.gs.event.impl.DuelEvent;
 import com.prsc.gs.event.impl.FightEvent;
 import com.prsc.gs.states.Action;
 import com.prsc.gs.states.CombatState;
 import com.prsc.gs.util.Logger;
+import com.prsc.gs.world.World;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -57,8 +56,8 @@ public abstract class Mob extends Entity {
     /**
      * Time of last movement, used for timeout
      */
-    protected long lastMovement = GameEngine.getAccurateTimestamp();
-    public long lastTimeShot = GameEngine.getAccurateTimestamp();
+    protected long lastMovement = System.currentTimeMillis();
+    public long lastTimeShot = System.currentTimeMillis();
     protected int mobSprite = 1;
     private int[][] mobSprites = new int[][]{{3, 2, 1}, {4, -1, 0}, {5, 6, 7}};
     /**
@@ -68,11 +67,11 @@ public abstract class Mob extends Entity {
     /**
      * The path we are walking
      */
-    protected final PathHandler pathHandler = new PathHandler(this);
+    public PathHandler pathHandler = new PathHandler(this);
     /**
      * Set when the mob has been destroyed to alert players
      */
-    protected AtomicBoolean removed = new AtomicBoolean(false);
+    protected boolean removed = false;
     /**
      * Has the sprite changed?
      */
@@ -110,10 +109,6 @@ public abstract class Mob extends Entity {
             }
         }
         return false;
-    }
-    
-    public PathHandler getPathHandler() {
-    	return pathHandler;
     }
 
     public boolean finishedPath() {
@@ -197,7 +192,7 @@ public abstract class Mob extends Entity {
     }
 
     public boolean isRemoved() {
-        return removed.get();
+        return removed;
     }
 
     public abstract void killedBy(Mob mob, boolean stake);
@@ -248,7 +243,7 @@ public abstract class Mob extends Entity {
         ourAppearanceChanged = b;
     }
 
-    public void setBusy(boolean busy) {
+    public synchronized void setBusy(boolean busy) {
         this.busy.set(busy);
     }
 
@@ -258,7 +253,7 @@ public abstract class Mob extends Entity {
     }
 
     public void setCombatTimer() {
-        combatTimer = GameEngine.getAccurateTimestamp();
+        combatTimer = System.currentTimeMillis();
     }
 
     public abstract void setHits(int lvl);
@@ -268,7 +263,7 @@ public abstract class Mob extends Entity {
     }
 
     public void setLastMoved() {
-        lastMovement = GameEngine.getAccurateTimestamp();
+        lastMovement = System.currentTimeMillis();
     }
 
     public void setLocation(Point p) {
@@ -282,7 +277,6 @@ public abstract class Mob extends Entity {
         }
         setLastMoved();
         warnedToMove = false;
-
         super.setLocation(p);
     }
 

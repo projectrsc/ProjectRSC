@@ -2,8 +2,11 @@ package com.prsc.ls.net;
 
 import java.net.InetSocketAddress;
 
+
 import org.jboss.netty.channel.*;
-import com.prsc.ls.Server;
+//import com.prsc.ls.codec.FCodecFactory;
+
+import com.prsc.ls.LoginEngine;
 import com.prsc.ls.util.Config;
 
 
@@ -11,6 +14,19 @@ import com.prsc.ls.util.Config;
  * Handles the protocol events fired from MINA.
  */
 public class FConnectionHandler extends SimpleChannelHandler {
+    /**
+     * A reference to the login engine
+     */
+    private LoginEngine engine;
+
+    /**
+     * Creates a new connection handler for the given login engine.
+     *
+     * @param engine The engine in use
+     */
+    public FConnectionHandler(LoginEngine engine) {
+        this.engine = engine;
+    }
 
     /**
      * Invoked whenever a packet is ready to be added to the queue.
@@ -23,8 +39,7 @@ public class FConnectionHandler extends SimpleChannelHandler {
         Channel ch = ctx.getChannel();
         if(e.getMessage() instanceof FPacket) {
         	if (ch.isConnected()) {
-        		FPacket packet = (FPacket) e.getMessage();
-        		Server.getServer().getEngine().pushToMessageStack(packet);
+        		engine.getFPacketQueue().add((FPacket) e.getMessage());
         	}
         }
     }

@@ -2,19 +2,34 @@ package com.prsc.ls.net;
 
 import java.net.InetSocketAddress;
 
-
 import org.jboss.netty.channel.*;
 
+import com.prsc.ls.LoginEngine;
 import com.prsc.ls.Server;
 import com.prsc.ls.model.World;
 import com.prsc.ls.util.Config;
+
+//import com.prsc.ls.codec.LSCodecFactory;
 
 
 /**
  * Handles the protocol events fired from .
  */
 public class LSConnectionHandler extends SimpleChannelHandler {
-	
+	/**
+	 * A reference to the login engine
+	 */
+	private LoginEngine engine;
+
+	/**
+	 * Creates a new connection handler for the given login engine.
+	 *
+	 * @param engine The engine in use
+	 */
+	public LSConnectionHandler(LoginEngine engine) {
+		this.engine = engine;
+	}
+
 	@Override
 	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
 		String ip = ((InetSocketAddress) ctx.getChannel().getRemoteAddress()).getAddress().getHostAddress();
@@ -37,12 +52,12 @@ public class LSConnectionHandler extends SimpleChannelHandler {
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
 		Channel ch = ctx.getChannel();
-		
 		if(e.getMessage() instanceof LSPacket) {
 			if (ch.isConnected()) {
-				LSPacket packet = (LSPacket) e.getMessage();
-				Server.getServer().getEngine().pushToMessageStack(packet);
+				engine.getLSPacketQueue().add((LSPacket) e.getMessage());
+				return;
 			}
+
 		}
 	}
 
@@ -68,6 +83,17 @@ public class LSConnectionHandler extends SimpleChannelHandler {
 			world.clearPlayers();
 			Server.error("Connection to world " + world.getID() + " lost!");
 		}
+	}
+
+	/**
+	 * Invoked whenever a channel is opened
+	 *
+	 * @param ctx The channel chandler context
+	 * @param e   The state event
+	 */
+	public void channelOpened(ChannelHandlerContext ctx, ChannelStateEvent e) {
+		//TODO: Add filter the specific protocol
+		//session.getFilterChain().addFirst("protocolFilter", new ProtocolCodecFilter(new LSCodecFactory()));
 	}
 
 	/**

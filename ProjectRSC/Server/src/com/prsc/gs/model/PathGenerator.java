@@ -1,8 +1,8 @@
 package com.prsc.gs.model;
 
-import com.prsc.gs.model.component.world.Area;
-import com.prsc.gs.model.component.world.TileValue;
-
+import com.prsc.gs.world.ActiveTile;
+import com.prsc.gs.world.TileValue;
+import com.prsc.gs.world.World;
 
 
 /**
@@ -10,6 +10,7 @@ import com.prsc.gs.model.component.world.TileValue;
  */
 /**
  * 
+ * @author xEnt Class generates a path and checks if the path is valid or not.
  */
 public class PathGenerator {
 
@@ -119,7 +120,7 @@ public class PathGenerator {
 			// If both directions are blocked OR we are going straight and the
 			// direction is blocked
 			if ((myXBlocked && myYBlocked) || (myXBlocked && startY == destY) || (myYBlocked && startX == destX)) {
-				//System.out.println("blocked3");
+				//System.out.println("yeah here3");
 				return cancelCoords(coords[0], coords[1]);
 			}
 
@@ -183,14 +184,16 @@ public class PathGenerator {
 
 	private boolean isBlocking(int x, int y, int bit) {
 		TileValue t = World.getWorld().getTileValue(x, y);
-		/*
-		if(Area.getArea(Point.location(x, y)).getObject(x, y) != null) {
-			if(Area.getArea(Point.location(x, y)).getObject(x, y).getGameObjectDef().getName().equalsIgnoreCase("tree")) {
+		ActiveTile tile = World.getWorld().getTile(x, y);
+		if (tile.hasGameObject()) {
+			if (tile.getGameObject().getGameObjectDef().name.equalsIgnoreCase("tree")) {
 				return true;
-			} 
-		} */
+			}
+		}
+		else
+			tile.cleanItself();
 		if (t.overlay == 2 || t.overlay == 11) // water & lava
-			return false; 
+			return false;
 		return isBlocking(t.mapValue, (byte) bit);
 	}
 
@@ -226,7 +229,14 @@ public class PathGenerator {
 	}
 	
 	private boolean isObjectAllowed(int x, int y) {
-		return Area.getArea(new Point(x, y)).getObject(x, y) != null && Area.getArea(new Point(x, y)).getObject(x, y).getDoorDef().getName().equalsIgnoreCase("door");
+		ActiveTile tile = World.getWorld().getTile(x, y);
+		if (tile.hasGameObject()) { // game object is blocking 
+			if(tile.getGameObject().getDoorDef() != null &&
+					tile.getGameObject().getDoorDef().getName().equalsIgnoreCase("door")) { // wall type only
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -235,6 +245,7 @@ public class PathGenerator {
 	 *  TODO: Fix being able to range in diagonal direction
 	 */
 	private boolean isWallInBetween() {
+
 		int enemyX = destX;
 		int enemyY = destY;
 
@@ -267,7 +278,7 @@ public class PathGenerator {
 				}
 			}
 			if (newX == enemyX && newY == enemyY) {
-				return false;//!isObjectAllowed(ourX, ourY);
+				return !isObjectAllowed(ourX, ourY);
 			}
 		}
 		//System.out.println("false");
