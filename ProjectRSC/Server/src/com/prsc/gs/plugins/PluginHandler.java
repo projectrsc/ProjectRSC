@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -44,7 +45,7 @@ public final class PluginHandler {
 
     private final Map<String, Set<Object>> actionPlugins = new HashMap<String, Set<Object>>();
     private final Map<String, Set<Object>> executivePlugins = new HashMap<String, Set<Object>>();
-    private final Map<String, Class<?>> queue = new HashMap<String, Class<?>>();
+    private final Map<String, Class<?>> queue = new ConcurrentHashMap<String, Class<?>>();
     private final List<Class<?>> knownInterfaces = new ArrayList<Class<?>>();
     private final PythonScriptFactory psf = new PythonScriptFactory(this);
     
@@ -193,6 +194,20 @@ public final class PluginHandler {
         if(pyQuestsDir.listFiles().length > 0) {
         	pyQuests = psf.buildQuests(pyQuestsDir);
         }
+       
+        File pyShopsDir = new File(Constants.GameServer.SCRIPTS_DIR +  "/python/shops/");
+        if(!pyShopsDir.exists()) {
+            try {
+                throw new FileNotFoundException("Python quests directory not found");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        List<ShopInterface> pyShops = new ArrayList<ShopInterface>();
+        if(pyShopsDir.listFiles().length > 0) {
+        	pyShops = psf.buildShops(pyShopsDir);
+        }
 
         File pyNpcsDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/npcs/");
         if(!pyNpcsDir.exists()) {
@@ -241,6 +256,8 @@ public final class PluginHandler {
         for(Class<?> interfce : knownInterfaces) {
             if(!pyQuests.isEmpty())
                 psf.crossCheckQuests(pyQuests, interfce); // will check, register plugin
+            if(!pyShops.isEmpty())
+            	psf.crossCheckShops(pyShops, interfce);
             if(!plugs.isEmpty())
                 psf.crossCheckPlugs(plugs, interfce); // another others
         }
