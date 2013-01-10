@@ -15,5 +15,5 @@ public interface GenericFactory {
 	public List<PacketHandler> buildHandler(File handlerDir) throws Exception;
 	public List<QuestInterface> buildQuests(File questsDir) throws Exception;
 	public List<PlugInterface> buildPlugs(File npcDir) throws Exception;
-	public List<ShopInterface> buildShops(File shopsDir);
+	public List<ShopInterface> buildShops(File shopsDir) throws Exception;
 }

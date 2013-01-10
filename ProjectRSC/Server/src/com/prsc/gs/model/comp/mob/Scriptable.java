@@ -1,6 +1,7 @@
 package com.prsc.gs.model.comp.mob;
 
 import java.util.Timer;
+
 import java.util.TimerTask;
 
 
@@ -25,6 +26,7 @@ import com.prsc.gs.plugins.Quest;
 import com.prsc.gs.states.Action;
 import com.prsc.gs.states.CombatState;
 import com.prsc.gs.tools.DataConversions;
+import com.prsc.gs.world.Shop;
 import com.prsc.gs.world.World;
 
 public class Scriptable {
@@ -294,6 +296,19 @@ public class Scriptable {
 	public Npc getNpc(int npcId) {
 		return World.getWorld().getNpcById(npcId);
 	}
+	
+	public Npc getNearestNpc(int npcId, int radius) {
+		Iterable<Npc> npcsInView = player.getViewArea().getNpcsInView();;
+		Npc closestNpc = null;
+		for(int next = radius; next >= radius; next--) {
+			for(Npc n : npcsInView) {
+				if(n.getID() == npcId && n.withinRange(player.getLocation(), next) && !n.isBusy()) {
+					closestNpc = n;
+				}
+			}
+		}
+		return closestNpc;
+	}
 
 	public Npc spawnNpc(int npcId, int x, int y, boolean respawn) {
 		return spawnNpc(npcId, x, y, 0, respawn);
@@ -436,6 +451,11 @@ public class Scriptable {
 	
 	public int getTotalNpcs() {
 		return World.getWorld().countNpcs();
+	}
+	
+	// Shops
+	public Shop[] getShopFromDatabase(String... name) {
+		return null;
 	}
 	
 	public void sleep(final int milliseconds) {

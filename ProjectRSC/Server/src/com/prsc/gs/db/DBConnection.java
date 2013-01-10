@@ -211,6 +211,15 @@ public final class DBConnection {
 		}
 
 	}
+	
+	public void loadShops() {
+		try {
+			ResultSet result;
+			result = this.statement.executeQuery("SELECT * FROM `" + Constants.GameServer.MYSQL_TABLE_PREFIX + "items`");
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void storeGroundItemToDatabase(Item item) {
 		ItemLoc i = item.getLoc();
@@ -244,7 +253,7 @@ public final class DBConnection {
 		try {
 			this.statement.execute("INSERT INTO `" + Constants.GameServer.MYSQL_TABLE_PREFIX + "npclocs`(`id`,`startX`,`minX`,`maxX`,`startY`,`minY`,`maxY`) VALUES('" + npc.getId() + "', '" + npc.startX() + "', '" + npc.minX() + "', '" + npc.maxX() + "','" + npc.startY() + "','" + npc.minY() + "','" + npc.maxY() + "')");
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
-
 }

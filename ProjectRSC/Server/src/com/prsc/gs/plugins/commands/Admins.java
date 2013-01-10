@@ -304,8 +304,15 @@ public final class Admins implements CommandListener {
 			int npcId = Integer.parseInt(args[0]);
 			final Npc n = new Npc(npcId, player.getX() + 1, player.getY() + 1, player.getX() - 5, 
 					player.getX() + 5, player.getY() - 5, player.getY() + 5);
-			n.setRespawn(false);
 			World.getWorld().registerNpc(n);
+			boolean store = Boolean.parseBoolean(args[1]);
+			if(store) {
+				n.setRespawn(true);
+				player.getActionSender().sendMessage("Storing to database");
+				world.getDB().storeNpcToDatabase(n);
+			} else {
+				n.setRespawn(false);
+			}
 			World.getWorld().getDelayedEventHandler().add(new SingleEvent(null, 60000) {
 				public void action() {
 					Mob opponent = n.getOpponent();
@@ -317,9 +324,6 @@ public final class Admins implements CommandListener {
 					n.remove();
 				}
 			});
-			boolean store = Boolean.parseBoolean(args[2]);
-			if(store)
-				world.getDB().storeNpcToDatabase(n);
 		} else if(command.equals("object")) {
 		    if (args.length < 1 || args.length > 3) {
 		    	player.getActionSender().sendMessage("Invalid args. Syntax: OBJECT id [direction] (store in db) true/false");

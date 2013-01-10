@@ -140,6 +140,47 @@ public class PythonScriptFactory implements GenericFactory {
 		}
 	}
 	
+	public void crossCheckShops(List<ShopInterface> shops, Class<?> interfce) {
+		try {
+			for(ShopInterface s : shops) { // for executive
+				List<Class<?>> interfces = Arrays.asList(s.getClass().getInterfaces());
+				if(interfces != null && interfces.contains(interfce)) {
+					String interfceName = interfce.getName().substring(interfce.getName().lastIndexOf(".") + 1);
+					if(handler.getExecutivePlugins().containsKey(interfceName)) {
+						//System.out.println("Adding to executive plugs " + interfce.getSimpleName());
+						Set<Object> data = handler.getExecutivePlugins().get(interfceName);
+						data.add(s);
+						handler.getExecutivePlugins().put(interfceName, data);
+					} else if(interfceName.endsWith("ExecutiveListener")) {
+						//System.out.println("(EXEC) We should add " + interfceName);
+						Set<Object> data = new HashSet<Object>();
+						data.add(s);
+						handler.getExecutivePlugins().put(interfceName, data);
+					}
+				}
+			}
+			for(ShopInterface s : shops) { // for action
+				List<Class<?>> interfces = Arrays.asList(s.getClass().getInterfaces());
+				if(interfces != null && interfces.contains(interfce)) {
+					String interfceName = interfce.getName().substring(interfce.getName().lastIndexOf(".") + 1);
+					if(handler.getActionPlugins().containsKey(interfceName)) {
+						//System.out.println("Adding to action plugs " + interfce.getSimpleName());
+						Set<Object> data = handler.getActionPlugins().get(interfceName);
+		        		data.add(s);
+		        		handler.getActionPlugins().put(interfceName, data);
+					} else if(!interfceName.endsWith("ExecutiveListener")) {
+						//System.out.println("(ACTION) We should add " + interfceName);
+						Set<Object> data = new HashSet<Object>();
+                    	data.add(s);
+                    	handler.getActionPlugins().put(interfceName, data);
+					}
+				}
+			}
+		} catch(Exception e) {
+			//e.printStackTrace()
+		}
+	}
+	
 	public void crossCheckPlugs(List<PlugInterface> handlers, Class<?> interfce) {
 		try {
 			for(PlugInterface p : handlers) { // for executive
@@ -213,9 +254,66 @@ public class PythonScriptFactory implements GenericFactory {
     }
 
 	@Override
-	public List<ShopInterface> buildShops(File pyShopsDir) {
-		// TODO Auto-generated method stub
-		return null; 
+	public List<ShopInterface> buildShops(File pyShopsDir) throws Exception {
+		List<ShopInterface> loadedShops = new ArrayList<ShopInterface>();
+		PyObject pythonClass = null; 
+		for(File file : pyShopsDir.listFiles()) {
+			if(file.isDirectory()) {
+				//System.out.println("Directory: " + file.getAbsoluteFile().getName());
+				if(!file.getAbsoluteFile().getName().equalsIgnoreCase("unfinished")) {
+					for(File f : file.getAbsoluteFile().listFiles()) {
+						if(f.getAbsoluteFile().isFile() && f.getName().endsWith(".py")) {
+							//System.out.println("File: " + f.getAbsoluteFile().getName());
+							String pyFile = f.getAbsoluteFile().getAbsolutePath();
+							if(pythonClass == null) {
+								PyObject pObj = null;
+								ShopInterface handler = null;
+								try {
+									interpreter.execfile(pyFile);
+									pythonClass = interpreter.get(f.getName().replace(".py", "").trim());
+									pObj = pythonClass.__call__();
+									handler = (ShopInterface) pObj.__tojava__(ShopInterface.class);
+									pythonClass = null;
+								} catch(PyException py) {
+									errors.add(ReadableError.toReadable(py.toString()));
+									py.printStackTrace();
+								} finally {
+									loadedShops.add(handler);
+									backedScripts.add(handler);
+								}
+							} else {
+								throw new Exception("Syntax error found, unable to convert " + f.getName().replace(".py", "").trim());
+							}
+						}
+					}
+				}
+			} else {
+				if(file.getAbsoluteFile().isFile() && file.getName().endsWith(".py")) {
+					//System.out.println("File: " + file.getAbsoluteFile().getName());
+					String pyFile = pyShopsDir.getAbsolutePath() + File.separatorChar + file.getName();
+					if(pythonClass == null) {
+						PyObject pObj = null;
+						ShopInterface handler = null;
+						try {
+							interpreter.execfile(pyFile);
+							pythonClass = interpreter.get(file.getName().replace(".py", "").trim());
+							pObj = pythonClass.__call__();
+							handler = (ShopInterface) pObj.__tojava__(ShopInterface.class);
+							pythonClass = null;
+						} catch(PyException py) {
+							errors.add(ReadableError.toReadable(py.toString()));
+							py.printStackTrace();
+						} finally {
+							loadedShops.add(handler);
+							backedScripts.add(handler);
+						}
+					} else {
+						throw new Exception("Syntax error found, unable to convert " + file.getName().replace(".py", "").trim());
+					}
+				}
+			}
+		}
+		return loadedShops;
 	}
 
 	@Override
@@ -223,26 +321,58 @@ public class PythonScriptFactory implements GenericFactory {
 		List<PlugInterface> loadedPythonNpcs = new ArrayList<PlugInterface>();
 		PyObject pythonClass = null; 
 		for(File file : pyNpcsDir.listFiles()) {
-			if(file.getAbsoluteFile().isFile() && file.getName().endsWith(".py")) {
-				String pyFile = pyNpcsDir.getAbsolutePath() + File.separatorChar + file.getName();
-				if(pythonClass == null) {
-					PyObject pObj = null;
-					PlugInterface handler = null;
-					try {
-						interpreter.execfile(pyFile);
-						pythonClass = interpreter.get(file.getName().replace(".py", "").trim());
-						pObj = pythonClass.__call__();
-						handler = (PlugInterface) pObj.__tojava__(PlugInterface.class);
-						pythonClass = null;
-					} catch(PyException py) {
-						errors.add(ReadableError.toReadable(py.toString()));
-						py.printStackTrace();
-					} finally {
-						loadedPythonNpcs.add(handler);
-						backedScripts.add(handler);
+			if(file.isDirectory()) {
+				//System.out.println("Directory: " + file.getAbsoluteFile().getName());
+				if(!file.getAbsoluteFile().getName().equalsIgnoreCase("unfinished")) {
+					for(File f : file.getAbsoluteFile().listFiles()) {
+						if(f.getAbsoluteFile().isFile() && f.getName().endsWith(".py")) {
+							//System.out.println("File: " + f.getAbsoluteFile().getName());
+							String pyFile = f.getAbsoluteFile().getAbsolutePath();
+							if(pythonClass == null) {
+								PyObject pObj = null;
+								PlugInterface handler = null;
+								try {
+									interpreter.execfile(pyFile);
+									pythonClass = interpreter.get(f.getName().replace(".py", "").trim());
+									pObj = pythonClass.__call__();
+									handler = (PlugInterface) pObj.__tojava__(PlugInterface.class);
+									pythonClass = null;
+								} catch(PyException py) {
+									errors.add(ReadableError.toReadable(py.toString()));
+									py.printStackTrace();
+								} finally {
+									loadedPythonNpcs.add(handler);
+									backedScripts.add(handler);
+								}
+							} else {
+								throw new Exception("Syntax error found, unable to convert " + f.getName().replace(".py", "").trim());
+							}
+						}
 					}
-				} else {
-					throw new Exception("Syntax error found, unable to convert " + file.getName().replace(".py", "").trim());
+				}
+			} else {
+				if(file.getAbsoluteFile().isFile() && file.getName().endsWith(".py")) {
+					//System.out.println("File: " + file.getAbsoluteFile().getName());
+					String pyFile = pyNpcsDir.getAbsolutePath() + File.separatorChar + file.getName();
+					if(pythonClass == null) {
+						PyObject pObj = null;
+						PlugInterface handler = null;
+						try {
+							interpreter.execfile(pyFile);
+							pythonClass = interpreter.get(file.getName().replace(".py", "").trim());
+							pObj = pythonClass.__call__();
+							handler = (PlugInterface) pObj.__tojava__(PlugInterface.class);
+							pythonClass = null;
+						} catch(PyException py) {
+							errors.add(ReadableError.toReadable(py.toString()));
+							py.printStackTrace();
+						} finally {
+							loadedPythonNpcs.add(handler);
+							backedScripts.add(handler);
+						}
+					} else {
+						throw new Exception("Syntax error found, unable to convert " + file.getName().replace(".py", "").trim());
+					}
 				}
 			}
 		}

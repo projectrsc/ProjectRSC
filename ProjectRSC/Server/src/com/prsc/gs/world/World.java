@@ -132,6 +132,8 @@ public final class World {
 	private Server server;
 
 	private final List<Shop> shops = new ArrayList<Shop>();
+	
+	private final List<Shop> shopData = new ArrayList<Shop>(); // not really sure where to put this yet
 
 	public final ActiveTile[][] tiles = new ActiveTile[MAX_WIDTH][MAX_HEIGHT];
 
@@ -408,6 +410,14 @@ public final class World {
 
 	public void registerShops(Shop... shop) {
 		shops.addAll(Arrays.asList(shop));
+	}
+	
+	public void addShopData(Shop...shop) {
+		shopData.addAll(Arrays.asList(shop));
+	}
+	
+	public void clearShopData() {
+		shopData.clear();
 	}
 
 	public void setClientUpdater(ClientUpdater clientUpdater) {

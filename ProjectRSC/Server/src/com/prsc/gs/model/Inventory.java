@@ -96,7 +96,6 @@ public class Inventory {
         int freedSlots = 0;
         for (InvItem item : items) {
             freedSlots += getFreedSlots(item);
-            ;
         }
         return freedSlots;
     }

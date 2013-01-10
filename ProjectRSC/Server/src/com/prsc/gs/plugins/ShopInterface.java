@@ -7,5 +7,4 @@ public interface ShopInterface {
 	public Shop[] getShops();
 	
 	public boolean isMembers();
-				
 }
