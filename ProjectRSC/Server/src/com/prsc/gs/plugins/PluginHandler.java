@@ -194,7 +194,7 @@ public final class PluginHandler {
         if(pyQuestsDir.listFiles().length > 0) {
         	pyQuests = psf.buildQuests(pyQuestsDir);
         }
-       
+        /*
         File pyShopsDir = new File(Constants.GameServer.SCRIPTS_DIR +  "/python/shops/");
         if(!pyShopsDir.exists()) {
             try {
@@ -207,7 +207,7 @@ public final class PluginHandler {
         List<ShopInterface> pyShops = new ArrayList<ShopInterface>();
         if(pyShopsDir.listFiles().length > 0) {
         	pyShops = psf.buildShops(pyShopsDir);
-        }
+        } */
 
         File pyNpcsDir = new File(Constants.GameServer.SCRIPTS_DIR + "/python/npcs/");
         if(!pyNpcsDir.exists()) {
@@ -256,8 +256,8 @@ public final class PluginHandler {
         for(Class<?> interfce : knownInterfaces) {
             if(!pyQuests.isEmpty())
                 psf.crossCheckQuests(pyQuests, interfce); // will check, register plugin
-            if(!pyShops.isEmpty())
-            	psf.crossCheckShops(pyShops, interfce);
+            //if(!pyShops.isEmpty())
+            //	psf.crossCheckShops(pyShops, interfce);
             if(!plugs.isEmpty())
                 psf.crossCheckPlugs(plugs, interfce); // another others
         }
