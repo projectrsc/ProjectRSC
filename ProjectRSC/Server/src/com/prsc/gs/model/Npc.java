@@ -352,7 +352,7 @@ public class Npc extends Mob {
                     for (Player p : t.getPlayers()) {
                         if (p.inCombat()) {
                             continue;
-                        }
+                        } 
                         if (p.isBusy() || p.isNonaggro() || now - p.getCombatTimer() < (p.getCombatState() == CombatState.RUNNING || p.getCombatState() == CombatState.WAITING ? 3000 : 1500) || !p.nextTo(this) || !p.getLocation().inBounds(loc.minX - 4, loc.minY - 4, loc.maxX + 4, loc.maxY + 4)) {
                             continue;
                         }

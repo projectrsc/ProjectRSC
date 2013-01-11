@@ -273,7 +273,7 @@ class LostCity(Quest, TalkToNpcListener, ObjectActionListener, PlayerKilledNpcLi
             script.sleep(500)
             script.displayMessage("you go through the door and find yourself somewhere else")
             
-        if stage == -1 and gameObj.getID() == self.ZANARIS_DOOR:
+        if stage == -1 and gameObj.getID() == self.ZANARIS_DOOR: # has completed the quest, give them access
             if script.isWielding(self.DRAMEN_STAFF):
                 script.movePlayer(126, 3518, False)
             

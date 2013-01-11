@@ -3,6 +3,7 @@ package com.prsc.gs.plugins.lang.python;
 import java.io.File;
 
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,7 +19,6 @@ import org.python.util.PythonInterpreter;
 import com.prsc.gs.phandler.PacketHandler;
 import com.prsc.gs.plugins.PlugInterface;
 import com.prsc.gs.plugins.PluginHandler;
-import com.prsc.gs.plugins.Quest;
 import com.prsc.gs.plugins.QuestInterface;
 import com.prsc.gs.plugins.ShopInterface;
 import com.prsc.gs.plugins.lang.GenericFactory;
@@ -223,30 +223,38 @@ public class PythonScriptFactory implements GenericFactory {
 	} 
 	
 	@Override
-    public List<QuestInterface> buildQuests(File directory) throws Exception {
+    public List<QuestInterface> buildQuests(File pyQuestDir) throws Exception {
 		List<QuestInterface> loadedPythonQuests = new ArrayList<QuestInterface>();
 		PyObject pythonClass = null; 
-		for(File file : directory.listFiles()) {
-			if(file.getAbsoluteFile().isFile() && file.getName().endsWith(".py")) {
-				String pyFile = directory.getAbsolutePath() + File.separatorChar + file.getName();
-				if(pythonClass == null) {
-					PyObject pObj = null;
-					QuestInterface q = null;
-					try {
-						interpreter.execfile(pyFile);
-						pythonClass = interpreter.get(file.getName().replace(".py", "").trim());
-						pObj = pythonClass.__call__();
-						q = (QuestInterface) pObj.__tojava__(QuestInterface.class);
-						pythonClass = null;
-					} catch(PyException py) {
-						errors.add(ReadableError.toReadable(py.toString()));
-						py.printStackTrace();
-					} finally {
-						loadedPythonQuests.add((Quest)q);
-						backedScripts.add(q);
+		for(File file : pyQuestDir.listFiles()) {
+			if(file.isDirectory()) {
+				//System.out.println("Directory: " + file.getAbsoluteFile().getName());
+				if(!file.getAbsoluteFile().getName().equalsIgnoreCase("unfinished")) {
+					for(File f : file.getAbsoluteFile().listFiles()) {
+						if(f.getAbsoluteFile().isFile() && f.getName().endsWith(".py")) {
+							//System.out.println("File: " + f.getAbsoluteFile().getName());
+							String pyFile = f.getAbsoluteFile().getAbsolutePath();
+							if(pythonClass == null) {
+								PyObject pObj = null;
+								QuestInterface handler = null;
+								try {
+									interpreter.execfile(pyFile);
+									pythonClass = interpreter.get(f.getName().replace(".py", "").trim());
+									pObj = pythonClass.__call__();
+									handler = (QuestInterface) pObj.__tojava__(QuestInterface.class);
+									pythonClass = null;
+								} catch(PyException py) {
+									errors.add(ReadableError.toReadable(py.toString()));
+									py.printStackTrace();
+								} finally {
+									loadedPythonQuests.add(handler);
+									backedScripts.add(handler);
+								}
+							} else {
+								throw new Exception("Syntax error found, unable to convert " + f.getName().replace(".py", "").trim());
+							}
+						}
 					}
-				} else {
-					throw new Exception("[PYTHON]: Syntax error found, unable to convert " + file.getName().replace(".py", "").trim());
 				}
 			}
 		}
