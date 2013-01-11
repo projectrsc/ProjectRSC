@@ -227,7 +227,7 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
         script = player.getScriptHelper()
         script.setActiveQuest(self)
         stage = script.getQuestStage()
-        return npc.getID() == self.COUNT_DRAYNOR and stage == 3
+        return npc.getID() == self.COUNT_DRAYNOR and stage >= 2
     
     def blockObjectAction(self, gameObject, command, player): # WE MUST OVERRIDE THE BLOCKING FOR RANDOM OJBS
         script = player.getScriptHelper()
