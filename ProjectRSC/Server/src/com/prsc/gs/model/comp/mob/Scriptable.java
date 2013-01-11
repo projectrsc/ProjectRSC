@@ -311,14 +311,15 @@ public class Scriptable {
 	}
 
 	public Npc spawnNpc(int npcId, int x, int y, boolean respawn) {
-		return spawnNpc(npcId, x, y, 0, respawn);
+		return spawnNpc(npcId, x, y, 0, respawn, false);
 	}
 	
 	// Fix
-	public Npc spawnNpc(int npcId, int x, int y, int time, boolean persist) {
+	public Npc spawnNpc(int npcId, int x, int y, int time, boolean persist, boolean aggressive) {
 		if (EntityHandler.getNpcDef(npcId) != null) {
 			final Npc n = new Npc(npcId, x, y, x - 5, x + 5, y - 5, y + 5);
 			n.setRespawn(persist);
+			n.getDef().aggressive = true;
 			World.getWorld().registerNpc(n);
 			if(!persist) {
 				World.getWorld().getDelayedEventHandler().add(new SingleEvent(null, time == 0 ? 300000 : time) {

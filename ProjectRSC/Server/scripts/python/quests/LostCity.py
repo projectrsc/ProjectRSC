@@ -1,9 +1,12 @@
 from com.prsc.gs.plugins import Quest
-from com.prsc.gs.plugins.listeners.action import TalkToNpcListener, ObjectActionListener, PlayerKilledNpcListener
-from com.prsc.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, ObjectActionExecutiveListener, PlayerKilledNpcExecutiveListener
+from com.prsc.gs.plugins.listeners.action import TalkToNpcListener, ObjectActionListener, InvUseOnItemListener, WallObjectActionListener, PlayerKilledNpcListener
+from com.prsc.gs.plugins.listeners.executive import TalkToNpcExecutiveListener, ObjectActionExecutiveListener, InvUseOnItemExecutiveListener, WallObjectActionExecutiveListener, PlayerKilledNpcExecutiveListener
 
-class LostCity(Quest, TalkToNpcListener, ObjectActionListener, PlayerKilledNpcListener, 
-               TalkToNpcExecutiveListener, ObjectActionExecutiveListener, PlayerKilledNpcExecutiveListener):
+# LOST CITY - @author: GORF
+
+class LostCity(Quest, TalkToNpcListener, ObjectActionListener, PlayerKilledNpcListener, InvUseOnItemListener,
+               WallObjectActionListener, TalkToNpcExecutiveListener, InvUseOnItemExecutiveListener, 
+               ObjectActionExecutiveListener, WallObjectActionExecutiveListener, PlayerKilledNpcExecutiveListener):
     
     # NPCS Used
     ADVENTURER_CLERIC = 207
@@ -19,13 +22,21 @@ class LostCity(Quest, TalkToNpcListener, ObjectActionListener, PlayerKilledNpcLi
     LEPROCHAUN_TREE = 237
     ENTRANA_LADDER = 244
     DRAMEN_TREE = 245
+    MAGIC_DOOR = 65
+    ZANARIS_DOOR = 66
     
     # Items used'
+    KNIFE = 13
     BONES = 20
     FISHING_BAIT = 380 
     BRONZE_ARROWS = 11
     BRONZE_AXE = 87 
     DRAMEN_BRANCH = 510
+    DRAMEN_STAFF = 509
+    
+    # Required Levels
+    REQUIRED_CRAFTING = 31
+    REQUIRED_WOODCUTTING = 36
     
     def getQuestId(self):
         return 18
@@ -39,6 +50,10 @@ class LostCity(Quest, TalkToNpcListener, ObjectActionListener, PlayerKilledNpcLi
     def handleReward(self, player):
         script = player.getScriptHelper()
         script.setActiveQuest(self)
+        script.addQuestPoints(3)
+        script.displayMessage("The world starts to shimmer", "You find yourself in different surroundings",
+                              "Well done you have completed the Lost City of Zanaris quest",
+                              "@gre@You have gained 3 quest points!")
     
     def onTalkToNpc(self, player, npc):        
         script = player.getScriptHelper()
@@ -174,7 +189,7 @@ class LostCity(Quest, TalkToNpcListener, ObjectActionListener, PlayerKilledNpcLi
         if command == "search":
             if stage == 0:
                 script.displayMessage("There is nothing in this tree")
-            if stage == 1 or stage == 2:
+            if stage == 1 or stage == 2 or stage == 3:
                 if not script.isNpcNearby(self.LEPRECHAUN):
                     script.displayMessage("A leprechaun jumps down from the tree and runs off")
                     leprechaun = script.spawnNpc(self.LEPRECHAUN, 173, 661, 300000, False)
@@ -182,7 +197,7 @@ class LostCity(Quest, TalkToNpcListener, ObjectActionListener, PlayerKilledNpcLi
                 else:
                     script.displayMessage("There is nothing in this tree")
         elif command == "climb-down":
-            if stage ==  2:
+            if stage == 2:
                 entrana_monk = script.getNearestNpc(self.MONK_OF_ENTRANA, 5)
                 if entrana_monk == None:
                     return
@@ -205,20 +220,23 @@ class LostCity(Quest, TalkToNpcListener, ObjectActionListener, PlayerKilledNpcLi
                     script.setQuestStage(3)
         elif command == "chop":
             if stage == 3:
-                if script.getCurrentLevel(player.SkillType.WOODCUT) < 1: # 36
+                if script.getCurrentLevel(player.SkillType.WOODCUT) < self.REQUIRED_WOODCUTTING: # 36
                     script.displayMessage("You are not a high enough woodcutting level to chop down this tree", "You need a woodcutting level of 36")
                     return
             
-                #if not script.isNpcNearby(self.TREE_SPIRIT):
-                script.displayMessage("You attempt to chop the tree")
-                script.addItem(self.DRAMEN_BRANCH, 1)
+                if not script.isNpcNearby(self.TREE_SPIRIT):
+                    script.displayMessage("You attempt to chop the tree")
+                    script.sleep(1000)
+                    ghost_spirit = script.spawnNpc(self.TREE_SPIRIT, player.getX() + 1, player.getY() + 1, 300000, False, True)
+                    if ghost_spirit == None:
+                        return
+                    script.release()
+                    script.attackPlayer(ghost_spirit)
+                    script.setQuestStage(4)
+            if stage == 5:
+                script.displayMessage("You attempt to chop the tree", "You manage to cut off a dramen branch")
                 script.sleep(1000)
-                ghost_spirit = script.spawnNpc(self.TREE_SPIRIT, player.getX() + 1, player.getY() + 1, 300000, False)
-                if ghost_spirit == None:
-                    return
-                script.setActiveNpc(ghost_spirit)
-                script.sendNpcChat("Woo woo! This is my tree")
-                script.attackPlayer(ghost_spirit)
+                script.addItem(self.DRAMEN_BRANCH, 1)
         script.release()
     
     def onPlayerKilledNpc(self, player, npc):
@@ -229,7 +247,7 @@ class LostCity(Quest, TalkToNpcListener, ObjectActionListener, PlayerKilledNpcLi
         
         no_bones = script.getRandom(0, 3) == 0
         
-        if stage == 3:
+        if stage == 3 and npc.getID() == self.ZOMBIE:
             if no_bones:
                 return
             random = script.getRandom(0, 2)
@@ -239,7 +257,60 @@ class LostCity(Quest, TalkToNpcListener, ObjectActionListener, PlayerKilledNpcLi
                 script.spawnItem(player.getX(), player.getY(), self.FISHING_BAIT, 1)
             elif random == 2:
                 script.spawnItem(player.getX(), player.getY(), self.BRONZE_AXE, 1)
-        script.spawnItem(player.getX(), player.getY(), self.BONES, 1)
+            script.spawnItem(player.getX(), player.getY(), self.BONES, 1)
+        
+        if stage == 4 and npc.getID() == self.TREE_SPIRIT:
+            script.setQuestStage(5)
+        
+    def onWallObjectAction(self, gameObj, click, player):
+        script = player.getScriptHelper()
+        script.setActiveQuest(self)
+        stage = script.getQuestStage()
+        script.occupy()
+        
+        if gameObj.getID() == self.MAGIC_DOOR:
+            script.movePlayer(109, 245, False)
+            script.sleep(500)
+            script.displayMessage("you go through the door and find yourself somewhere else")
+            
+        if stage == 6 and gameObj.getID() == self.ZANARIS_DOOR:
+            if script.isWielding(self.DRAMEN_STAFF):
+                script.sleep(500)
+                script.movePlayer(126, 3518, False)
+                script.setQuestStage(-1)
+                script.setQuestCompleted()
+            else:
+                script.displayMessage("Nothing interesting happens")
+                return
+            
+        script.release()
+    
+    def onInvUseOnItem(self, player, item, item2):
+        script = player.getScriptHelper()
+        script.setActiveQuest(self)
+        stage = script.getQuestStage()
+        script.occupy()
+        
+        if stage == 5 and script.hasItem(self.DRAMEN_BRANCH):
+            if script.getCurrentLevel(player.SkillType.CRAFTING) < self.REQUIRED_CRAFTING:
+                script.displayMessage("You are not a high enough crafting level to craft this staff", "You need a crafting level of 31")
+                return
+            script.sleep(1500)
+            script.removeItem(self.DRAMEN_BRANCH, 1)
+            script.displayMessage("You craft a dramen staff out of the branch")
+            script.addItem(self.DRAMEN_STAFF, 1)
+            script.setQuestStage(6)
+        script.release()
+        
+    def blockInvUseOnItem(self, player, item, item2):
+        if not player.canAccessMembers():
+            return False
+        return item.getID() == self.KNIFE and item2.getID() == self.DRAMEN_BRANCH
+    
+    def blockWallObjectAction(self, gameObj, click, player):
+        if not player.canAccessMembers():
+            return False
+        return gameObj.getID() == self.MAGIC_DOOR or gameObj.getID() == self.ZANARIS_DOOR
     
     def blockObjectAction(self, gameObj, command, player):
         script = player.getScriptHelper()
@@ -258,11 +329,12 @@ class LostCity(Quest, TalkToNpcListener, ObjectActionListener, PlayerKilledNpcLi
             return True
         
         if command == "chop" and gameObj.getID() == self.DRAMEN_TREE and x == 412 and y == 3402:
-            print("chop")
             return True
     
     def blockPlayerKilledNpc(self, player, npc):
-        return npc.getID() == self.ZOMBIE
+        if not player.canAccessMembers():
+            return False
+        return npc.getID() == self.ZOMBIE or npc.getID() == self.TREE_SPIRIT
     
     def blockTalkToNpc(self, player, npc):
         script = player.getScriptHelper()

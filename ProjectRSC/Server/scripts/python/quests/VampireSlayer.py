@@ -142,7 +142,7 @@ class VampireSlayer(Quest, TalkToNpcListener, ObjectActionListener, PlayerAttack
         script.displayMessage("you search the coffin")
         script.sleep(500)
         script.displayMessage("A vampire jumps out of the coffin")
-        script.spawnNpc(self.COUNT_DRAYNOR, 205, 3382, 300000, False) # SPAWN FOR 5 MINS
+        script.spawnNpc(self.COUNT_DRAYNOR, 205, 3382, 300000, False, False) # SPAWN FOR 5 MINS
         
         script.release()
     
