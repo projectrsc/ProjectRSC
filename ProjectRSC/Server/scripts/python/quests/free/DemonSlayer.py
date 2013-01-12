@@ -635,7 +635,7 @@ class DemonSlayer(Quest, TalkToNpcListener, ObjectActionListener, InvUseOnObject
         elif next_option == 0 and choices == 1:
             script.sendNpcChat("Captain Rovin lives at the top of the guards quarters", "in the northwest wing of this place")
             self.moreKeyOptions(script, 4)
-        elif next_option == 1 and choices == 3 or next_option == 1 and choices == 2 or next_option == 1 and choices == 0:
+        elif next_option == 1 and choices == 3 or next_option == 1 and choices == 2 or next_option == 1 and choices == 0 or next_option == 1 and choices == 4:
             script.sendNpcChat("Captain Rovin lives at the top of the guards quarters", "in the northwest wing of this place")
             self.moreKeyOptions(script, 4)
         elif next_option == 1 and choices == 1:
