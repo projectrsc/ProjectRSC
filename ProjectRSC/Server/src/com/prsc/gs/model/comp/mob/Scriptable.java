@@ -1,8 +1,8 @@
 package com.prsc.gs.model.comp.mob;
 
-import java.util.Timer;
+import java.util.ArrayList;
 
-import java.util.TimerTask;
+import java.util.Collection;
 
 
 import com.prsc.config.Formulae;
@@ -35,7 +35,7 @@ public class Scriptable {
 	private Npc activeNpc = null;
 	private Quest activeQuest = null;
 	
-	private final Timer timer = new Timer();
+	private Collection<Object> temp = new ArrayList<Object>();
 	
 	private static final byte BEGINNING = 0x0;
 	private static final byte COMPLETE = -1;
@@ -452,6 +452,18 @@ public class Scriptable {
 	
 	public int getTotalNpcs() {
 		return World.getWorld().countNpcs();
+	}
+	
+	public void store(int i) {
+		temp.add(i);
+	}
+	
+	public int sizeOfCollection() {
+		return temp.size();
+	}
+	
+	public void erase() {
+		temp.clear();
 	}
 	
 	// Shops
