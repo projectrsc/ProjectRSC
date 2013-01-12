@@ -361,7 +361,7 @@ class DemonSlayer(Quest, TalkToNpcListener, ObjectActionListener, InvUseOnObject
                     script.sendNpcChat("Give em here then")
                     finished = False
                     while script.hasItem(self.BONES, 1):
-                        if script.sizeOfCollection() >= self.NEEDED_BONES:
+                        if script.sizeOfCollection() == self.NEEDED_BONES:
                             finished = True
                             break
                         script.displayMessage("You give Traiborn a set of bones")
@@ -369,6 +369,7 @@ class DemonSlayer(Quest, TalkToNpcListener, ObjectActionListener, InvUseOnObject
                         script.store(1)
                         script.sleep(1000)
                     if finished:
+                        script.erase()
                         script.sendNpcChat("Hurrah! That's all 25 sets of bones")
                         script.displayMessage("Traiborn starts waving his arms")
                         script.sendNpcChat("Wings of dark and colour too", "spreading in the mountain dew")
