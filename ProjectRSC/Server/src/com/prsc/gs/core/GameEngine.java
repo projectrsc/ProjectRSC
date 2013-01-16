@@ -1,13 +1,10 @@
 package com.prsc.gs.core;
 
-import java.util.List;
-
-
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.prsc.gs.Server;
 import com.prsc.gs.connection.Client;
-import com.prsc.gs.event.impl.DatabaseReconnectionEvent;
 import com.prsc.gs.event.impl.ReloadFilterEvent;
 import com.prsc.gs.event.impl.SaveProfileEvent;
 import com.prsc.gs.event.impl.ShopRestockEvent;
@@ -21,7 +18,7 @@ public final class GameEngine extends Thread {
 
     private static final World world = World.getWorld();
     
-    private final List<Client> clients = new CopyOnWriteArrayList<Client>();
+    private final Set<Client> clients = new CopyOnWriteArraySet<Client>();
 
     private final DelayedEventHandler eventHandler = new DelayedEventHandler();
     
@@ -33,7 +30,7 @@ public final class GameEngine extends Thread {
     
     private boolean running = true; 
     
-    public List<Client> getClients() {
+    public Set<Client> getClients() {
     	return clients;
     }
     
@@ -98,7 +95,7 @@ public final class GameEngine extends Thread {
     }
     
     public static long getAccurateTimestamp() {
-    	return System.nanoTime() / 1000000;
+    	return System.currentTimeMillis();
     }
 
     @Override

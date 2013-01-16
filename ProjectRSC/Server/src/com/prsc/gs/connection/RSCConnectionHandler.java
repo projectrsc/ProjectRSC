@@ -46,6 +46,7 @@ public final class RSCConnectionHandler extends IdleStateAwareChannelHandler {
     public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
     	Client client = (Client) ctx.getChannel().getAttachment();
     	if(engine.getClients().contains(client)) {
+    		System.out.println("Remove client");
     		engine.removeClient(client);
     	}
     }
@@ -65,6 +66,7 @@ public final class RSCConnectionHandler extends IdleStateAwareChannelHandler {
             player.destroy(false);
         }
         if(engine.getClients().contains(client)) {
+        	System.out.println("Remove client");
         	engine.removeClient(client);
         }
     }
