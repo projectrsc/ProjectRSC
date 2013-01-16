@@ -1,10 +1,7 @@
 package com.prsc.gs.model;
 
 import com.prsc.config.Constants;
-import com.prsc.gs.world.ActiveTile;
-import com.prsc.gs.world.TileValue;
-import com.prsc.gs.world.World;
-
+import com.prsc.gs.model.component.world.TileValue;
 
 public class PathHandler {
 	/**
@@ -113,9 +110,10 @@ public class PathHandler {
 			// If both directions are blocked OR we are going straight and the
 			// direction is blocked
 			if ((myXBlocked && myYBlocked) || (myXBlocked && startY == destY) || (myYBlocked && startX == destX)) {
+				//System.out.println("Cancelling");
 				return cancelCoords();
 			}
-
+			//System.out.println("Coords: " + coords[0] + " " + coords[1]);
 			if (coords[0] > startX) {
 				newXBlocked = isBlocking(coords[0], coords[1], 2); // Check dest
 				// tiles
@@ -141,11 +139,13 @@ public class PathHandler {
 			// If both directions are blocked OR we are going straight and the
 			// direction is blocked
 			if ((newXBlocked && newYBlocked) || (newXBlocked && startY == coords[1]) || (myYBlocked && startX == coords[0])) {
+				//System.out.println("Cancelling2");
 				return cancelCoords();
 			}
 
 			// If only one direction is blocked, but it blocks both tiles
 			if ((myXBlocked && newXBlocked) || (myYBlocked && newYBlocked)) {
+				//System.out.println("Cancelling3");
 				return cancelCoords();
 			}
 
@@ -158,38 +158,49 @@ public class PathHandler {
 	private boolean isBlocking(byte val, byte bit) {
 		if (path.isNoClip())
 			return false;
-
+		
+		bit = (byte) (bit & 0xff);
 		if ((val & bit) != 0) { // There is a wall in the way
+			//System.out.println("blocking");
+			//System.out.println("1PH Bit is: " + (val & bit));
 			return true;
 		}
 		if ((val & 16) != 0) { // There is a diagonal wall here: \
+			//System.out.println("blocking");
+			//System.out.println("2PH Bit is: " + (val & 16));
 			return true;
 		}
 		if ((val & 32) != 0) { // There is a diagonal wall here: /
+			//System.out.println("blocking");
+			//System.out.println("3PH Bit is: " + (val & 32));
 			return true;
 		}
 		if ((val & 64) != 0) { // This tile is unwalkable
+			//System.out.println("tile is unwalkable");
 			return true;
-		}
-		return false;
+		} 
+		//System.out.println("Not blocking");
+		//return false; 
+		//int mask = 0x70 | bit;
+        return false;
 	}
 
 	private boolean isBlocking(int x, int y, int bit) {
 		if (path.isNoClip())
 			return false;
 		TileValue t = world.getTileValue(x, y);
-		return isBlocking(t.mapValue, (byte) bit) || isBlocking(t.objectValue, (byte) bit) || isMobBlocking(x, y);
-	}
-
+		return isBlocking(t.mapValue, (byte) bit) || isBlocking(t.objectValue, (byte) bit); //|| isMobBlocking(x, y);
+	 } // isMobBlocking(x, y)
+	
+	/*
 	private boolean isMobBlocking(int x, int y) {
-		ActiveTile t = world.getTile(x, y);
 		if (mob instanceof Player) {
-			if (t.hasNpcs()) {
-				for (Npc n : t.getNpcs()) {
-					if (n.getDef().isAggressive() && !n.getLocation().inWilderness())
-						return true;
-				}
-			}
+			Player pl = (Player) mob;
+			for (Npc n : pl.getViewArea().getNpcsInView()) { // t,getNpcs()
+				if (n.getLocation() == pl.getLocation() && n.getDef().isAggressive() && !n.getLocation().inWilderness()) {
+					return true;
+				} 
+			} 
 		}
 		//		if (mob instanceof Npc) {
 		//		    Npc n = (Npc) mob;
@@ -202,7 +213,7 @@ public class PathHandler {
 		//		}
 		//		t.cleanItself();
 		return false;
-	}
+	} */
 
 	/**
 	 * Resets the path (stops movement)
@@ -235,9 +246,15 @@ public class PathHandler {
 			}
 		}
 		if (newCoords[0] > -1 && newCoords[1] > -1) {
-			mob.setLocation(Point.location(newCoords[0], newCoords[1]));
+			if(mob instanceof Npc) {
+				Npc n = (Npc) mob;
+				n.setLocation(Point.location(newCoords[0], newCoords[1]));
+			} else if(mob instanceof Player) {
+				Player p = (Player) mob;
+				p.setLocation(Point.location(newCoords[0], newCoords[1]));
+			}
 		}
-	}
+	} 
 
 	/**
 	 * Creates a new path and sets us walking it

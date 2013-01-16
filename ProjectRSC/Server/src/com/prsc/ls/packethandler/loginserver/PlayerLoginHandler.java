@@ -45,6 +45,12 @@ public final class PlayerLoginHandler implements PacketHandler {
 			
 			builder.setUID(uID);
 			if (loginCode == 0 || loginCode == 1 || loginCode == 99) {//
+				
+				/*
+				if(Monitor.getInstance() != null) {
+					Monitor.getInstance().onLogin(session);
+				} */
+				
 				try {
 					Server.db.updateQuery("UPDATE `" + Config.MYSQL_TABLE_PREFIX + "players` SET online=1 WHERE user='" + user + "'");
 				} catch (Exception e) {
@@ -70,14 +76,21 @@ public final class PlayerLoginHandler implements PacketHandler {
 		byte returnVal = 0;
 
 		try {
-			ResultSet result = Server.db.getQuery("SELECT `sub_expires`, `pass`, `salt`, `banned`, `owner`, `group_id` FROM `" + Config.MYSQL_TABLE_PREFIX + "players` WHERE `user`='" + user + "'");            
-			if (!result.next()) {
+			ResultSet passwordResult = Server.db.getQuery("SELECT `password`, `salt` FROM `" + Config.MYSQL_TABLE_PREFIX + "users` WHERE `username`='" + DataConversions.hashToUsername(user)+"'");
+			if(!passwordResult.next()) {
 				return 2;
 			}
+			
+			String hashedPassword = DataConversions.hmac("SHA512", passwordResult.getString("salt") + pass, Config.HASH_PRIVATE_KEY);
 
-			String hashedPassword = DataConversions.hmac("SHA512", result.getString("salt") + pass, Config.HASH_PRIVATE_KEY);
-
-			if (!hashedPassword.equals(result.getString("pass"))) {
+			if (!hashedPassword.equals(passwordResult.getString("password"))) {
+				return 2;
+			}
+			
+			passwordResult.close();
+			
+			ResultSet result = Server.db.getQuery("SELECT `sub_expires`, `banned`, `owner`, `group_id` FROM `" + Config.MYSQL_TABLE_PREFIX + "players` WHERE `user`='" + user + "'");            
+			if (!result.next()) {
 				return 2;
 			}
 

@@ -30,7 +30,7 @@ public class FriendHandler implements PacketHandler {
                 byte[] message = p.getRemainingData();
                 w = server.findWorld(friend);
                 if (w != null) {
-                    w.getActionSender().sendPM(user, friend, avoidBlock, message);
+                    w.getActionSender().sendPM(session, user, friend, avoidBlock, message);
                 }
                 break;
             case 11: // Add friend
@@ -40,13 +40,13 @@ public class FriendHandler implements PacketHandler {
                     if (Server.db.getQuery("SELECT 1 FROM `" + Config.MYSQL_TABLE_PREFIX + "players` AS p LEFT JOIN `" + Config.MYSQL_TABLE_PREFIX + "friends` AS f ON f.user=p.user WHERE (p.block_private=0 OR f.friend='" + user + "') AND p.user='" + friend + "'").next()) {
                         w = server.findWorld(friend);
                         if (w != null) {
-                            world.getActionSender().friendLogin(user, friend, w.getID());
+                            world.getActionSender().friendLogin(session, user, friend, w.getID());
                         }
                     }
                     if (Server.db.getQuery("SELECT 1 FROM `" + Config.MYSQL_TABLE_PREFIX + "players` AS p LEFT JOIN `" + Config.MYSQL_TABLE_PREFIX + "friends` AS f ON f.friend=p.user WHERE p.block_private=1 AND f.user='" + friend + "' AND p.user='" + user + "'").next()) {
                         w = server.findWorld(friend);
                         if (w != null) {
-                            w.getActionSender().friendLogin(friend, user, world.getID());
+                            w.getActionSender().friendLogin(session, friend, user, world.getID());
                         }
                     }
                 } catch (SQLException e) {
@@ -60,7 +60,7 @@ public class FriendHandler implements PacketHandler {
                     if (Server.db.getQuery("SELECT 1 FROM `" + Config.MYSQL_TABLE_PREFIX + "players` WHERE block_private=1 AND user='" + user + "'").next()) {
                         w = server.findWorld(friend);
                         if (w != null) {
-                            w.getActionSender().friendLogout(friend, user);
+                            w.getActionSender().friendLogout(session, friend, user);
                         }
                     }
                 } catch (SQLException e) {

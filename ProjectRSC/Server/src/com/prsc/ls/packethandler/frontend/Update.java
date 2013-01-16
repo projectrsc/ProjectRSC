@@ -18,7 +18,7 @@ public class Update implements PacketHandler {
         try {
             String reason = params[0];
             for (World w : Server.getServer().getWorlds()) {
-                w.getActionSender().update(reason);
+                w.getActionSender().update(session, reason);
             }
             builder.setID(1);
         } catch (Exception e) {

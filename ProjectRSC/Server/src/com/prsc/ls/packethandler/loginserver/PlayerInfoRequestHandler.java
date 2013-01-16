@@ -23,7 +23,7 @@ public class PlayerInfoRequestHandler implements PacketHandler {
             session.write(builder.toPacket());
             return;
         }
-        w.getActionSender().requestPlayerInfo(user, new PacketHandler() {
+        w.getActionSender().requestPlayerInfo(session, user, new PacketHandler() {
             public void handlePacket(Packet p, Channel s) throws Exception {
                 LSPacketBuilder builder = new LSPacketBuilder();
                 builder.setUID(uID);

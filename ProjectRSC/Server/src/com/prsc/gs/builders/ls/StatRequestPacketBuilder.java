@@ -1,9 +1,11 @@
 package com.prsc.gs.builders.ls;
 
 import com.prsc.config.Constants;
+
+
 import com.prsc.gs.builders.LSPacketBuilder;
 import com.prsc.gs.connection.LSPacket;
-import com.prsc.gs.world.World;
+import com.prsc.gs.model.World;
 
 public final class StatRequestPacketBuilder {
 

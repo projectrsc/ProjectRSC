@@ -118,7 +118,7 @@ class Agility(PlugInterface, ObjectActionListener, ObjectActionExecutiveListener
 		script.release()
          	
 	def blockObjectAction(self, gameObj, command, player):
-		if player.canAccessMembers():
+		if Constants.GameServer.MEMBER_WORLD:
 			for commandStr in self.VALID_COMMANDS:
 				if commandStr == command and self.EXP_DISTRIBUTION.has_key(gameObj.getID()):
 					return True

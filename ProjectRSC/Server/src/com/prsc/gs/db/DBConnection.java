@@ -1,6 +1,7 @@
 package com.prsc.gs.db;
 
 import java.sql.Connection;
+
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,8 +22,8 @@ import com.prsc.gs.model.GameObject;
 import com.prsc.gs.model.Item;
 import com.prsc.gs.model.Npc;
 import com.prsc.gs.model.Point;
+import com.prsc.gs.model.World;
 import com.prsc.gs.util.Logger;
-import com.prsc.gs.world.World;
 
 public final class DBConnection {
 
@@ -167,8 +168,8 @@ public final class DBConnection {
 				} 
 				GameObject obj = new GameObject(p, result.getInt("id"), result.getInt("direction"), result.getInt("type"));
 
-
 				world.registerGameObject(obj);
+				world.registerObjectCopy(obj);
 			}
 
 			result = this.statement.executeQuery("SELECT * FROM `" + Constants.GameServer.MYSQL_TABLE_PREFIX + "npclocs`");
@@ -211,15 +212,6 @@ public final class DBConnection {
 		}
 
 	}
-	
-	public void loadShops() {
-		try {
-			ResultSet result;
-			result = this.statement.executeQuery("SELECT * FROM `" + Constants.GameServer.MYSQL_TABLE_PREFIX + "items`");
-		} catch(SQLException e) {
-			e.printStackTrace();
-		}
-	}
 
 	public void storeGroundItemToDatabase(Item item) {
 		ItemLoc i = item.getLoc();
@@ -253,7 +245,7 @@ public final class DBConnection {
 		try {
 			this.statement.execute("INSERT INTO `" + Constants.GameServer.MYSQL_TABLE_PREFIX + "npclocs`(`id`,`startX`,`minX`,`maxX`,`startY`,`minY`,`maxY`) VALUES('" + npc.getId() + "', '" + npc.startX() + "', '" + npc.minX() + "', '" + npc.maxX() + "','" + npc.startY() + "','" + npc.minY() + "','" + npc.maxY() + "')");
 		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 	}
+
 }

@@ -2,7 +2,9 @@ package com.prsc.gs.plugins.commands;
 
 
 import com.prsc.config.Constants;
-import com.prsc.config.Formulae;
+
+
+
 import com.prsc.gs.connection.filter.ConnectionFilter;
 import com.prsc.gs.db.DatabaseManager;
 import com.prsc.gs.db.query.StaffLog;
@@ -11,28 +13,26 @@ import com.prsc.gs.event.SingleEvent;
 import com.prsc.gs.external.EntityHandler;
 import com.prsc.gs.model.GameObject;
 import com.prsc.gs.model.InvItem;
-import com.prsc.gs.model.Item;
 import com.prsc.gs.model.Mob;
 import com.prsc.gs.model.Npc;
 import com.prsc.gs.model.Player;
 import com.prsc.gs.model.Point;
+import com.prsc.gs.model.World;
+import com.prsc.gs.model.component.mob.Scriptable;
+import com.prsc.gs.model.component.mob.player.Appearance;
+import com.prsc.gs.model.component.world.TileValue;
 import com.prsc.gs.plugins.PluginHandler;
 import com.prsc.gs.plugins.listeners.action.CommandListener;
-import com.prsc.gs.service.Services;
+import com.prsc.gs.registrar.PortRegistrar;
+import com.prsc.gs.registrar.impl.PacketHandlers;
 import com.prsc.gs.states.CombatState;
 import com.prsc.gs.tools.DataConversions;
-import com.prsc.gs.world.ActiveTile;
-import com.prsc.gs.world.TileValue;
-import com.prsc.gs.world.World;
 
 public final class Admins implements CommandListener {
 
 	private final World world = World.getWorld();
 
 	private static final String COMMAND_PREFIX = "@red@SERVER: @whi@";
-	
-	private DelayedEvent globalDropEvent;
-	private int count = 0;
 
 	@Override
 	public void onCommand(String command, String[] args, Player player) {
@@ -106,68 +106,6 @@ public final class Admins implements CommandListener {
 				p.getActionSender().sendAlert(sb.toString(), false);
 			}
 			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " used SYSTEM " + sb.toString()));
-		} else if (command.equals("globaldrop")) {
-			if (args.length != 3) {
-				sendInvalidArguments(player, "globaldrop", "id of item", "amount to be dropped", "show locations (yes/no)");
-				return; 
-			}
-			
-			final int itemToDrop = Integer.parseInt(args[0]); 
-			final int amountToDrop = Integer.parseInt(args[1]);
-			final boolean showLoc = args[2].equalsIgnoreCase("yes") ? true : false;
-			
-            if (globalDropEvent != null) {
-                player.getActionSender().sendMessage(COMMAND_PREFIX + "There is already a world drop running");
-                return;
-            }
-            player.getActionSender().sendMessage(COMMAND_PREFIX + "Starting global drop..");
-            final Player p = player;
-            PluginHandler.getPluginHandler().getExecutor().submit(new Runnable() {
-
-				@Override
-				public void run() {
-					while(count < amountToDrop) {
-						Point location = getRandomLocation();
-						if(showLoc)
-							p.getActionSender().sendMessage("Dropped at: x: " + location.getX() + " y: " + location.getY());
-						World.getWorld().getTile(location).add(new Item(itemToDrop, location));
-						count++;
-						globalDropEvent = null;
-					}
-					count = 0;
-				}
-            });
-            /*
-            DelayedEvent event = new DelayedEvent(player, 1000) {
-            	
-            	@Override
-            	public void run() {
-					
-            	}
-            	
-            	private Point getRandomLocation() {
-					Point location = Point.location(DataConversions.random(55, 335), DataConversions.random(143, 720));
-                    
-					if(!Formulae.isF2PLocation(location)) {
-						return getRandomLocation();
-					}
-					
-					ActiveTile tile = World.getWorld().getTile(location.getX(), location.getY());
-                    if (tile.hasGameObject()) {
-                        return getRandomLocation();
-                    }
-                    
-                    TileValue value = World.getWorld().getTileValue(location.getX(), location.getY());
-                    
-                    if (value.diagWallVal != 0 || value.horizontalWallVal != 0 || value.verticalWallVal != 0 || value.overlay != 0) {
-                        return getRandomLocation();
-                    }
-                    return location;
-				}
-            }; */
-            //globalDropEvent = event;
-            //World.getWorld().getDelayedEventHandler().add(event);
-            world.sendWorldMessage(COMMAND_PREFIX + "@gre@New global drop started! " + amountToDrop + " " + EntityHandler.getItemDef(itemToDrop).getName() + "'s dropped");
 		} else if (command.equals("removeip")) {
 			if (args.length != 1) {
 				sendInvalidArguments(player, "removeip", "ip");
@@ -211,37 +149,6 @@ public final class Admins implements CommandListener {
 			player.setBlink(!player.blink());
 			player.getActionSender().sendMessage(COMMAND_PREFIX + "Your blink status is now " + player.blink());
 			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " changed blink status to " + player.blink()));
-		} else if (command.equals("goto") || command.equals("summon")) {
-			boolean summon = command.equals("summon");
-
-			if (args.length != 1) {
-				sendInvalidArguments(player, summon ? "summon" : "goto", "name");
-				return;
-			}
-			long usernameHash = DataConversions.usernameToHash(args[0]);
-			Player affectedPlayer = world.getPlayer(usernameHash);
-
-			if (affectedPlayer != null) {
-				if (summon) {
-					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " summoned " + affectedPlayer.getUsername() + " from " + affectedPlayer.getLocation().toString() + " to " + player.getLocation().toString()));
-					affectedPlayer.teleport(player.getX(), player.getY(), true);
-				} else {
-					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went from " + player.getLocation() + " to " + affectedPlayer.getUsername() + " at " + affectedPlayer.getLocation().toString()));
-					player.teleport(affectedPlayer.getX(), affectedPlayer.getY(), true);
-				}
-			} else {
-				player.getActionSender().sendMessage(COMMAND_PREFIX + "Invalid player");
-				return;
-			}
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (summon ? 2 : 3), affectedPlayer));
-		} else if (command.equalsIgnoreCase("kick")) {
-			Player p = world.getPlayer(DataConversions.usernameToHash(args[0]));
-			if (p == null) {
-				return;
-			}
-			p.destroy(false);
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, 6, p));
-			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " kicked " + p.getUsername()));
 		} else if (command.equals("teleport")) {
 			if (args.length != 2) {
 				player.getActionSender().sendMessage("Invalid args. Syntax: TELEPORT x y");
@@ -265,7 +172,8 @@ public final class Admins implements CommandListener {
 							pl.setBusy(true);
 							pl.setBusy(false);
 						}
-						PluginHandler.getPluginHandler().loadPythonScripts();
+						PluginHandler.getPluginHandler().initPythonRegisters();
+						PortRegistrar.lookup(PacketHandlers.class).getPythonGameHandlers();
 					} catch (Exception e) {
 						e.printStackTrace();
 					} finally {
@@ -329,10 +237,10 @@ public final class Admins implements CommandListener {
 		    	player.getActionSender().sendMessage("Invalid args. Syntax: OBJECT id [direction] (store in db) true/false");
 		    	return;
 		    }
-		    boolean percist = (args.length > 1 ? args[2].equalsIgnoreCase("true") : false);
+		    boolean percist = args[2].equalsIgnoreCase("true");
 		    int id = Integer.parseInt(args[0]);
 		    if (id < 0) {
-		    	GameObject object = world.getTile(player.getLocation()).getGameObject();
+		    	GameObject object = player.getCurrentArea().getObject(player.getX(), player.getY());
 			    if (object != null) {
 				    world.unregisterGameObject(object);
 				    if(percist) {
@@ -379,28 +287,98 @@ public final class Admins implements CommandListener {
 				}
 				
 			});
+		} else if(command.equals("stresstest")) {
+			int npcId = Integer.parseInt(args[0]);
+			int amount = Integer.parseInt(args[1]);
+			for(int i = 0; i < amount; i++) {
+				final Npc n = new Npc(npcId, player.getX() + 1, player.getY() + 1, player.getX() - 5, 
+					player.getX() + 5, player.getY() - 5, player.getY() + 5);
+				n.setRespawn(false);
+				World.getWorld().registerNpc(n);
+				World.getWorld().getDelayedEventHandler().add(new SingleEvent(null, 600000) {
+					public void action() {
+						Mob opponent = n.getOpponent();
+						if (opponent != null) {
+							opponent.resetCombat(CombatState.ERROR);
+						}
+						n.resetCombat(CombatState.ERROR);
+						world.unregisterNpc(n);
+						n.remove();
+					}
+				});
+			}
+		} else if (command.equalsIgnoreCase("kick")) {
+			Player p = world.getPlayer(DataConversions.usernameToHash(args[0]));
+			if (p == null) {
+				return;
+			}
+			p.destroy(false);
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, 6, p));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " kicked " + p.getUsername()));
+		} else if (command.equals("invis")) {
+			if (player.isInvis()) {
+				player.setinvis(false);
+			} else {
+				player.setinvis(true);
+			}
+			player.getActionSender().sendMessage(COMMAND_PREFIX + "You are now " + (player.isInvis() ? "invisible" : "visible"));
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went " + (player.isInvis() ? "in" : "") + "visible"));
+		} else if (command.equals("goto") || command.equals("summon")) {
+			boolean summon = command.equals("summon");
+
+			if (args.length != 1) {
+				sendInvalidArguments(player, summon ? "summon" : "goto", "name");
+				return;
+			}
+			long usernameHash = DataConversions.usernameToHash(args[0]);
+			Player affectedPlayer = world.getPlayer(usernameHash);
+
+			if (affectedPlayer != null) {
+				if (summon) {
+					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " summoned " + affectedPlayer.getUsername() + " from " + affectedPlayer.getLocation().toString() + " to " + player.getLocation().toString()));
+					affectedPlayer.teleport(player.getX(), player.getY(), true);
+				} else {
+					//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player.getUsername() + " went from " + player.getLocation() + " to " + affectedPlayer.getUsername() + " at " + affectedPlayer.getLocation().toString()));
+					if(!player.isAdmin() && Point.inWilderness(affectedPlayer.getX(), affectedPlayer.getY())) {
+						player.getActionSender().sendMessage("Mods cannot teleport in the wilderness");
+					} else {
+						player.teleport(affectedPlayer.getX(), affectedPlayer.getY(), true);
+					}
+				}
+			} else {
+				player.getActionSender().sendMessage(COMMAND_PREFIX + "Invalid player");
+				return;
+			}
+			//Services.lookup(DatabaseManager.class).addQuery(new StaffLog(player, (summon ? 2 : 3), affectedPlayer));
+		} else if(command.equals("controlnpc")) {
+			int npcId = Integer.parseInt(args[0]);
+			final Npc n = new Npc(npcId, player.getX() + 1, player.getY() + 1, player.getX() - 5, 
+					player.getX() + 5, player.getY() - 5, player.getY() + 5);
+				n.setRespawn(false);
+				World.getWorld().registerNpc(n);
+				World.getWorld().getDelayedEventHandler().add(new SingleEvent(null, 600000) {
+					public void action() {
+						Mob opponent = n.getOpponent();
+						if (opponent != null) {
+							opponent.resetCombat(CombatState.ERROR);
+						}
+						n.resetCombat(CombatState.ERROR);
+						world.unregisterNpc(n);
+						n.remove();
+					}
+			});
+			Scriptable script = player.getScriptHelper();
+			script.setActiveNpc(n);
+		} else if(command.equals("npctalk")) {
+			Scriptable script = player.getScriptHelper();
+			String message = "";
+			for(String chat : args) {
+				message += chat + " ";
+			}
+			script.sendNpcChat(message);
 		}
 	}
-	
-	private Point getRandomLocation() {
-		Point location = Point.location(DataConversions.random(55, 335), DataConversions.random(143, 720));
-        
-		if(!Formulae.isF2PLocation(location)) {
-			return getRandomLocation();
-		}
-		
-		ActiveTile tile = World.getWorld().getTile(location.getX(), location.getY());
-        if (tile.hasGameObject()) {
-            return getRandomLocation();
-        }
-        
-        TileValue value = World.getWorld().getTileValue(location.getX(), location.getY());
-        
-        if (value.diagWallVal != 0 || value.horizontalWallVal != 0 || value.verticalWallVal != 0 || value.overlay != 0) {
-            return getRandomLocation();
-        }
-        return location;
-	}
+
 
 	private void sendInvalidArguments(Player p, String... strings) {
 		StringBuilder sb = new StringBuilder(COMMAND_PREFIX + "Invalid arguments @red@Syntax: @whi@");

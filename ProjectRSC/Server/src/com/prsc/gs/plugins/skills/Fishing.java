@@ -1,6 +1,7 @@
 package com.prsc.gs.plugins.skills;
 
 import com.prsc.config.Constants;
+
 import com.prsc.config.Formulae;
 import com.prsc.gs.event.ShortEvent;
 import com.prsc.gs.external.EntityHandler;
@@ -9,18 +10,17 @@ import com.prsc.gs.external.ObjectFishingDef;
 import com.prsc.gs.model.*;
 import com.prsc.gs.plugins.listeners.action.ObjectActionListener;
 import com.prsc.gs.plugins.listeners.executive.ObjectActionExecutiveListener;
-import com.prsc.gs.world.World;
 
 
 public class Fishing implements ObjectActionListener, ObjectActionExecutiveListener {
 
     @Override
     public void onObjectAction(final GameObject object, String command, Player owner) {
-        /*if (command.equals("lure") || command.equals("bait") || command.equals("net") || command.equals("harpoon") || command.equals("cage")) {
+        if (command.equals("lure") || command.equals("bait") || command.equals("net") || command.equals("harpoon") || command.equals("cage")) {
             handleFishing(object, owner, owner.click);
             return;
-        } */
-       // return;
+        }
+        return;
     }
 
     private void handleFishing(final GameObject object, Player owner, final int click) {
@@ -95,12 +95,7 @@ public class Fishing implements ObjectActionListener, ObjectActionExecutiveListe
     }
 
 	@Override
-	public boolean blockObjectAction(GameObject obj, String command,
-			Player player) {
-		if (command.equals("lure") || command.equals("bait") || command.equals("net") || command.equals("harpoon") || command.equals("cage")) {
-			handleFishing(obj, player, player.click);
-			return true;
-        } 
-		return false;
+	public boolean blockObjectAction(GameObject obj, String command, Player player) {
+		return command.equals("lure") || command.equals("bait") || command.equals("net") || command.equals("harpoon") || command.equals("cage");
 	}
 }

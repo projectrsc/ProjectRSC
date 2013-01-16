@@ -1,6 +1,8 @@
 package com.prsc.gs.plugins.skills;
 
 import com.prsc.config.Constants;
+
+
 import com.prsc.config.Formulae;
 import com.prsc.gs.event.ShortEvent;
 import com.prsc.gs.event.SingleEvent;
@@ -10,7 +12,6 @@ import com.prsc.gs.model.*;
 import com.prsc.gs.plugins.listeners.action.ObjectActionListener;
 import com.prsc.gs.plugins.listeners.executive.ObjectActionExecutiveListener;
 import com.prsc.gs.tools.DataConversions;
-import com.prsc.gs.world.World;
 
 import java.util.Arrays;
 
@@ -52,8 +53,8 @@ public final class Mining implements ObjectActionListener, ObjectActionExecutive
 		if (!owner.withinRange(object, 1)) {
 			return;
 		}
-		
-		final GameObject newobject = World.getWorld().getTile(object.getX(), object.getY()).getGameObject(); //???
+
+		final GameObject newobject = owner.getCurrentArea().getObject(object.getX(), object.getY());  //World.getWorld().getTile(object.getX(), object.getY()).getGameObject(); //???
 		final ObjectMiningDef def = EntityHandler.getObjectMiningDef(newobject.getID());
 		
 		if (def == null || def.getRespawnTime() < 1) {
@@ -153,7 +154,8 @@ public final class Mining implements ObjectActionListener, ObjectActionExecutive
 						owner.incExp(14, def.getExp(), true);
 						owner.getActionSender().sendStat(14);
 						owner.lastMineTries = -1;
-						world.registerGameObject(new GameObject(object.getLocation(), 98, object.getDirection(), object.getType()));
+						GameObject tempRock = new GameObject(object.getLocation(), 98, object.getDirection(), object.getType());
+						//world.unregisterGameObject(object);
 
 						int respawn = def.getRespawnTime() * 1000;
 						
@@ -171,7 +173,11 @@ public final class Mining implements ObjectActionListener, ObjectActionExecutive
 						} else if (def.getReqLevel() == 85) { //rune
 							respawn = (25 - (world.countPlayers() / 160)) * 60000;
 						} */
-						world.delayedSpawnObject(newobject.getLoc(), respawn);						
+						world.registerGameObject(tempRock);
+						//world.unregisterObject(object);
+						world.delayedSpawnObject(newobject.getLoc(), tempRock, respawn);
+						object.remove();
+						//world.unregisterGameObject(tempRock);
 					}
 					owner.getActionSender().sendInventory();
 					

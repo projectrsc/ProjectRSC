@@ -38,7 +38,7 @@ public class BanHandler implements PacketHandler {
         } else {
             World w = Server.getServer().findWorld(user);
             if (w != null) {
-                w.getActionSender().logoutUser(user);
+                w.getActionSender().logoutUser(session, user);
             }
             if (banned)
                 Server.db.updateQuery("INSERT `" + Config.MYSQL_TABLE_PREFIX + "banlog` VALUES('" + user + "','" + modhash + "','" + (System.currentTimeMillis() / 1000) + "')");

@@ -1,20 +1,22 @@
 package com.prsc.gs.builders;
 
 import java.util.ArrayList;
+
+
 import java.util.List;
 import java.util.Map.Entry;
 
 import com.prsc.config.Constants;
 import com.prsc.config.Formulae;
 import com.prsc.gs.connection.RSCPacket;
-import com.prsc.gs.model.Bank;
 import com.prsc.gs.model.InvItem;
 import com.prsc.gs.model.Player;
+import com.prsc.gs.model.Shop;
+import com.prsc.gs.model.World;
+import com.prsc.gs.model.component.mob.player.Bank;
 import com.prsc.gs.plugins.QuestInterface;
-import com.prsc.gs.service.Services;
-import com.prsc.gs.service.impl.Captcha;
-import com.prsc.gs.world.Shop;
-import com.prsc.gs.world.World;
+import com.prsc.gs.registrar.PortRegistrar;
+import com.prsc.gs.registrar.impl.Captcha;
 
 
 public class MiscPacketBuilder {
@@ -186,7 +188,7 @@ public class MiscPacketBuilder {
 	 */
 	public void sendEnterSleep() {
 		player.setSleeping(true);
-		byte[] image = Services.lookup(Captcha.class).generateCaptcha(player);
+		byte[] image = PortRegistrar.lookup(Captcha.class).generateCaptcha(player);
 		RSCPacketBuilder s = new RSCPacketBuilder();
 		s.setID(206);
 		s.addBytes(image, 0, image.length);
@@ -369,6 +371,13 @@ public class MiscPacketBuilder {
 	public void sendMessage(String message) {
 		RSCPacketBuilder s = new RSCPacketBuilder();
 		s.setID(48);
+		s.addBytes(message.getBytes());
+		player.getSession().write(s.toPacket());
+	}
+	
+	public void sendGlobalMessage(String message) {
+		RSCPacketBuilder s = new RSCPacketBuilder();
+		s.setID(49);
 		s.addBytes(message.getBytes());
 		player.getSession().write(s.toPacket());
 	}

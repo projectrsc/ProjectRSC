@@ -1,15 +1,16 @@
 package com.prsc.gs.plugins.misc;
 
 import com.prsc.config.Constants;
+
 import com.prsc.gs.event.ShortEvent;
 import com.prsc.gs.model.ChatMessage;
 import com.prsc.gs.model.GameObject;
 import com.prsc.gs.model.InvItem;
 import com.prsc.gs.model.Npc;
 import com.prsc.gs.model.Player;
+import com.prsc.gs.model.World;
 import com.prsc.gs.plugins.listeners.action.ObjectActionListener;
 import com.prsc.gs.plugins.listeners.executive.ObjectActionExecutiveListener;
-import com.prsc.gs.world.World;
 
 public class RandomObjects implements ObjectActionExecutiveListener, ObjectActionListener {
 
@@ -33,6 +34,7 @@ public class RandomObjects implements ObjectActionExecutiveListener, ObjectActio
 			owner.getActionSender().sendMessage("You must talk to the owner about this.");
 			return;
 		} else if (command.equalsIgnoreCase("close") || command.equalsIgnoreCase("open")) {
+			System.out.println("Triggered");
 			switch (object.getID()) {
 			case 18:
 				replaceGameObject(17, true, owner, object);
@@ -364,27 +366,32 @@ public class RandomObjects implements ObjectActionExecutiveListener, ObjectActio
 	}
 	
 	private void replaceGameObject(int newID, boolean open, Player owner, GameObject object) {
-		World.getWorld().registerGameObject(new GameObject(object.getLocation(), newID, object.getDirection(), object.getType()));
-		owner.getActionSender().sendSound(open ? "opendoor" : "closedoor");
+		World.getWorld().unregisterGameObject(object);
+        World.getWorld().registerGameObject(new GameObject(object.getLocation(), newID, object.getDirection(), object.getType()));
+        owner.getActionSender().sendSound(open ? "opendoor" : "closedoor"); 
 	}
 
 	private void doGate(Player owner, GameObject object) {
 		owner.getActionSender().sendSound("opendoor");
-		World.getWorld().registerGameObject(new GameObject(object.getLocation(), 181, object.getDirection(), object.getType()));
+		World.getWorld().unregisterGameObject(object);
+		//World.getWorld().registerGameObject(new GameObject(object.getLocation(), 181, object.getDirection(), object.getType()));
 		World.getWorld().delayedSpawnObject(object.getLoc(), 1000);
 	}
 
 	@Override
 	public boolean blockObjectAction(GameObject obj, String command, Player player) { // FIX
 		if (obj.getID() == 613 || obj.getID() == 638 || obj.getID() == 639 || obj.getID() == 643
-				|| command.equals("board") || command.startsWith("search") && obj.getID() != 136 
-				|| command.equalsIgnoreCase("open") || command.equalsIgnoreCase("close")) {
+				|| command.equals("board") || command.equalsIgnoreCase("open") || command.equalsIgnoreCase("close")) {
 			return true;
 		}
 		//System.out.println(obj.getX() + ", " + obj.getY() + ", " + obj.getID());
 		
+		if(command.startsWith("search") && obj.getID() != 136) {
+			return true;
+		}
+		
 		if (obj.getLocation().getX() == 94 && obj.getLocation().getY() == 521 && obj.getID() == 60) {
-			if (player.canAccessMembers()) {
+			if(player.canAccessMembers()) {
 				return true;
 			}
 		}

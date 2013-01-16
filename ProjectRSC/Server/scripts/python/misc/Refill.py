@@ -27,8 +27,8 @@ class Refill(PlugInterface, InvUseOnObjectListener, InvUseOnObjectExecutiveListe
 			script.sendSound("filljug")
 			script.removeItem(id, 1)
 			script.sleep(300)
-			script.addItem(self.REFILLABLE[id], 1)
 			script.displayMessage("You fill the " + item.getDef().getName().lower() + " with water")
+			script.addItem(self.REFILLABLE[id], 1)
 			script.release()
 	
 	def blockInvUseOnObject(self, obj, item, player):

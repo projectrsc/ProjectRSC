@@ -12,6 +12,8 @@ import com.prsc.gs.tools.DataConversions;
 
 import java.util.ArrayList;
 
+import org.python.google.common.collect.Lists;
+
 public final class FightEvent extends DelayedEvent {
 
     private Mob affectedMob;
@@ -189,8 +191,8 @@ public final class FightEvent extends DelayedEvent {
             opponent.resetCombat(CombatState.LOST);
         } else { // show hits
             ArrayList<Player> playersToInform = new ArrayList<Player>();
-            playersToInform.addAll(opponent.getViewArea().getPlayersInView());
-            playersToInform.addAll(attacker.getViewArea().getPlayersInView());
+            playersToInform.addAll(Lists.newArrayList(opponent.getViewArea().getPlayersInView()));
+            playersToInform.addAll(Lists.newArrayList(attacker.getViewArea().getPlayersInView()));
             for (Player p : playersToInform) {
                 p.informOfModifiedHits(opponent);
             }

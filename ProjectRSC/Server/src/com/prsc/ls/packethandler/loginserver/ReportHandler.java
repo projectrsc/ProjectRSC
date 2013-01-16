@@ -19,7 +19,7 @@ public final class ReportHandler implements PacketHandler {
         final long reported = p.readLong();
         final byte reason = p.readByte();
 
-        world.getActionSender().requestReportInfo(reported, new PacketHandler() {
+        world.getActionSender().requestReportInfo(session, reported, new PacketHandler() {
             public void handlePacket(Packet p, Channel session) throws Exception {
                 int x = p.readShort();
                 int y = p.readShort();

@@ -39,7 +39,7 @@ public final class World {
 		for (Entry<Long, Integer> player : getPlayers()) {
 			long user = player.getKey();
 			for (World w : Server.getServer().getWorlds()) {
-				w.actionSender.friendLogout(user);
+				w.actionSender.friendLogout(channel, user);
 			}
 		}
 		players.clear();
@@ -88,7 +88,7 @@ public final class World {
 				long friend = result.getLong("user");
 				World w = server.findWorld(friend);
 				if (w != null) {
-					w.getActionSender().friendLogin(friend, user, id);
+					w.getActionSender().friendLogin(channel, friend, user, id);
 				}
 			}
 			long now = (int) (System.currentTimeMillis() / 1000);
@@ -106,7 +106,7 @@ public final class World {
 			players.remove(user);
 			try {
 				for (World w : Server.getServer().getWorlds()) {
-					w.getActionSender().friendLogout(user);
+					w.getActionSender().friendLogout(channel, user);
 				}
 				System.out.println("LS: Starting removal of " + DataConversions.hashToUsername(user) + " from world " + id);
 				if(players.containsKey(user)) {

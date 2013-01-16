@@ -3,7 +3,6 @@ from com.prsc.gs.plugins.listeners.executive import TalkToNpcExecutiveListener
 from com.prsc.gs.plugins import PlugInterface
 
 '''
-@author: GORF
 This is a generic template for an NPC handler (always document what the handler is)
 EX:
 @author: GORF

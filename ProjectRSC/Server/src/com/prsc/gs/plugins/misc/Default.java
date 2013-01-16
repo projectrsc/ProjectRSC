@@ -1,7 +1,5 @@
 package com.prsc.gs.plugins.misc;
 
-
-import com.prsc.config.Formulae;
 import com.prsc.gs.model.GameObject;
 import com.prsc.gs.model.InvItem;
 import com.prsc.gs.model.Npc;

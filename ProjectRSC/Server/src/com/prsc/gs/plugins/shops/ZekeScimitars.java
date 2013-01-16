@@ -1,20 +1,22 @@
 package com.prsc.gs.plugins.shops;
 
 import com.prsc.gs.model.InvItem;
+
 import com.prsc.gs.model.MenuHandler;
 import com.prsc.gs.model.Npc;
 import com.prsc.gs.model.Player;
+import com.prsc.gs.model.Shop;
 import com.prsc.gs.plugins.ScriptablePlug;
 import com.prsc.gs.plugins.ShopInterface;
 import com.prsc.gs.plugins.listeners.action.TalkToNpcListener;
 import com.prsc.gs.plugins.listeners.executive.TalkToNpcExecutiveListener;
-import com.prsc.gs.world.Shop;
 
 public final class ZekeScimitars extends ScriptablePlug implements ShopInterface, TalkToNpcExecutiveListener, TalkToNpcListener {
 
 	private final Shop shop = new Shop(false, 25000, 100, 50, new InvItem(82, 5), new InvItem(83, 3), new InvItem(84, 2), new InvItem(85, 1));
 	
 	public static final int npcid = 84;
+	
 	@Override
 	public Shop[] getShops() {
 		return new Shop[] { shop };
